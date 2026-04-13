@@ -1,0 +1,268 @@
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  .hdr{background:#185FA5;padding:1.5rem 1.25rem 1.25rem;border-radius:var(--border-radius-lg);margin-bottom:1.25rem;position:relative;overflow:hidden;}
+  .hdr::before{content:'';position:absolute;top:-30px;right:-20px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,0.07);}
+  .hdr::after{content:'';position:absolute;bottom:-18px;left:35%;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.05);}
+  .badge-top{display:inline-block;background:rgba(255,255,255,0.18);color:#fff;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:.5px;}
+  .hdr h1{color:#fff;font-size:20px;font-weight:500;line-height:1.3;margin-bottom:6px;}
+  .hdr p{color:rgba(255,255,255,.82);font-size:13px;line-height:1.5;}
+  .meta-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+  .meta-pill{background:rgba(255,255,255,.15);color:#fff;font-size:12px;padding:4px 10px;border-radius:20px;}
+
+  .prog-wrap{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+  .prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .prog-row span{font-size:13px;color:var(--color-text-secondary);}
+  .xp-val{font-size:15px;font-weight:500;color:#185FA5 !important;}
+  .bar-track{height:10px;background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:10px;overflow:hidden;}
+  .bar-fill{height:100%;background:#185FA5;border-radius:10px;transition:width .5s ease;}
+  .rank-lbl{font-size:12px;color:var(--color-text-secondary);margin-top:6px;text-align:right;}
+
+  .sec-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
+
+  .mcard{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;overflow:hidden;transition:border-color .2s;}
+  .mcard.active{border-color:#185FA5;}
+  .mcard.done-card{opacity:.72;}
+
+  .mhdr{display:flex;align-items:center;gap:12px;padding:12px 1rem;cursor:pointer;user-select:none;}
+  .micon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .ic-b{background:#E6F1FB;} .ic-a{background:#FAEEDA;} .ic-g{background:#EAF3DE;} .ic-c{background:#FAECE7;}
+
+  .minfo{flex:1;}
+  .mtitle{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px;}
+  .msub{font-size:12px;color:var(--color-text-secondary);}
+  .mxp{font-size:12px;font-weight:500;color:#185FA5;background:#E6F1FB;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+  .mxp.done-xp{color:#888;background:var(--color-background-secondary);text-decoration:line-through;}
+  .chev{font-size:13px;color:var(--color-text-secondary);transition:transform .2s;margin-left:4px;}
+  .chev.open{transform:rotate(90deg);}
+
+  .mbody{display:none;padding:0 1rem 14px;border-top:.5px solid var(--color-border-tertiary);}
+  .mbody.open{display:block;}
+
+  .context-pill{display:inline-block;background:#E6F1FB;color:#0C447C;font-size:12px;padding:4px 10px;border-radius:20px;margin:10px 0 6px;}
+
+  .step-list{list-style:none;padding:0;margin:4px 0 0;}
+  .step-list li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--color-text-primary);line-height:1.55;padding:6px 0;border-bottom:.5px solid var(--color-border-tertiary);}
+  .step-list li:last-child{border-bottom:none;}
+  .snum{width:20px;height:20px;background:#E6F1FB;color:#0C447C;border-radius:50%;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+
+  .tip-box{background:#E6F1FB;border-left:2px solid #185FA5;border-radius:0 6px 6px 0;padding:8px 10px;font-size:12px;color:#0C447C;margin-top:10px;line-height:1.5;}
+  .link-ref{font-size:12px;color:#185FA5;text-decoration:underline;word-break:break-all;cursor:pointer;}
+
+  .comp-btn{margin-top:12px;width:100%;padding:8px;background:transparent;border:.5px solid #185FA5;color:#0C447C;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;cursor:pointer;transition:background .15s;}
+  .comp-btn:hover{background:#E6F1FB;}
+  .comp-btn.done-btn{background:#E6F1FB;color:#0C447C;border-color:#85B7EB;}
+
+  .dlv-box{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+  .dlv-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:13px;color:var(--color-text-primary);border-bottom:.5px solid var(--color-border-tertiary);}
+  .dlv-row:last-child{border-bottom:none;}
+  .chk{width:18px;height:18px;border-radius:50%;border:.5px solid var(--color-border-tertiary);background:var(--color-background-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;cursor:pointer;transition:background .2s;}
+  .chk.checked{background:#185FA5;border-color:#185FA5;color:#fff;}
+
+  .rub-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+  .rub-item{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;}
+  .r-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:2px;}
+  .r-val{font-size:15px;font-weight:500;color:#185FA5;}
+
+  .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#042C53;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99;white-space:nowrap;}
+  .toast.show{opacity:1;}
+</style>
+
+<div class="hdr">
+  <div class="badge-top">Actividad gamificada · 90 min</div>
+  <h1>Vacaciones en línea: ¿qué tan bien buscas?</h1>
+  <p>Usaste internet en Semana Santa para ver series, buscar lugares, comprar o explorar redes. Ahora vamos a analizar esas búsquedas con ojos de experto.</p>
+  <div class="meta-row">
+    <span class="meta-pill">Gestión de información</span>
+    <span class="meta-pill">Individual</span>
+    <span class="meta-pill">Bachillerato técnico</span>
+  </div>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-row">
+    <span>Progreso total</span>
+    <span class="xp-val" id="xp-display">0 / 100 XP</span>
+  </div>
+  <div class="bar-track"><div class="bar-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="rank-lbl" id="rank-lbl">Nivel: Usuario casual</div>
+</div>
+
+<p class="sec-title">Misiones</p>
+
+<!-- MISIÓN 1 -->
+<div class="mcard" id="card-0">
+  <div class="mhdr" onclick="tog(0)">
+    <div class="micon ic-b">📱</div>
+    <div class="minfo">
+      <div class="mtitle">Misión 1 — ¿Qué buscaste en vacaciones?</div>
+      <div class="msub">Punto de partida · 10 min</div>
+    </div>
+    <span class="mxp" id="xp-0">+15 XP</span>
+    <span class="chev" id="chev-0">▶</span>
+  </div>
+  <div class="mbody" id="body-0">
+    <span class="context-pill">Reflexión personal</span>
+    <ul class="step-list">
+      <li><span class="snum">1</span>Piensa en las vacaciones de Semana Santa. Elige <strong>1 tema</strong> sobre el que buscaste información real en internet: un lugar a visitar, una película o serie, un producto que querías comprar, un videojuego, un destino turístico, recetas, eventos locales, etc.</li>
+      <li><span class="snum">2</span>En tu documento, escribe el tema elegido y responde: ¿qué querías saber exactamente? ¿qué palabras escribiste en el buscador la primera vez?</li>
+      <li><span class="snum">3</span>Plantea 3 preguntas abiertas que podrían guiar una búsqueda más completa sobre ese tema. Ejemplo: si buscaste "lugares para ir cerca de Guadalajara", una pregunta sería: ¿qué factores hacen que un destino sea recomendable para un día de visita?</li>
+    </ul>
+    <div class="tip-box">El objetivo es partir de algo real que viviste, no inventar un tema. Mientras más honesta sea tu elección, más interesante será la actividad.</div>
+    <button class="comp-btn" id="btn-0" onclick="compM(0,15)">Marcar misión como completada</button>
+  </div>
+</div>
+
+<!-- MISIÓN 2 -->
+<div class="mcard" id="card-1">
+  <div class="mhdr" onclick="tog(1)">
+    <div class="micon ic-a">🔍</div>
+    <div class="minfo">
+      <div class="mtitle">Misión 2 — Búsqueda antes vs. búsqueda mejorada</div>
+      <div class="msub">Operadores avanzados · 25 min</div>
+    </div>
+    <span class="mxp" id="xp-1">+25 XP</span>
+    <span class="chev" id="chev-1">▶</span>
+  </div>
+  <div class="mbody" id="body-1">
+    <span class="context-pill">Búsqueda avanzada en Google</span>
+    <ul class="step-list">
+      <li><span class="snum">1</span>Realiza la búsqueda tal como la habrías hecho en vacaciones (palabras sencillas, sin operadores). Copia la barra de búsqueda exacta en tu documento y anota cuántos resultados aproximados arrojó Google.</li>
+      <li><span class="snum">2</span>Ahora mejora esa búsqueda usando <strong>al menos 2 operadores</strong>: comillas <code>"..."</code> para frases exactas, <code>site:</code> para limitar a un dominio, <code>filetype:</code> para un tipo de archivo, o <code>-palabra</code> para excluir términos. Registra esta segunda búsqueda.</li>
+      <li><span class="snum">3</span>Compara ambas búsquedas: ¿cambió la cantidad de resultados? ¿mejoraron en calidad? Escribe 3 diferencias concretas que observaste.</li>
+      <li><span class="snum">4</span>Guarda los enlaces de <strong>5 fuentes</strong> relevantes que encontraste. Incluye al menos 1 fuente que no sea una red social ni un blog personal.</li>
+    </ul>
+    <div class="tip-box">Guía rápida de operadores: <span class="link-ref" onclick="openLink('https://support.google.com/websearch/answer/2466433')">Búsqueda avanzada de Google →</span></div>
+    <button class="comp-btn" id="btn-1" onclick="compM(1,25)">Marcar misión como completada</button>
+  </div>
+</div>
+
+<!-- MISIÓN 3 -->
+<div class="mcard" id="card-2">
+  <div class="mhdr" onclick="tog(2)">
+    <div class="micon ic-g">🧪</div>
+    <div class="minfo">
+      <div class="mtitle">Misión 3 — ¿En qué sí confías y en qué no?</div>
+      <div class="msub">Evaluación de credibilidad · 30 min</div>
+    </div>
+    <span class="mxp" id="xp-2">+35 XP</span>
+    <span class="chev" id="chev-2">▶</span>
+  </div>
+  <div class="mbody" id="body-2">
+    <span class="context-pill">Criterio CRAAP aplicado a tus fuentes</span>
+    <ul class="step-list">
+      <li><span class="snum">1</span>Selecciona tus <strong>3 fuentes más importantes</strong>. Para cada una aplica el criterio <strong>CRAAP</strong>: <em>Currency</em> (vigencia), <em>Relevance</em> (relevancia para tu tema), <em>Authority</em> (quién publica y por qué es confiable), <em>Accuracy</em> (tiene referencias, datos verificables), <em>Purpose</em> (informa, vende, entretiene u opina).</li>
+      <li><span class="snum">2</span>Crea una tabla: Fuente | C | R | A | A | P | Puntaje 1–5 por criterio | ¿Usarías esta fuente? (Sí / Con reservas / No).</li>
+      <li><span class="snum">3</span>Identifica <strong>al menos 1 señal de alerta</strong>: sin autor visible, sin fecha, diseño confuso con muchos anuncios, dominio desconocido, contenido exagerado o sin fuentes propias citadas.</li>
+      <li><span class="snum">4</span>Escribe un párrafo (5–7 líneas) comparando la fuente más confiable con la menos confiable. ¿Qué diferencia concreta hay entre ellas?</li>
+    </ul>
+    <div class="tip-box">Referencia del test CRAAP: <span class="link-ref" onclick="openLink('https://library.csuchico.edu/help/source-or-information-good')">CSU Chico Library →</span><br>También puedes revisar si el sitio tiene sección "Acerca de" o "Quiénes somos".</div>
+    <button class="comp-btn" id="btn-2" onclick="compM(2,35)">Marcar misión como completada</button>
+  </div>
+</div>
+
+<!-- MISIÓN 4 -->
+<div class="mcard" id="card-3">
+  <div class="mhdr" onclick="tog(3)">
+    <div class="micon ic-c">📋</div>
+    <div class="minfo">
+      <div class="mtitle">Misión 4 — Tu informe final de vacaciones digitales</div>
+      <div class="msub">Síntesis y reflexión · 25 min</div>
+    </div>
+    <span class="mxp" id="xp-3">+25 XP</span>
+    <span class="chev" id="chev-3">▶</span>
+  </div>
+  <div class="mbody" id="body-3">
+    <span class="context-pill">Redacción y reflexión crítica</span>
+    <ul class="step-list">
+      <li><span class="snum">1</span>Redacta un resumen de <strong>10–15 líneas</strong> respondiendo tus 3 preguntas originales, usando solo la información de tus fuentes confiables (las que aprobaron el filtro CRAAP).</li>
+      <li><span class="snum">2</span>Al final del resumen, lista tus fuentes en formato básico: Autor o sitio. Título de la página. URL. Fecha en que la consultaste.</li>
+      <li><span class="snum">3</span>Responde por escrito estas preguntas de reflexión:<br>— ¿Cómo buscabas información antes de esta actividad comparado con ahora?<br>— ¿Encontraste alguna fuente que parecía confiable pero al evaluarla no lo era? ¿Qué te hizo desconfiar?<br>— ¿Cómo aplicarías esto la próxima vez que busques algo en internet?</li>
+      <li><span class="snum">4</span>Guarda tu documento como <code>TuNombre_VacacionesDigitales_GI.pdf</code> o <code>.docx</code> listo para entregar.</li>
+    </ul>
+    <div class="tip-box">No uses IA para escribir el resumen ni las reflexiones. El docente puede pedirte que expliques en voz alta lo que encontraste y por qué elegiste cada fuente.</div>
+    <button class="comp-btn" id="btn-3" onclick="compM(3,25)">Marcar misión como completada</button>
+  </div>
+</div>
+
+<!-- ENTREGABLES -->
+<p class="sec-title" style="margin-top:1.25rem">Entregables — checklist</p>
+<div class="dlv-box">
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>Tema real de vacaciones elegido y justificado</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>3 preguntas de investigación abiertas redactadas</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>Búsqueda simple y búsqueda con operadores registradas</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>3 diferencias concretas entre ambas búsquedas</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>5 fuentes localizadas y anotadas</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>Tabla CRAAP con 3 fuentes evaluadas</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>Párrafo comparando fuente más confiable vs menos confiable</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>Resumen de 10–15 líneas con citas</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>3 preguntas de reflexión respondidas</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tglChk(this)"></div><span>Archivo nombrado correctamente y listo para entregar</span></div>
+</div>
+
+<!-- RÚBRICA -->
+<p class="sec-title">Rúbrica</p>
+<div class="rub-grid">
+  <div class="rub-item"><div class="r-label">Búsqueda con operadores y comparación</div><div class="r-val">25 pts</div></div>
+  <div class="rub-item"><div class="r-label">Evaluación CRAAP de 3 fuentes</div><div class="r-val">35 pts</div></div>
+  <div class="rub-item"><div class="r-label">Resumen con citas correctas</div><div class="r-val">20 pts</div></div>
+  <div class="rub-item"><div class="r-label">Reflexión crítica personal</div><div class="r-val">20 pts</div></div>
+</div>
+<div style="margin-top:8px;font-size:12px;color:var(--color-text-secondary);text-align:right;">Total: 100 pts</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const done=[false,false,false,false];
+  const xpV=[15,25,35,25];
+  let total=0;
+  const ranks=[
+    {min:0,lbl:'Usuario casual'},
+    {min:15,lbl:'Buscador activo'},
+    {min:40,lbl:'Evaluador digital'},
+    {min:75,lbl:'Analista de fuentes'},
+    {min:100,lbl:'Gestor experto de información'}
+  ];
+  function getRank(x){let r=ranks[0].lbl;for(const k of ranks){if(x>=k.min)r=k.lbl;}return r;}
+  function updProg(){
+    const p=Math.min((total/100)*100,100);
+    document.getElementById('prog-fill').style.width=p+'%';
+    document.getElementById('xp-display').textContent=total+' / 100 XP';
+    document.getElementById('rank-lbl').textContent='Nivel: '+getRank(total);
+  }
+  function tog(i){
+    const b=document.getElementById('body-'+i);
+    const c=document.getElementById('chev-'+i);
+    const card=document.getElementById('card-'+i);
+    const wasOpen=b.classList.contains('open');
+    for(let j=0;j<4;j++){
+      document.getElementById('body-'+j).classList.remove('open');
+      document.getElementById('chev-'+j).classList.remove('open');
+      document.getElementById('card-'+j).classList.remove('active');
+    }
+    if(!wasOpen){b.classList.add('open');c.classList.add('open');card.classList.add('active');}
+  }
+  function compM(i,xp){
+    if(done[i])return;
+    done[i]=true;
+    total=Math.min(total+xp,100);
+    const btn=document.getElementById('btn-'+i);
+    btn.textContent='¡Misión completada!';
+    btn.classList.add('done-btn');
+    const xpEl=document.getElementById('xp-'+i);
+    xpEl.classList.add('done-xp');
+    document.getElementById('card-'+i).classList.add('done-card');
+    updProg();
+    showToast('+'+xp+' XP — ¡Misión completada!');
+  }
+  function tglChk(el){
+    el.classList.toggle('checked');
+    el.textContent=el.classList.contains('checked')?'✓':'';
+  }
+  function showToast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg;t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2200);
+  }
+  updProg();
+</script>
