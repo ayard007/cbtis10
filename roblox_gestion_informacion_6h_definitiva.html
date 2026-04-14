@@ -1,0 +1,534 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.hdr{background:linear-gradient(135deg,#3c3489 0%,#7f77dd 100%);padding:1.5rem 1.25rem 1.25rem;border-radius:var(--border-radius-lg);margin-bottom:1.25rem;position:relative;overflow:hidden;}
+.hdr::before{content:'';position:absolute;top:-28px;right:-18px;width:115px;height:115px;border-radius:50%;background:rgba(255,255,255,.07);}
+.hdr::after{content:'';position:absolute;bottom:-16px;left:38%;width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.05);}
+.badge-top{display:inline-block;background:rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:.5px;}
+.hdr h1{color:#fff;font-size:19px;font-weight:500;line-height:1.3;margin-bottom:5px;}
+.hdr p{color:rgba(255,255,255,.85);font-size:13px;line-height:1.5;}
+.meta-row{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap;}
+.meta-pill{background:rgba(255,255,255,.17);color:#fff;font-size:12px;padding:4px 10px;border-radius:20px;}
+
+.prog-wrap{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.prog-top span{font-size:13px;color:var(--color-text-secondary);}
+.xp-num{font-size:15px;font-weight:500;color:#534ab7 !important;}
+.bar-track{height:10px;background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:10px;overflow:hidden;}
+.bar-fill{height:100%;background:linear-gradient(90deg,#534ab7,#7f77dd);border-radius:10px;transition:width .5s ease;}
+.rank-row{display:flex;justify-content:space-between;margin-top:6px;}
+.rank-row span{font-size:12px;color:var(--color-text-secondary);}
+.rank-name{font-size:12px;font-weight:500;color:#3c3489;}
+
+.xp-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.25rem;}
+.xpc{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;text-align:center;}
+.xpc .lbl{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;}
+.xpc .val{font-size:16px;font-weight:500;color:#534ab7;}
+.xpc .val.ex{color:#993c1d;}
+
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.tab{padding:7px 14px;font-size:13px;font-weight:500;border-radius:var(--border-radius-md);border:.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.tab.on{background:#EEEDFE;border-color:#afa9ec;color:#3c3489;}
+.tab.xt{border-color:#f0997b;color:#993c1d;}
+.tab.xt.on{background:#FAECE7;border-color:#d85a30;color:#712b13;}
+
+.sp{display:none;}.sp.on{display:block;}
+
+.shead{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:12px 1.25rem;margin-bottom:10px;}
+.shead-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+.shead-title{font-size:15px;font-weight:500;color:var(--color-text-primary);}
+.sbadge{font-size:12px;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.b1{background:#EEEDFE;color:#3c3489;}.b2{background:#E1F5EE;color:#085041;}
+.b3{background:#E6F1FB;color:#0c447c;}.bx{background:#FAECE7;color:#712b13;}
+.shead-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:4px;}
+.shead-obj{font-size:12px;color:var(--color-text-secondary);line-height:1.5;}
+.shead-obj strong{font-weight:500;color:var(--color-text-primary);}
+
+.antiia{background:#EAF3DE;border:.5px solid #97c459;border-radius:var(--border-radius-md);padding:10px 12px;font-size:12px;color:#173404;margin-bottom:12px;line-height:1.6;}
+.antiia strong{font-weight:500;display:block;margin-bottom:3px;color:#3b6d11;}
+
+.sec-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
+
+.mcard{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;overflow:hidden;transition:border-color .2s;}
+.mcard.on{border-color:#534ab7;}.mcard.xcard.on{border-color:#d85a30;}.mcard.dk{opacity:.72;}
+.mhdr{display:flex;align-items:center;gap:12px;padding:12px 1rem;cursor:pointer;user-select:none;}
+.mico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.ip{background:#EEEDFE;}.ia{background:#FAEEDA;}.ig{background:#EAF3DE;}
+.ib{background:#E6F1FB;}.it{background:#E1F5EE;}.ic{background:#FAECE7;}
+.minf{flex:1;}
+.mt{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px;}
+.ms{font-size:12px;color:var(--color-text-secondary);}
+.mxp{font-size:12px;font-weight:500;color:#534ab7;background:#EEEDFE;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.mxp.xp{color:#712b13;background:#FAECE7;}
+.mxp.used{color:#888;background:var(--color-background-secondary);text-decoration:line-through;}
+.chev{font-size:13px;color:var(--color-text-secondary);transition:transform .2s;margin-left:4px;}
+.chev.op{transform:rotate(90deg);}
+
+.mbody{display:none;padding:0 1rem 14px;border-top:.5px solid var(--color-border-tertiary);}
+.mbody.op{display:block;}
+.ctxp{display:inline-block;background:#EEEDFE;color:#3c3489;font-size:12px;padding:4px 10px;border-radius:20px;margin:10px 0 6px;}
+.ctxp.xp{background:#FAECE7;color:#712b13;}
+
+.step-list{list-style:none;padding:0;margin:4px 0 0;}
+.step-list li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--color-text-primary);line-height:1.55;padding:7px 0;border-bottom:.5px solid var(--color-border-tertiary);}
+.step-list li:last-child{border-bottom:none;}
+.sn{width:20px;height:20px;background:#EEEDFE;color:#3c3489;border-radius:50%;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sn.xp{background:#FAECE7;color:#712b13;}
+
+/* bloque anti-IA por misión */
+.aiblock{background:#f9fff4;border:1px solid #c0dd97;border-radius:var(--border-radius-md);padding:10px 12px;margin-top:10px;}
+.aiblock-title{font-size:11px;font-weight:500;color:#3b6d11;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.aiblock ul{list-style:none;padding:0;margin:0;}
+.aiblock ul li{font-size:12px;color:#173404;line-height:1.65;padding:3px 0;border-bottom:.5px solid #c0dd97;}
+.aiblock ul li:last-child{border-bottom:none;}
+.aiblock ul li::before{content:'▸ ';color:#639922;font-size:11px;}
+.why-tag{display:inline-block;background:#EAF3DE;color:#3b6d11;font-size:10px;font-weight:500;padding:2px 6px;border-radius:10px;margin-left:4px;vertical-align:middle;}
+
+.tip-box{background:#EEEDFE;border-left:2px solid #534ab7;border-radius:0 6px 6px 0;padding:8px 10px;font-size:12px;color:#26215c;margin-top:10px;line-height:1.5;}
+.warn-box{background:#FAEEDA;border-left:2px solid #ba7517;border-radius:0 6px 6px 0;padding:8px 10px;font-size:12px;color:#412402;margin-top:8px;line-height:1.5;}
+.tip-box.xp{background:#FAECE7;border-left-color:#d85a30;color:#4a1b0c;}
+
+.comp-btn{margin-top:12px;width:100%;padding:8px;background:transparent;border:.5px solid #534ab7;color:#3c3489;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;cursor:pointer;transition:background .15s;}
+.comp-btn:hover{background:#EEEDFE;}
+.comp-btn.done{background:#EEEDFE;color:#3c3489;border-color:#afa9ec;}
+.comp-btn.xb{border-color:#d85a30;color:#712b13;}
+.comp-btn.xb:hover{background:#FAECE7;}
+.comp-btn.xb.done{background:#FAECE7;border-color:#f0997b;}
+
+.dlv-box{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.dlv-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:13px;color:var(--color-text-primary);border-bottom:.5px solid var(--color-border-tertiary);}
+.dlv-row:last-child{border-bottom:none;}
+.chk{width:18px;height:18px;border-radius:50%;border:.5px solid var(--color-border-tertiary);background:var(--color-background-primary);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px;cursor:pointer;transition:background .2s;}
+.chk.on{background:#534ab7;border-color:#534ab7;color:#fff;}
+
+.rub-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+.rub-item{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;}
+.rl{font-size:12px;color:var(--color-text-secondary);margin-bottom:2px;line-height:1.4;}
+.rv{font-size:15px;font-weight:500;color:#534ab7;}
+.rv.xp{color:#d85a30;}
+
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#26215c;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99;white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
+
+<!-- ENCABEZADO -->
+<div class="hdr">
+  <div class="badge-top">Actividad gamificada · 3 sesiones · 6 horas + puntos extra</div>
+  <h1>Roblox bajo la lupa: búsqueda y evaluación de información en plataformas digitales</h1>
+  <p>Explorarás Roblox como gestor de información: cómo busca, organiza y presenta contenido. Aprenderás a evaluar críticamente lo que encuentras en ella.</p>
+  <div class="meta-row">
+    <span class="meta-pill">Gestión de información</span>
+    <span class="meta-pill">Individual</span>
+    <span class="meta-pill">Bachillerato técnico</span>
+    <span class="meta-pill">Roblox app</span>
+  </div>
+</div>
+
+<!-- PROGRESO -->
+<div class="prog-wrap">
+  <div class="prog-top"><span>XP acumulado</span><span class="xp-num" id="xpd">0 / 100 XP</span></div>
+  <div class="bar-track"><div class="bar-fill" id="pgf" style="width:0%"></div></div>
+  <div class="rank-row"><span>Rango actual</span><span class="rank-name" id="rnk">Explorador de plataformas</span></div>
+</div>
+
+<p class="sec-title">Distribución de puntos</p>
+<div class="xp-summary">
+  <div class="xpc"><div class="lbl">Sesión 1</div><div class="val">25 XP</div></div>
+  <div class="xpc"><div class="lbl">Sesión 2</div><div class="val">40 XP</div></div>
+  <div class="xpc"><div class="lbl">Sesión 3</div><div class="val">35 XP</div></div>
+  <div class="xpc"><div class="lbl">Extra</div><div class="val ex">+20 XP</div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="sw('s1',this)">Sesión 1</div>
+  <div class="tab" onclick="sw('s2',this)">Sesión 2</div>
+  <div class="tab" onclick="sw('s3',this)">Sesión 3</div>
+  <div class="tab xt" onclick="sw('sx',this)">Puntos extra</div>
+</div>
+
+<!-- ============================================================ SESIÓN 1 -->
+<div class="sp on" id="p-s1">
+  <div class="shead">
+    <div class="shead-top"><span class="shead-title">Sesión 1 — Roblox como buscador de contenido</span><span class="sbadge b1">2 horas · 25 XP</span></div>
+    <div class="shead-desc">El alumno explora Roblox con ojos analíticos por primera vez: ¿cómo organiza la información? ¿cómo funciona su motor de búsqueda comparado con Google?</div>
+    <div class="shead-obj"><strong>Objetivo:</strong> Identificar la estructura informacional de Roblox y comparar su sistema de búsqueda con buscadores web tradicionales.</div>
+  </div>
+  <div class="antiia">
+    <strong>¿Por qué las reflexiones de esta sesión no se pueden copiar de una IA?</strong>
+    Cada pregunta pide que menciones el nombre exacto de juegos que aparecieron en TU pantalla, en TU búsqueda, en ese momento. Los resultados de Roblox varían según cuenta, dispositivo, hora y región. Una IA no puede saber qué viste tú hoy. Si una respuesta no menciona datos específicos y observables de tu pantalla, no es válida.
+  </div>
+
+  <p class="sec-title">Misiones</p>
+
+  <!-- M 1.1 -->
+  <div class="mcard" id="c-s1a">
+    <div class="mhdr" onclick="tog('s1a')">
+      <div class="mico ip">🗂️</div>
+      <div class="minf"><div class="mt">Misión 1.1 — Mapa de la plataforma</div><div class="ms">¿Cómo organiza Roblox su información? · 35 min</div></div>
+      <span class="mxp" id="x-s1a">+8 XP</span><span class="chev" id="v-s1a">▶</span>
+    </div>
+    <div class="mbody" id="b-s1a">
+      <span class="ctxp">Abre Roblox — pantalla principal, sin buscar nada aún</span>
+      <ul class="step-list">
+        <li><span class="sn">1</span>Observa la pantalla principal durante 2 minutos sin tocar nada. Luego describe o dibuja en tu documento el mapa de secciones que ves: nombres exactos de cada categoría o sección visible tal como aparecen en tu pantalla.</li>
+        <li><span class="sn">2</span>Identifica al menos 5 secciones distintas. Para cada una: nombre exacto en pantalla + qué tipo de contenido muestra + cuántos juegos son visibles sin hacer scroll.</li>
+        <li><span class="sn">3</span>Toma captura de pantalla de la pantalla principal e insértala en tu documento.</li>
+      </ul>
+      <div class="aiblock">
+        <div class="aiblock-title">Preguntas de reflexión — a prueba de IA</div>
+        <ul>
+          <li>Escribe el nombre exacto de la primera sección que aparece en tu pantalla y el título del primer juego que aparece en ella. ¿Por qué crees que ese juego específico está en esa posición? <span class="why-tag">requiere ver tu pantalla</span></li>
+          <li>¿Encontraste alguna sección que no entendiste qué criterio usaba para agrupar los juegos? Nómbrala y explica qué intentaste deducir sobre su lógica. <span class="why-tag">requiere exploración propia</span></li>
+          <li>Compara lo que Roblox pone en su pantalla principal con lo que Google pone cuando abres google.com. ¿Qué diferencia te dice algo sobre el propósito de cada plataforma? <span class="why-tag">comparación personal</span></li>
+        </ul>
+      </div>
+      <div class="tip-box">La IA puede decirte cómo luce Roblox en general, pero no puede decirte qué juego específico apareció primero en tu cuenta hoy. Esa observación solo la tienes tú.</div>
+      <button class="comp-btn" id="bn-s1a" onclick="compM('s1a',8)">Marcar como completada</button>
+    </div>
+  </div>
+
+  <!-- M 1.2 -->
+  <div class="mcard" id="c-s1b">
+    <div class="mhdr" onclick="tog('s1b')">
+      <div class="mico ia">🔍</div>
+      <div class="minf"><div class="mt">Misión 1.2 — El buscador interno vs. Google</div><div class="ms">Búsqueda simple vs. refinada · 50 min</div></div>
+      <span class="mxp" id="x-s1b">+10 XP</span><span class="chev" id="v-s1b">▶</span>
+    </div>
+    <div class="mbody" id="b-s1b">
+      <span class="ctxp">Usa la lupa de búsqueda dentro de Roblox</span>
+      <ul class="step-list">
+        <li><span class="sn">1</span>Elige un género de juego de tu interés. Haz una búsqueda con una sola palabra. Copia exactamente lo que escribiste y anota los nombres y número de visitas de los 3 primeros resultados.</li>
+        <li><span class="sn">2</span>Realiza 3 búsquedas más del mismo tema con palabras distintas o más específicas. Para cada una registra: consulta exacta, los 3 primeros juegos con nombre y visitas, y si los filtros disponibles cambiaron algo.</li>
+        <li><span class="sn">3</span>Crea una tabla: Consulta escrita | Primer resultado (nombre exacto) | Visitas del primero | ¿Mejoró la calidad respecto a la búsqueda anterior? (Sí/No + una razón concreta tuya).</li>
+        <li><span class="sn">4</span>Haz la misma búsqueda principal en Google. Anota qué tipo de resultados aparecen allí que no aparecen en Roblox.</li>
+      </ul>
+      <div class="aiblock">
+        <div class="aiblock-title">Preguntas de reflexión — a prueba de IA</div>
+        <ul>
+          <li>De tus 4 búsquedas, ¿cuál produjo el resultado más sorprendente o inesperado? Nombra el juego específico y explica por qué te sorprendió encontrarlo ahí. <span class="why-tag">requiere tu experiencia real</span></li>
+          <li>¿Hubo algún juego que apareciera en varias de tus búsquedas diferentes? ¿Qué hipótesis tienes sobre por qué Roblox lo sigue mostrando? <span class="why-tag">requiere observar tus propios resultados</span></li>
+          <li>Describe una limitación concreta del buscador de Roblox que encontraste hoy al buscar. No digas "no tiene operadores avanzados" en abstracto: di qué intentaste buscar y por qué no funcionó bien. <span class="why-tag">requiere intento fallido real</span></li>
+        </ul>
+      </div>
+      <button class="comp-btn" id="bn-s1b" onclick="compM('s1b',10)">Marcar como completada</button>
+    </div>
+  </div>
+
+  <!-- M 1.3 -->
+  <div class="mcard" id="c-s1c">
+    <div class="mhdr" onclick="tog('s1c')">
+      <div class="mico ig">📝</div>
+      <div class="minf"><div class="mt">Misión 1.3 — Cierre de sesión 1</div><div class="ms">Síntesis escrita · 35 min</div></div>
+      <span class="mxp" id="x-s1c">+7 XP</span><span class="chev" id="v-s1c">▶</span>
+    </div>
+    <div class="mbody" id="b-s1c">
+      <span class="ctxp">Redacción en tu documento</span>
+      <ul class="step-list">
+        <li><span class="sn">1</span>Escribe un párrafo de 6–8 líneas comparando el buscador de Roblox con Google usando ejemplos concretos de lo que buscaste hoy: menciona al menos un nombre de juego real que encontraste.</li>
+        <li><span class="sn">2</span>Responde en 3–4 líneas: ¿Roblox es una plataforma de gestión de información? Argumenta con 2 razones basadas en lo que tú observaste hoy, no en definiciones generales.</li>
+        <li><span class="sn">3</span>Inserta tus capturas etiquetadas y guarda el documento como <strong>TuNombre_S1_RobloxGI.docx</strong></li>
+      </ul>
+      <div class="warn-box">Entregable parcial sesión 1: mapa de secciones + tabla de búsquedas + párrafo comparativo + reflexiones. Si el docente lee tu reflexión y no encuentra nombres específicos de lo que viste, la respuesta no es válida.</div>
+      <button class="comp-btn" id="bn-s1c" onclick="compM('s1c',7)">Marcar como completada</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SESIÓN 2 -->
+<div class="sp" id="p-s2">
+  <div class="shead">
+    <div class="shead-top"><span class="shead-title">Sesión 2 — Evaluación crítica de información en Roblox</span><span class="sbadge b2">2 horas · 40 XP</span></div>
+    <div class="shead-desc">El alumno aplica el criterio CRAAP a juegos y perfiles de creadores reales que encontró en Roblox, identificando señales de alerta y evaluando la autoridad del creador.</div>
+    <div class="shead-obj"><strong>Objetivo:</strong> Evaluar críticamente la información presentada en juegos y perfiles usando criterios formales, y distinguir contenido confiable de contenido engañoso.</div>
+  </div>
+  <div class="antiia">
+    <strong>¿Por qué las reflexiones de esta sesión no se pueden copiar de una IA?</strong>
+    Las preguntas piden que describas los datos específicos de los 3 juegos que tú elegiste: visitas reales, nombre del creador real, fecha de actualización visible en tu pantalla, calificación exacta. También piden que describas una señal de alerta concreta que tú observaste. Ningún dato de este tipo puede inventarlo una IA porque depende de lo que apareció en tu cuenta en este momento.
+  </div>
+
+  <p class="sec-title">Misiones</p>
+
+  <!-- M 2.1 -->
+  <div class="mcard" id="c-s2a">
+    <div class="mhdr" onclick="tog('s2a')">
+      <div class="mico ib">🎮</div>
+      <div class="minf"><div class="mt">Misión 2.1 — Selección de 3 juegos y primera impresión</div><div class="ms">Elegir, describir y comparar · 35 min</div></div>
+      <span class="mxp" id="x-s2a">+10 XP</span><span class="chev" id="v-s2a">▶</span>
+    </div>
+    <div class="mbody" id="b-s2a">
+      <span class="ctxp">Explora los resultados de tus búsquedas de la sesión anterior</span>
+      <ul class="step-list">
+        <li><span class="sn">1</span>Selecciona 3 juegos distintos de los que encontraste: uno con más de 1 millón de visitas, uno con entre 10 mil y 1 millón, y uno con menos de 10 mil o recién publicado.</li>
+        <li><span class="sn">2</span>Sin entrar a jugarlos, analiza únicamente su página de descripción. Para cada uno registra en tu documento: nombre exacto del juego, nombre del creador, número de visitas, calificación (porcentaje o pulgares), fecha de última actualización, y copia literal de los primeros 2 renglones de su descripción.</li>
+        <li><span class="sn">3</span>Toma captura de la página de descripción de cada uno de los 3 juegos.</li>
+      </ul>
+      <div class="aiblock">
+        <div class="aiblock-title">Preguntas de reflexión — a prueba de IA</div>
+        <ul>
+          <li>¿La descripción del juego más popular es más clara o más vaga que la del menos popular? Cita textualmente una frase de cada descripción para comparar. <span class="why-tag">requiere copia literal de pantalla</span></li>
+          <li>¿Alguna de las 3 descripciones te generó desconfianza antes de evaluar? ¿Qué palabra o dato específico te hizo sentir eso? <span class="why-tag">requiere reacción personal observada</span></li>
+        </ul>
+      </div>
+      <button class="comp-btn" id="bn-s2a" onclick="compM('s2a',10)">Marcar como completada</button>
+    </div>
+  </div>
+
+  <!-- M 2.2 -->
+  <div class="mcard" id="c-s2b">
+    <div class="mhdr" onclick="tog('s2b')">
+      <div class="mico ip">🧪</div>
+      <div class="minf"><div class="mt">Misión 2.2 — Laboratorio CRAAP aplicado a Roblox</div><div class="ms">Evaluación formal de tus 3 juegos · 50 min</div></div>
+      <span class="mxp" id="x-s2b">+20 XP</span><span class="chev" id="v-s2b">▶</span>
+    </div>
+    <div class="mbody" id="b-s2b">
+      <span class="ctxp">Criterio CRAAP adaptado a plataformas de juego</span>
+      <ul class="step-list">
+        <li><span class="sn">1</span>Aplica el criterio CRAAP adaptado a tus 3 juegos. Escala 1–5 por criterio:<br><em>Currency:</em> ¿fue actualizado en los últimos 6 meses?<br><em>Relevance:</em> ¿coincide lo que promete su descripción con lo que muestran sus capturas o tráiler?<br><em>Authority:</em> ¿el creador tiene otros juegos publicados? ¿tiene seguidores verificables?<br><em>Accuracy:</em> ¿las estadísticas son consistentes o sospechosas (ej. millones de visitas pero 40% de calificación)?<br><em>Purpose:</em> ¿el juego informa, entretiene, vende Robux, o promete cosas imposibles?</li>
+        <li><span class="sn">2</span>Crea la tabla CRAAP en tu documento: Nombre del juego | C | R | A | A | P | Total /25 | Veredicto (Confiable / Con reservas / No confiable).</li>
+        <li><span class="sn">3</span>Identifica en al menos 1 juego una señal de alerta concreta: descripción con promesas de Robux gratis, nombre del juego en mayúsculas con signos de exclamación, número de visitas altísimo con calificación muy baja, o creador sin historial. Descríbela con detalle.</li>
+        <li><span class="sn">4</span>Entra máximo 5 minutos al juego con mayor puntaje CRAAP. ¿Cumplió lo que prometía su descripción? Actualiza la tabla si cambia alguna calificación.</li>
+      </ul>
+      <div class="aiblock">
+        <div class="aiblock-title">Preguntas de reflexión — a prueba de IA</div>
+        <ul>
+          <li>Escribe el puntaje CRAAP exacto que obtuvieron tus 3 juegos y explica en qué criterio específico falló el peor evaluado. ¿Qué dato concreto de su página te llevó a ponerle esa calificación? <span class="why-tag">requiere tus datos reales de la tabla</span></li>
+          <li>Después de entrar 5 minutos al juego mejor evaluado, ¿cambiarías algún puntaje? Di exactamente cuál y por qué, basándote en algo que viste dentro del juego. <span class="why-tag">requiere experiencia de juego real</span></li>
+          <li>¿El criterio CRAAP fue suficiente para evaluar un juego de Roblox o sentiste que faltaba algo? Propón un criterio adicional que tú añadirías y explica por qué lo necesitas. <span class="why-tag">requiere reflexión sobre experiencia propia</span></li>
+        </ul>
+      </div>
+      <div class="tip-box">Referencia CRAAP: <span style="color:#534ab7;text-decoration:underline;cursor:pointer;" onclick="openLink('https://library.csuchico.edu/help/source-or-information-good')">CSU Chico Library →</span></div>
+      <button class="comp-btn" id="bn-s2b" onclick="compM('s2b',20)">Marcar como completada</button>
+    </div>
+  </div>
+
+  <!-- M 2.3 -->
+  <div class="mcard" id="c-s2c">
+    <div class="mhdr" onclick="tog('s2c')">
+      <div class="mico it">👤</div>
+      <div class="minf"><div class="mt">Misión 2.3 — Evaluando perfiles de creadores</div><div class="ms">Autoridad del creador como fuente · 35 min</div></div>
+      <span class="mxp" id="x-s2c">+10 XP</span><span class="chev" id="v-s2c">▶</span>
+    </div>
+    <div class="mbody" id="b-s2c">
+      <span class="ctxp">Explora los perfiles de los creadores de tus 3 juegos</span>
+      <ul class="step-list">
+        <li><span class="sn">1</span>Entra al perfil del creador del juego con mayor puntaje CRAAP. Registra: número de juegos publicados, seguidores, fecha de creación de la cuenta, y si tiene descripción de perfil.</li>
+        <li><span class="sn">2</span>Repite para el creador del juego con menor puntaje. Compara ambos en una tabla de dos columnas.</li>
+        <li><span class="sn">3</span>Escribe 5–7 líneas: ¿el número de seguidores garantiza que un creador es confiable? ¿Qué otros indicadores usarías para evaluar la autoridad de un creador en Roblox?</li>
+      </ul>
+      <div class="aiblock">
+        <div class="aiblock-title">Preguntas de reflexión — a prueba de IA</div>
+        <ul>
+          <li>Copia el nombre de usuario exacto de ambos creadores que analizaste. ¿Cuántos juegos tiene publicados cada uno? ¿Esa diferencia cambió tu percepción de confianza? ¿Por qué sí o por qué no? <span class="why-tag">requiere datos reales de perfil</span></li>
+          <li>¿Encontraste algo en alguno de los perfiles que no esperabas? Descríbelo. Puede ser algo positivo o negativo. <span class="why-tag">requiere observación sorpresiva propia</span></li>
+        </ul>
+      </div>
+      <div class="warn-box">Entregable parcial sesión 2: tabla CRAAP completa con datos reales + análisis de señal de alerta + comparación de perfiles. Guarda el documento.</div>
+      <button class="comp-btn" id="bn-s2c" onclick="compM('s2c',10)">Marcar como completada</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SESIÓN 3 -->
+<div class="sp" id="p-s3">
+  <div class="shead">
+    <div class="shead-top"><span class="shead-title">Sesión 3 — Comunidades, fuentes externas y reporte final</span><span class="sbadge b3">2 horas · 35 XP</span></div>
+    <div class="shead-desc">El alumno analiza cómo fluye la información en comunidades de Roblox, la contrasta con fuentes externas y sintetiza todo en un reporte profesional.</div>
+    <div class="shead-obj"><strong>Objetivo:</strong> Contrastar información dentro y fuera de la plataforma e integrar todos los hallazgos en un reporte de gestión de información.</div>
+  </div>
+  <div class="antiia">
+    <strong>¿Por qué las reflexiones de esta sesión no se pueden copiar de una IA?</strong>
+    Las preguntas piden que describas mensajes específicos que viste en el muro de un grupo real de Roblox, y que compares la descripción oficial de un juego real con lo que dice una fuente externa que tú buscaste. Estos datos son únicos de tu sesión de exploración.
+  </div>
+
+  <p class="sec-title">Misiones</p>
+
+  <!-- M 3.1 -->
+  <div class="mcard" id="c-s3a">
+    <div class="mhdr" onclick="tog('s3a')">
+      <div class="mico it">👥</div>
+      <div class="minf"><div class="mt">Misión 3.1 — Las comunidades como fuentes de información</div><div class="ms">Grupos y foros dentro de Roblox · 40 min</div></div>
+      <span class="mxp" id="x-s3a">+12 XP</span><span class="chev" id="v-s3a">▶</span>
+    </div>
+    <div class="mbody" id="b-s3a">
+      <span class="ctxp">Menú → Grupos → Busca un grupo relacionado a tu género de juego</span>
+      <ul class="step-list">
+        <li><span class="sn">1</span>Busca 2 grupos relacionados con el género que investigaste. Para cada uno registra: nombre exacto, número de miembros, fecha de creación, si tienen descripción o reglas publicadas.</li>
+        <li><span class="sn">2</span>Observa el muro de publicaciones de cada grupo. Clasifica los últimos 5 mensajes visibles por tipo: información útil / opinión personal / spam / publicidad / contenido sin sentido.</li>
+        <li><span class="sn">3</span>Compara ambos grupos: ¿cuál ofrece información más organizada y confiable? ¿Qué hace la diferencia?</li>
+      </ul>
+      <div class="aiblock">
+        <div class="aiblock-title">Preguntas de reflexión — a prueba de IA</div>
+        <ul>
+          <li>Copia textualmente 1 mensaje del muro de cada grupo que encontraste. Clasifícalo según los tipos de la actividad y explica por qué lo clasificaste así. <span class="why-tag">requiere copia literal de mensaje real</span></li>
+          <li>¿Alguno de los grupos tenía reglas de publicación visibles? Si sí, ¿qué decían? Si no, ¿cómo afecta eso la calidad de la información que circula ahí? <span class="why-tag">requiere observación directa</span></li>
+        </ul>
+      </div>
+      <button class="comp-btn" id="bn-s3a" onclick="compM('s3a',12)">Marcar como completada</button>
+    </div>
+  </div>
+
+  <!-- M 3.2 -->
+  <div class="mcard" id="c-s3b">
+    <div class="mhdr" onclick="tog('s3b')">
+      <div class="mico ia">🌐</div>
+      <div class="minf"><div class="mt">Misión 3.2 — Roblox vs. fuentes externas</div><div class="ms">Contrastar información dentro y fuera · 40 min</div></div>
+      <span class="mxp" id="x-s3b">+13 XP</span><span class="chev" id="v-s3b">▶</span>
+    </div>
+    <div class="mbody" id="b-s3b">
+      <span class="ctxp">Combina Roblox con el navegador web</span>
+      <ul class="step-list">
+        <li><span class="sn">1</span>Toma el juego con mayor puntaje CRAAP de la sesión anterior. Búscalo fuera de Roblox: en Google, YouTube o un wiki de fans. Anota las URLs de al menos 2 fuentes externas que encontraste.</li>
+        <li><span class="sn">2</span>Compara la descripción oficial del juego en Roblox con lo que dicen esas fuentes externas. ¿Coinciden? ¿Hay información adicional que Roblox no menciona? ¿Hay contradicciones? Anota al menos 2 diferencias concretas.</li>
+        <li><span class="sn">3</span>Escribe 5 líneas: ¿por qué es importante buscar información sobre un contenido digital en múltiples fuentes y no solo en la plataforma que lo aloja?</li>
+      </ul>
+      <div class="aiblock">
+        <div class="aiblock-title">Preguntas de reflexión — a prueba de IA</div>
+        <ul>
+          <li>¿Qué dato específico sobre el juego encontraste fuera de Roblox que NO aparece en su descripción oficial? Nómbralo y cita de dónde lo obtuviste (URL o nombre del sitio). <span class="why-tag">requiere búsqueda real y comparación</span></li>
+          <li>¿La información de la fuente externa fue mejor, peor o simplemente diferente a la de Roblox? Justifica con un ejemplo concreto de ambas. <span class="why-tag">requiere comparación de fuentes reales</span></li>
+        </ul>
+      </div>
+      <button class="comp-btn" id="bn-s3b" onclick="compM('s3b',13)">Marcar como completada</button>
+    </div>
+  </div>
+
+  <!-- M 3.3 -->
+  <div class="mcard" id="c-s3c">
+    <div class="mhdr" onclick="tog('s3c')">
+      <div class="mico ig">📋</div>
+      <div class="minf"><div class="mt">Misión 3.3 — Reporte final integrador</div><div class="ms">Documento final de las 3 sesiones · 40 min</div></div>
+      <span class="mxp" id="x-s3c">+10 XP</span><span class="chev" id="v-s3c">▶</span>
+    </div>
+    <div class="mbody" id="b-s3c">
+      <span class="ctxp">Redacción del reporte final</span>
+      <ul class="step-list">
+        <li><span class="sn">1</span>Integra las 3 sesiones en un reporte con estas secciones: (a) ¿Qué es Roblox como plataforma de información? (b) Análisis del sistema de búsqueda interno. (c) Evaluación CRAAP de los 3 juegos con tabla. (d) Análisis de comunidades. (e) Comparación con fuentes externas. (f) Conclusiones.</li>
+        <li><span class="sn">2</span>En conclusiones responde: ¿Roblox es una plataforma confiable para gestionar información? ¿Qué habilidades necesita un usuario para usarla críticamente? Argumenta con datos concretos de tu investigación.</li>
+        <li><span class="sn">3</span>Incluye todas tus capturas de pantalla organizadas y etiquetadas a lo largo del reporte.</li>
+        <li><span class="sn">4</span>Guarda como <strong>TuNombre_RobloxGI_Reporte.pdf</strong></li>
+      </ul>
+      <div class="warn-box">El reporte se invalida si no contiene nombres reales de juegos, creadores y grupos que tú exploraste. El docente verificará que los datos mencionados existan en Roblox y sean consistentes con las capturas entregadas.</div>
+      <button class="comp-btn" id="bn-s3c" onclick="compM('s3c',10)">Marcar como completada</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ SESIÓN EXTRA -->
+<div class="sp" id="p-sx">
+  <div class="shead">
+    <div class="shead-top"><span class="shead-title">Sesión extra — Diseña tu propio juego en papel</span><span class="sbadge bx">Puntos adicionales · +20 XP</span></div>
+    <div class="shead-desc">Ejercicio creativo voluntario. Usando todo lo que aprendiste sobre cómo Roblox presenta y organiza información, diseñarás en papel la ficha informacional de un juego propio.</div>
+    <div class="shead-obj"><strong>Objetivo:</strong> Aplicar creativamente los criterios de búsqueda y evaluación aprendidos para diseñar contenido digital que sea claro, atractivo y confiable desde su concepción.</div>
+  </div>
+  <div class="antiia">
+    <strong>¿Por qué este reto no se puede hacer con IA?</strong>
+    El entregable es una hoja física diseñada a mano. El docente puede pedirte que expliques en voz alta por qué tomaste cada decisión de diseño. Además, las decisiones deben justificarse con observaciones concretas de los juegos que tú evaluaste en las sesiones anteriores, no con ideas genéricas.
+  </div>
+
+  <p class="sec-title">Reto extra</p>
+
+  <div class="mcard xcard" id="c-sxa">
+    <div class="mhdr" onclick="tog('sxa')">
+      <div class="mico ic">🎨</div>
+      <div class="minf"><div class="mt">Reto — Diseña la ficha informacional de tu propio juego</div><div class="ms">Ejercicio creativo en papel · tiempo libre</div></div>
+      <span class="mxp xp" id="x-sxa">+20 XP</span><span class="chev" id="v-sxa">▶</span>
+    </div>
+    <div class="mbody" id="b-sxa">
+      <span class="ctxp xp">Hoja en blanco, lápiz o pluma — sin computadora para este paso</span>
+      <ul class="step-list">
+        <li><span class="sn xp">1</span><strong>Inventa un juego de Roblox.</strong> Puede ser de cualquier género. Dale un nombre, un género y una premisa en 1–2 oraciones. El juego no tiene que ser técnicamente posible, solo tiene que tener una idea clara.</li>
+        <li><span class="sn xp">2</span><strong>Diseña su ficha informacional en papel</strong> como si fuera su página de descripción dentro de Roblox. Debe incluir: nombre del juego, nombre del creador (puedes inventarlo), descripción de 3–5 oraciones, género, número de visitas y calificación que te gustaría que tuviera, y al menos 3 etiquetas o palabras clave que lo describan.</li>
+        <li><span class="sn xp">3</span><strong>Aplica lo aprendido en la evaluación CRAAP</strong> para que tu ficha pase el filtro. En una columna al lado de tu diseño, justifica cómo tu juego cumpliría cada criterio: Currency, Relevance, Authority, Accuracy, Purpose.</li>
+        <li><span class="sn xp">4</span><strong>Identifica conscientemente 1 decisión de diseño</strong> que tomaste para que tu juego fuera más confiable que alguno de los que evaluaste. Escríbela debajo de tu ficha: "A diferencia del juego [nombre que evaluaste], yo decidí [tu decisión] porque [razón basada en lo que aprendiste]."</li>
+        <li><span class="sn xp">5</span>Toma foto a tu hoja y adjúntala en un documento como <strong>TuNombre_JuegoCreativo_Extra.pdf</strong>. Agrega debajo de la foto un párrafo de 5–7 líneas explicando qué aprendiste de las sesiones anteriores que influyó en tus decisiones de diseño.</li>
+      </ul>
+      <div class="aiblock">
+        <div class="aiblock-title">Preguntas de reflexión — a prueba de IA</div>
+        <ul>
+          <li>¿Qué elemento de la ficha de alguno de los juegos que evaluaste en sesiones anteriores copiaste intencionalmente porque te pareció bueno? Nómbralo y explica por qué te pareció efectivo. <span class="why-tag">requiere referencia a evaluación propia</span></li>
+          <li>¿Qué error o señal de alerta que encontraste en la sesión 2 evitaste conscientemente en tu diseño? Describe la señal de alerta y cómo la evitaste. <span class="why-tag">requiere vincular experiencia real con decisión creativa</span></li>
+        </ul>
+      </div>
+      <div class="tip-box xp">Este reto se evalúa sobre 20 pts: originalidad y coherencia del diseño (8 pts), justificación CRAAP aplicada a tu juego (7 pts), reflexión vinculada a tus sesiones anteriores (5 pts).</div>
+      <button class="comp-btn xb" id="bn-sxa" onclick="compM('sxa',20)">Marcar reto como completado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ENTREGABLES -->
+<p class="sec-title" style="margin-top:1.5rem">Entregables finales</p>
+<div class="dlv-box">
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>S1 — Mapa de secciones con nombres exactos de pantalla</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>S1 — Tabla de 4 búsquedas con consultas y resultados reales</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>S1 — Párrafo comparativo Roblox vs. Google con ejemplos propios</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>S2 — Tabla CRAAP de 3 juegos reales con datos de pantalla</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>S2 — Señal de alerta concreta identificada y descrita</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>S2 — Comparación de 2 perfiles de creadores reales</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>S3 — Clasificación de mensajes de 2 grupos reales</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>S3 — Comparación con fuentes externas (URLs incluidas)</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>S3 — Reporte integrador con capturas etiquetadas</span></div>
+  <div class="dlv-row"><div class="chk" onclick="tgl(this)"></div><span>Extra — Ficha de juego diseñada en papel (foto adjunta)</span></div>
+</div>
+
+<!-- RÚBRICA -->
+<p class="sec-title">Rúbrica general</p>
+<div class="rub-grid">
+  <div class="rub-item"><div class="rl">Análisis del sistema de búsqueda (S1)</div><div class="rv">25 pts</div></div>
+  <div class="rub-item"><div class="rl">Evaluación CRAAP y señales de alerta (S2)</div><div class="rv">40 pts</div></div>
+  <div class="rub-item"><div class="rl">Comunidades, fuentes ext. y reporte (S3)</div><div class="rv">35 pts</div></div>
+  <div class="rub-item"><div class="rl">Reto creativo — diseño en papel (extra)</div><div class="rv xp">+20 pts</div></div>
+</div>
+<div style="margin-top:8px;font-size:12px;color:var(--color-text-secondary);text-align:right;">Base: 100 pts · Con extra: hasta 120 pts</div>
+
+<div class="toast" id="tst"></div>
+
+<script>
+const done={};
+const xpMap={s1a:8,s1b:10,s1c:7,s2a:10,s2b:20,s2c:10,s3a:12,s3b:13,s3c:10,sxa:20};
+let total=0;
+const ranks=[
+  {m:0,l:'Explorador de plataformas'},
+  {m:15,l:'Buscador activo'},
+  {m:30,l:'Analista de contenido'},
+  {m:55,l:'Evaluador crítico'},
+  {m:80,l:'Gestor experto de información'},
+  {m:100,l:'Maestro de plataformas digitales'}
+];
+function getRank(x){let r=ranks[0].l;for(const k of ranks)if(x>=k.m)r=k.l;return r;}
+function upd(){
+  const p=Math.min((total/100)*100,100);
+  document.getElementById('pgf').style.width=p+'%';
+  document.getElementById('xpd').textContent=total+' / 100 XP';
+  document.getElementById('rnk').textContent=getRank(total);
+}
+function sw(id,el){
+  document.querySelectorAll('.sp').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  el.classList.add('on');
+}
+function tog(id){
+  const b=document.getElementById('b-'+id);
+  const v=document.getElementById('v-'+id);
+  const c=document.getElementById('c-'+id);
+  const wasOpen=b.classList.contains('op');
+  document.querySelectorAll('.mbody').forEach(e=>e.classList.remove('op'));
+  document.querySelectorAll('.chev').forEach(e=>e.classList.remove('op'));
+  document.querySelectorAll('.mcard').forEach(e=>e.classList.remove('on'));
+  if(!wasOpen){b.classList.add('op');v.classList.add('op');c.classList.add('on');}
+}
+function compM(id,xp){
+  if(done[id])return;
+  done[id]=true;
+  total=Math.min(total+xp,120);
+  document.getElementById('bn-'+id).textContent='¡Completada!';
+  document.getElementById('bn-'+id).classList.add('done');
+  document.getElementById('x-'+id).classList.add('used');
+  document.getElementById('c-'+id).classList.add('dk');
+  upd();
+  showToast('+'+xp+' XP — ¡Misión completada!');
+}
+function tgl(el){el.classList.toggle('on');el.textContent=el.classList.contains('on')?'✓':'';}
+function showToast(m){const t=document.getElementById('tst');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
+upd();
+</script>
