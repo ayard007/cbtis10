@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Actividad Integradora — Blogger | Gestión de Información de Plataformas Digitales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #17160f;
+    --paper: #f4efe4;
+    --paper-warm: #ebe3d1;
+    --accent: #c8442c;
+    --accent-soft: #e08769;
+    --gold: #b38a3a;
+    --ink-soft: #433f32;
+    --line: #2a2820;
+    --highlight: #fff7c2;
+    --success: #3d6b3a;
+    --shadow: 0 2px 0 var(--line);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter Tight', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(200, 68, 44, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(179, 138, 58, 0.06) 0%, transparent 40%);
+  }
+
+  /* Textura de grano sutil */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.25;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* LAYOUT PRINCIPAL */
+  .layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: 100vh;
+  }
+
+  /* SIDEBAR */
+  aside {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2rem 1.5rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 3px solid var(--line);
+  }
+
+  aside::-webkit-scrollbar { width: 6px; }
+  aside::-webkit-scrollbar-track { background: var(--line); }
+  aside::-webkit-scrollbar-thumb { background: var(--accent); }
+
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    line-height: 1;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+  }
+
+  .brand-accent {
+    color: var(--accent-soft);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .brand-sub {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 2.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(244, 239, 228, 0.2);
+  }
+
+  .nav-title {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  nav ul { list-style: none; }
+
+  nav li { margin-bottom: 0.15rem; }
+
+  nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 0.8rem;
+    color: var(--paper);
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-radius: 2px;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+  }
+
+  nav a:hover {
+    background: rgba(244, 239, 228, 0.08);
+    border-left-color: var(--accent-soft);
+  }
+
+  nav a.active {
+    background: rgba(200, 68, 44, 0.15);
+    border-left-color: var(--accent);
+    color: var(--paper);
+  }
+
+  .nav-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--gold);
+    min-width: 22px;
+  }
+
+  .nav-done {
+    margin-left: auto;
+    font-size: 0.9rem;
+    color: var(--success);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  nav a.completed .nav-done { opacity: 1; color: #7cb87a; }
+  nav a.completed .nav-num { text-decoration: line-through; opacity: 0.5; }
+
+  .progress-box {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(244, 239, 228, 0.05);
+    border: 1px solid rgba(244, 239, 228, 0.15);
+    border-radius: 2px;
+  }
+
+  .progress-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: rgba(244, 239, 228, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-soft));
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+
+  .progress-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    color: var(--paper);
+  }
+
+  /* MAIN CONTENT */
+  main {
+    padding: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .phase {
+    padding: 4rem 5rem;
+    max-width: 1100px;
+    min-height: 100vh;
+    border-bottom: 1px dashed var(--ink-soft);
+    display: none;
+  }
+
+  .phase.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* HERO / PORTADA */
+  .hero {
+    padding: 4rem 5rem;
+    position: relative;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    padding: 0.4rem 0.8rem;
+    background: var(--ink);
+    color: var(--paper);
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin: 2.5rem 0;
+    padding: 1.5rem 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .meta-item {
+    padding: 0 1rem;
+    border-right: 1px solid var(--ink-soft);
+  }
+
+  .meta-item:last-child { border-right: none; }
+
+  .meta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  .meta-value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .lead {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    line-height: 1.5;
+    max-width: 42em;
+    font-weight: 400;
+    margin-bottom: 2rem;
+    color: var(--ink-soft);
+  }
+
+  .lead strong { color: var(--ink); font-weight: 600; }
+
+  /* PHASE HEADERS */
+  .phase-header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--ink);
+    position: relative;
+  }
+
+  .phase-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    margin-bottom: 0.8rem;
+  }
+
+  .phase-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .phase-title em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .phase-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.7rem;
+    background: var(--highlight);
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .phase-intro {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 42em;
+  }
+
+  /* SECCIONES INTERNAS */
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 2.5rem 0 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 1.8rem 0 0.8rem;
+  }
+
+  p { margin-bottom: 1rem; }
+
+  ul, ol { margin: 1rem 0 1rem 1.5rem; }
+
+  li { margin-bottom: 0.5rem; }
+
+  /* CAJAS ESPECIALES */
+  .objective-box {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2rem;
+    margin: 2rem 0;
+    position: relative;
+  }
+
+  .objective-box::before {
+    content: '◆';
+    position: absolute;
+    top: -12px;
+    left: 2rem;
+    background: var(--paper);
+    color: var(--ink);
+    padding: 0 0.5rem;
+    font-size: 1rem;
+  }
+
+  .objective-box h3 {
+    color: var(--accent-soft);
+    font-style: italic;
+    margin-top: 0;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 600;
+  }
+
+  .objective-box p {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+
+  .step-box {
+    background: var(--paper-warm);
+    border-left: 4px solid var(--accent);
+    padding: 1.5rem 2rem;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+
+  .step-num {
+    position: absolute;
+    top: -12px;
+    left: 2rem;
+    background: var(--accent);
+    color: var(--paper);
+    padding: 0.2rem 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  .resource-link {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    margin: 0.8rem 0;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.2s;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  .resource-link:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--accent);
+  }
+
+  .resource-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    color: var(--accent);
+    min-width: 30px;
+  }
+
+  .resource-content { flex: 1; }
+
+  .resource-title {
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+
+  .resource-url {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    word-break: break-all;
+  }
+
+  /* PREGUNTAS DE REFLEXIÓN */
+  .reflection {
+    background: linear-gradient(135deg, var(--highlight) 0%, #ffeb8a 100%);
+    border: 2px solid var(--ink);
+    padding: 2rem;
+    margin: 2.5rem 0;
+    position: relative;
+  }
+
+  .reflection::before {
+    content: '?';
+    position: absolute;
+    top: -18px;
+    right: 2rem;
+    background: var(--ink);
+    color: var(--highlight);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    font-style: italic;
+  }
+
+  .reflection-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    font-style: italic;
+  }
+
+  .reflection-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ink-soft);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--ink);
+  }
+
+  .reflection ol { counter-reset: reflection; list-style: none; margin-left: 0; }
+
+  .reflection li {
+    counter-increment: reflection;
+    padding-left: 2.5rem;
+    position: relative;
+    margin-bottom: 1.2rem;
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  .reflection li::before {
+    content: counter(reflection, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--paper);
+    padding: 0.15rem 0.4rem;
+    border: 1px solid var(--ink);
+  }
+
+  .reflection textarea {
+    width: 100%;
+    min-height: 90px;
+    margin-top: 0.8rem;
+    padding: 0.8rem;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.95rem;
+    resize: vertical;
+    color: var(--ink);
+  }
+
+  .reflection textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+
+  .warning-note {
+    background: var(--paper);
+    border: 2px dashed var(--accent);
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+  }
+
+  .warning-note strong {
+    color: var(--accent);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+
+  /* IA ADVERTENCIA */
+  .ai-warning {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.5rem 1.75rem;
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--gold);
+    font-size: 0.95rem;
+  }
+
+  .ai-warning-title {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  /* CÓDIGO */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+    background: var(--ink);
+    color: var(--accent-soft);
+    padding: 0.15em 0.4em;
+    border-radius: 2px;
+  }
+
+  pre {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    border-left: 4px solid var(--gold);
+  }
+
+  pre code { background: none; color: var(--paper); padding: 0; }
+
+  /* CHECKLIST */
+  .checklist {
+    background: var(--paper-warm);
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    border: 1px solid var(--ink-soft);
+  }
+
+  .checklist-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+
+  .checklist ul { list-style: none; margin-left: 0; }
+
+  .checklist li {
+    padding: 0.5rem 0;
+    padding-left: 2rem;
+    position: relative;
+    border-bottom: 1px dashed var(--ink-soft);
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+  }
+
+  .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75rem;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+  }
+
+  .checklist li.checked {
+    color: var(--ink-soft);
+    text-decoration: line-through;
+  }
+
+  .checklist li.checked::before {
+    background: var(--accent);
+    content: '✓';
+    color: var(--paper);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    padding-left: 1px;
+    padding-top: 1px;
+  }
+
+  /* NAVEGACIÓN INFERIOR */
+  .phase-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--ink);
+  }
+
+  .nav-btn {
+    padding: 1rem 1.5rem;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    color: var(--ink);
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: all 0.2s;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  .nav-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--accent);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .nav-btn.primary {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  .nav-btn.complete {
+    background: var(--success);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* RETO FINAL */
+  .challenge-banner {
+    background: var(--accent);
+    color: var(--paper);
+    padding: 2.5rem 3rem;
+    margin-bottom: 2.5rem;
+    border: 3px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--ink);
+    position: relative;
+  }
+
+  .challenge-banner::before {
+    content: 'EXAMEN PARCIAL';
+    position: absolute;
+    top: -14px;
+    left: 2rem;
+    background: var(--ink);
+    color: var(--highlight);
+    padding: 0.3rem 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+  }
+
+  .challenge-banner h2 {
+    color: var(--paper);
+    margin-top: 0;
+    font-size: 2.2rem;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 800;
+  }
+
+  .rubric-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+  }
+
+  .rubric-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .rubric-table td {
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--ink-soft);
+    font-size: 0.95rem;
+  }
+
+  .rubric-table tr:last-child td { border-bottom: none; }
+
+  .rubric-table tr:nth-child(even) td { background: var(--paper-warm); }
+
+  .rubric-points {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--accent);
+    text-align: center;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { position: static; height: auto; }
+    .phase, .hero { padding: 2rem 1.5rem; }
+    .hero-meta { grid-template-columns: repeat(2, 1fr); }
+    .meta-item { border-right: none; border-bottom: 1px solid var(--ink-soft); padding-bottom: 1rem; margin-bottom: 0.5rem; }
+  }
+
+  /* DECORACIÓN */
+  .ornament {
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin: 2.5rem 0;
+    letter-spacing: 1rem;
+  }
+
+  .start-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 1.2rem 2.5rem;
+    background: var(--accent);
+    color: var(--paper);
+    text-decoration: none;
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    border: 2px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .start-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--ink);
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside>
+    <div class="brand">Bitácora <span class="brand-accent">digital</span></div>
+    <div class="brand-sub">Parcial · Blogger 2026</div>
+
+    <div class="nav-title">Ruta de aprendizaje</div>
+    <nav>
+      <ul>
+        <li><a href="#inicio" data-phase="inicio" class="active"><span class="nav-num">00</span> Portada <span class="nav-done">✓</span></a></li>
+        <li><a href="#fase1" data-phase="fase1"><span class="nav-num">01</span> ¿Qué es un blog? <span class="nav-done">✓</span></a></li>
+        <li><a href="#fase2" data-phase="fase2"><span class="nav-num">02</span> Explorando Blogger <span class="nav-done">✓</span></a></li>
+        <li><a href="#fase3" data-phase="fase3"><span class="nav-num">03</span> Crear tu blog <span class="nav-done">✓</span></a></li>
+        <li><a href="#fase4" data-phase="fase4"><span class="nav-num">04</span> Diseño y tema <span class="nav-done">✓</span></a></li>
+        <li><a href="#fase5" data-phase="fase5"><span class="nav-num">05</span> Primera entrada <span class="nav-done">✓</span></a></li>
+        <li><a href="#fase6" data-phase="fase6"><span class="nav-num">06</span> Gestión de info <span class="nav-done">✓</span></a></li>
+        <li><a href="#fase7" data-phase="fase7"><span class="nav-num">07</span> Difusión y ética <span class="nav-done">✓</span></a></li>
+        <li><a href="#reto" data-phase="reto"><span class="nav-num">★</span> Reto final <span class="nav-done">✓</span></a></li>
+      </ul>
+    </nav>
+
+    <div class="progress-box">
+      <div class="progress-label">Tu progreso</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-text" id="progress-text">0 / 9 fases</div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- PORTADA -->
+    <section class="phase active" id="inicio">
+      <div class="hero">
+        <div class="hero-tag">Actividad integradora · 14 horas</div>
+        <h1>El blog como <em>bitácora</em> del pensamiento digital</h1>
+        <p class="lead">
+          Una travesía de <strong>siete fases más un reto final</strong> para descubrir cómo una plataforma tan sencilla como <strong>Blogger</strong> puede convertirse en tu propio laboratorio para gestionar, curar y publicar información en la era digital.
+        </p>
+
+        <div class="hero-meta">
+          <div class="meta-item">
+            <div class="meta-label">Materia</div>
+            <div class="meta-value">Gestión de Información de Plataformas Digitales</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Nivel</div>
+            <div class="meta-value">Preparatoria Técnica</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Duración</div>
+            <div class="meta-value">14 horas</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Entregable</div>
+            <div class="meta-value">Blog completo publicado</div>
+          </div>
+        </div>
+
+        <h2>¿Qué vas a lograr?</h2>
+        <p>Al terminar esta actividad habrás <strong>construido un blog completo desde cero</strong> en Blogger, entendiendo no sólo cómo usar la herramienta, sino <em>por qué</em> importa en el contexto de la gestión de información en plataformas digitales. Tu blog será una muestra viva de tu capacidad para investigar, organizar, curar y comunicar sobre un tema actual de tecnología o informática.</p>
+
+        <div class="objective-box">
+          <h3>Propósito pedagógico</h3>
+          <p>Que comprendas el blog como una <em>herramienta de gestión de información pública</em> — no como un sitio "para escribir"— y que desarrolles criterio propio para seleccionar, estructurar y publicar contenido confiable en internet.</p>
+        </div>
+
+        <h2>Cómo trabaja esta actividad</h2>
+        <ul>
+          <li><strong>Avanza fase por fase</strong>, en orden. Cada fase tiene instrucciones, enlaces externos para investigar, ejercicios guiados y preguntas de reflexión.</li>
+          <li><strong>Investiga en los enlaces sugeridos</strong> antes de responder. Las preguntas están diseñadas para que razones con lo que encontraste, no para copiar y pegar.</li>
+          <li><strong>Marca cada fase como completada</strong> con el botón al final de la sección. Tu progreso se guardará mientras la pestaña esté abierta.</li>
+          <li><strong>El reto final es tu examen parcial:</strong> un blog completo que entregarás con URL pública.</li>
+        </ul>
+
+        <div class="ai-warning">
+          <div class="ai-warning-title">Sobre el uso de IA en esta actividad</div>
+          <p style="margin: 0;">Puedes <strong>consultar</strong> una IA para aclarar dudas o explorar ideas. Pero las preguntas de reflexión, los análisis comparativos y las decisiones de curaduría <strong>deben ser tuyas</strong>. Una IA no sabe qué te parece importante, qué audiencia te interesa, ni qué observaste al navegar por los ejemplos. Lo que entregues como tuyo, que realmente lo sea.</p>
+        </div>
+
+        <div class="ornament">❋ ❋ ❋</div>
+
+        <div style="text-align: center; margin: 3rem 0;">
+          <a class="start-btn" data-goto="fase1">Comenzar Fase 1 →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FASE 1 -->
+    <section class="phase" id="fase1">
+      <div class="phase-header">
+        <div class="phase-num">Fase 01 · de 07</div>
+        <h1 class="phase-title">¿Qué es un <em>blog</em> y por qué sigue importando?</h1>
+        <span class="phase-duration">⧗ Duración sugerida: 1.5 horas</span>
+        <p class="phase-intro">Antes de crear cualquier cosa, hay que entender qué se crea y para qué. En esta primera fase vas a investigar qué es un blog, de dónde viene y qué papel cumple hoy en la gestión de información digital.</p>
+      </div>
+
+      <div class="objective-box">
+        <h3>Objetivo de la fase</h3>
+        <p>Que construyas con tus propias palabras una definición operativa de "blog", identificando sus elementos clave y diferenciándolo de otras plataformas digitales como redes sociales o sitios web tradicionales.</p>
+      </div>
+
+      <h2>Parte A · Exploración inicial (40 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 1</span>
+        <p>Visita los siguientes recursos y toma notas (en papel o un documento) sobre los <strong>tres conceptos</strong> que más se repitan al definir qué es un blog.</p>
+      </div>
+
+      <a class="resource-link" href="https://es.wikipedia.org/wiki/Blog" target="_blank" rel="noopener">
+        <span class="resource-icon">01</span>
+        <div class="resource-content">
+          <div class="resource-title">Definición y origen del término "blog"</div>
+          <div class="resource-url">es.wikipedia.org/wiki/Blog</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://www.hostinger.mx/tutoriales/que-es-un-blog" target="_blank" rel="noopener">
+        <span class="resource-icon">02</span>
+        <div class="resource-content">
+          <div class="resource-title">¿Qué es un blog? Guía actual con ejemplos</div>
+          <div class="resource-url">hostinger.mx/tutoriales/que-es-un-blog</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://blog.hubspot.es/marketing/que-es-un-blog" target="_blank" rel="noopener">
+        <span class="resource-icon">03</span>
+        <div class="resource-content">
+          <div class="resource-title">El blog en el contexto del marketing digital</div>
+          <div class="resource-url">blog.hubspot.es/marketing/que-es-un-blog</div>
+        </div>
+      </a>
+
+      <h2>Parte B · Observación de blogs reales (30 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 2</span>
+        <p>Explora al menos <strong>tres blogs distintos</strong> de los listados abajo. No los leas completos: navega, observa cómo se organizan, qué partes tienen, cómo agrupan su contenido.</p>
+      </div>
+
+      <a class="resource-link" href="https://xkcd.com/" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">xkcd — blog de ilustración con ciencia y tecnología</div>
+          <div class="resource-url">xkcd.com</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://www.xataka.com.mx/" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">Xataka México — blog tecnológico profesional</div>
+          <div class="resource-url">xataka.com.mx</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://css-tricks.com/" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">CSS-Tricks — blog técnico de desarrollo web</div>
+          <div class="resource-url">css-tricks.com</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://blog.google/intl/es-419/" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">The Keyword — el blog oficial de Google</div>
+          <div class="resource-url">blog.google/intl/es-419</div>
+        </div>
+      </a>
+
+      <div class="reflection">
+        <div class="reflection-title">Preguntas de reflexión — Fase 1</div>
+        <div class="reflection-sub">Piensa con calma · Responde en tus propias palabras</div>
+        <ol>
+          <li>
+            Después de investigar, <strong>define qué es un blog en una sola oración, usando tu propio vocabulario</strong>. No repitas textual ninguna definición que hayas leído.
+            <textarea placeholder="Escribe tu definición aquí..."></textarea>
+          </li>
+          <li>
+            ¿Qué <strong>tres elementos estructurales</strong> observaste que aparecen en la mayoría de los blogs que visitaste? (Ejemplo: fecha de publicación, autor, etiquetas...)
+            <textarea placeholder="Elemento 1, elemento 2, elemento 3 y por qué son importantes..."></textarea>
+          </li>
+          <li>
+            Un compañero dice: "un blog es lo mismo que una cuenta de Instagram, solo que con más texto". ¿Estás de acuerdo? Justifica tu respuesta señalando <strong>al menos dos diferencias reales</strong>.
+            <textarea placeholder="Yo (no) estoy de acuerdo porque..."></textarea>
+          </li>
+          <li>
+            De los blogs que exploraste, ¿<strong>cuál te pareció mejor organizado</strong> y por qué? Describe una decisión concreta de diseño o estructura que te llamó la atención.
+            <textarea placeholder="El blog X me pareció mejor organizado porque..."></textarea>
+          </li>
+        </ol>
+      </div>
+
+      <div class="ai-warning">
+        <div class="ai-warning-title">Recordatorio</div>
+        <p style="margin: 0;">Si le preguntas a una IA "¿qué es un blog?", te dará una respuesta genérica. Pero la pregunta 4 requiere que <em>tú hayas visitado</em> los blogs sugeridos. La IA no los ha visto contigo. Ese análisis es tuyo.</p>
+      </div>
+
+      <div class="phase-nav">
+        <a class="nav-btn" data-goto="inicio">← Portada</a>
+        <button class="nav-btn complete" data-complete="fase1">✓ Marcar fase 1 como completada</button>
+        <a class="nav-btn primary" data-goto="fase2">Fase 2 →</a>
+      </div>
+    </section>
+
+    <!-- FASE 2 -->
+    <section class="phase" id="fase2">
+      <div class="phase-header">
+        <div class="phase-num">Fase 02 · de 07</div>
+        <h1 class="phase-title">Explorando <em>Blogger</em>: la plataforma</h1>
+        <span class="phase-duration">⧗ Duración sugerida: 1.5 horas</span>
+        <p class="phase-intro">Blogger es una de las plataformas gratuitas más longevas de internet. Antes de abrir una cuenta, vas a conocer su historia, sus ventajas, sus límites y qué la diferencia de alternativas como WordPress o Medium.</p>
+      </div>
+
+      <div class="objective-box">
+        <h3>Objetivo de la fase</h3>
+        <p>Que puedas justificar con criterio por qué Blogger es una opción válida para un proyecto de gestión de información, identificando ventajas, desventajas y el tipo de usuario al que mejor se adapta.</p>
+      </div>
+
+      <h2>Parte A · Conociendo Blogger (45 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 1</span>
+        <p>Revisa la <strong>página oficial</strong> de Blogger y el centro de ayuda. Anota qué prometen ofrecer.</p>
+      </div>
+
+      <a class="resource-link" href="https://www.blogger.com/about/" target="_blank" rel="noopener">
+        <span class="resource-icon">01</span>
+        <div class="resource-content">
+          <div class="resource-title">Página oficial de Blogger — ¿Qué es y qué ofrece?</div>
+          <div class="resource-url">blogger.com/about</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://support.google.com/blogger/?hl=es" target="_blank" rel="noopener">
+        <span class="resource-icon">02</span>
+        <div class="resource-content">
+          <div class="resource-title">Centro de ayuda oficial de Blogger (Google)</div>
+          <div class="resource-url">support.google.com/blogger</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://support.google.com/blogger/answer/1623800?hl=es" target="_blank" rel="noopener">
+        <span class="resource-icon">03</span>
+        <div class="resource-content">
+          <div class="resource-title">Tutorial oficial: Primeros pasos en Blogger</div>
+          <div class="resource-url">support.google.com/blogger/answer/1623800</div>
+        </div>
+      </a>
+
+      <h2>Parte B · Comparación con alternativas (45 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 2</span>
+        <p>Busca información sobre dos alternativas populares: <strong>WordPress.com</strong> y <strong>Medium</strong>. Para cada una identifica: quién la usa, cuánto cuesta y qué tanto permite personalizar.</p>
+      </div>
+
+      <a class="resource-link" href="https://wordpress.com/es/" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">WordPress.com — versión gratuita</div>
+          <div class="resource-url">wordpress.com/es</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://medium.com/" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">Medium — publicación de contenido</div>
+          <div class="resource-url">medium.com</div>
+        </div>
+      </a>
+
+      <h2>Parte C · Tabla comparativa (30 min)</h2>
+
+      <p>En tu cuaderno o documento, llena esta tabla a partir de lo que investigaste:</p>
+
+      <table class="rubric-table">
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th>Blogger</th>
+            <th>WordPress.com</th>
+            <th>Medium</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>¿Es gratuito?</td><td>___</td><td>___</td><td>___</td></tr>
+          <tr><td>¿Permite dominio propio?</td><td>___</td><td>___</td><td>___</td></tr>
+          <tr><td>¿Nivel de personalización?</td><td>___</td><td>___</td><td>___</td></tr>
+          <tr><td>¿Año de creación?</td><td>___</td><td>___</td><td>___</td></tr>
+          <tr><td>¿Para qué usuario es mejor?</td><td>___</td><td>___</td><td>___</td></tr>
+        </tbody>
+      </table>
+
+      <div class="reflection">
+        <div class="reflection-title">Preguntas de reflexión — Fase 2</div>
+        <div class="reflection-sub">Razona con la información que acabas de recopilar</div>
+        <ol>
+          <li>
+            ¿Cuál es la <strong>principal ventaja</strong> que tiene Blogger frente a WordPress y Medium para alguien que apenas comienza? Justifica con un dato concreto de tu investigación.
+            <textarea placeholder="La principal ventaja es... porque..."></textarea>
+          </li>
+          <li>
+            ¿Cuál es el <strong>principal límite</strong> de Blogger que podría hacerte elegir otra plataforma más adelante?
+            <textarea placeholder="El límite más importante es..."></textarea>
+          </li>
+          <li>
+            Para un proyecto escolar sobre <strong>gestión de información digital</strong>, ¿por qué tiene sentido usar Blogger y no simplemente publicar en Instagram o en un grupo de WhatsApp? Da al menos dos razones.
+            <textarea placeholder="Razón 1... Razón 2..."></textarea>
+          </li>
+          <li>
+            Blogger existe desde 1999. ¿Qué te dice eso sobre la <strong>permanencia de la información</strong> en una plataforma digital, en comparación con redes sociales que aparecen y desaparecen?
+            <textarea placeholder="La permanencia de la información..."></textarea>
+          </li>
+        </ol>
+      </div>
+
+      <div class="phase-nav">
+        <a class="nav-btn" data-goto="fase1">← Fase 1</a>
+        <button class="nav-btn complete" data-complete="fase2">✓ Marcar fase 2 como completada</button>
+        <a class="nav-btn primary" data-goto="fase3">Fase 3 →</a>
+      </div>
+    </section>
+
+    <!-- FASE 3 -->
+    <section class="phase" id="fase3">
+      <div class="phase-header">
+        <div class="phase-num">Fase 03 · de 07</div>
+        <h1 class="phase-title">Manos a la obra: <em>crea tu blog</em></h1>
+        <span class="phase-duration">⧗ Duración sugerida: 2 horas</span>
+        <p class="phase-intro">Llegó el momento. En esta fase vas a crear tu cuenta en Blogger, elegir una dirección y definir la identidad básica de tu blog: su nombre, su descripción y su propósito.</p>
+      </div>
+
+      <div class="objective-box">
+        <h3>Objetivo de la fase</h3>
+        <p>Que tengas un blog activo con una identidad clara (nombre, descripción y URL) que refleje el tema tecnológico que investigarás durante todo el parcial.</p>
+      </div>
+
+      <h2>Parte A · Decisión previa: tu tema (30 min)</h2>
+
+      <p>Antes de abrir Blogger, necesitas <strong>decidir el tema de tu blog</strong>. Este tema te acompañará todo el parcial y será lo que investigues y publiques. Debe ser:</p>
+
+      <ul>
+        <li>Un tema <strong>actual</strong> de tecnología o informática (no algo de hace 15 años).</li>
+        <li><strong>Específico</strong>, no demasiado amplio. "La tecnología" no es un tema; "la IA generativa en la educación de preparatoria" sí lo es.</li>
+        <li>Algo que <strong>genuinamente te interese</strong>, porque vas a publicar varias entradas sobre él.</li>
+      </ul>
+
+      <div class="warning-note">
+        <strong>Ejemplos de temas válidos:</strong> realidad aumentada en la educación, ciberseguridad para adolescentes, videojuegos como herramienta de aprendizaje, desarrollo de apps móviles, impacto ambiental de los centros de datos, wearables y salud, redes 5G, blockchain fuera de las criptomonedas, IA generativa en el arte, privacidad en redes sociales, etc.
+      </div>
+
+      <div class="reflection" style="margin-top: 1rem;">
+        <div class="reflection-title">Define tu tema</div>
+        <div class="reflection-sub">Esta decisión te acompañará 14 horas</div>
+        <ol>
+          <li>
+            Escribe el <strong>tema exacto</strong> de tu blog en una frase de 10 a 15 palabras:
+            <textarea placeholder="Ej: 'Uso ético de la inteligencia artificial generativa en tareas escolares de preparatoria'"></textarea>
+          </li>
+          <li>
+            ¿Por qué elegiste este tema y no otro? ¿Qué te interesa de él?
+            <textarea placeholder="Me interesa porque..."></textarea>
+          </li>
+          <li>
+            ¿A quién le podría servir o interesar leer tu blog? Describe a tu lector ideal.
+            <textarea placeholder="Mi lector ideal es..."></textarea>
+          </li>
+        </ol>
+      </div>
+
+      <h2>Parte B · Crear el blog paso a paso (1 hora)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 1</span>
+        <p>Entra a <a href="https://www.blogger.com" target="_blank" rel="noopener"><strong>blogger.com</strong></a> desde tu navegador.</p>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 2</span>
+        <p>Inicia sesión con tu <strong>cuenta de Google</strong>. Si tu cuenta es institucional y no te deja, usa una cuenta personal de Gmail.</p>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 3</span>
+        <p>Haz clic en <strong>"Crear un blog nuevo"</strong>. Se abrirá un asistente con tres pasos:</p>
+        <ul>
+          <li><strong>Título:</strong> el nombre visible de tu blog (puede tener espacios y acentos).</li>
+          <li><strong>Dirección (URL):</strong> será algo como <code>tublog.blogspot.com</code>. Sin acentos, sin espacios, todo minúsculas. Si está ocupada, Blogger te lo indicará.</li>
+          <li><strong>Nombre visible:</strong> cómo aparecerás como autor de las entradas.</li>
+        </ul>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 4</span>
+        <p>Al terminar el asistente, habrás llegado al <strong>panel de control</strong> de tu blog. Tómate 15 minutos para explorar el menú lateral: Entradas, Estadísticas, Comentarios, Ingresos, Páginas, Diseño, Tema, Configuración.</p>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 5</span>
+        <p>Ve a <strong>Configuración</strong> y en la sección "Básico" agrega una <strong>descripción breve</strong> de tu blog (máximo 500 caracteres). Esta descripción es lo primero que lee alguien que llega a tu blog o que lo encuentra en Google.</p>
+      </div>
+
+      <h2>Parte C · Ejercicio guiado (30 min)</h2>
+
+      <div class="checklist">
+        <div class="checklist-title">Verifica que completaste todo esto:</div>
+        <ul>
+          <li>Tengo un blog creado en Blogger con una URL pública.</li>
+          <li>El título del blog refleja el tema que elegí.</li>
+          <li>Escribí una descripción breve que explica de qué trata el blog.</li>
+          <li>Mi nombre visible es un nombre apropiado (no apodos raros ni groserías).</li>
+          <li>Puedo abrir mi blog en una pestaña nueva y verlo como lo vería cualquier persona.</li>
+          <li>Anoté la URL en un lugar seguro (me va a hacer falta hasta el final del parcial).</li>
+        </ul>
+      </div>
+
+      <div class="reflection">
+        <div class="reflection-title">Preguntas de reflexión — Fase 3</div>
+        <div class="reflection-sub">Sobre las decisiones que acabas de tomar</div>
+        <ol>
+          <li>
+            ¿Qué tuviste que cambiar del nombre o URL original porque ya estaba ocupado? ¿Qué aprendes de eso sobre el <strong>tamaño real de internet</strong>?
+            <textarea placeholder="Tuve que cambiar..."></textarea>
+          </li>
+          <li>
+            La descripción de tu blog es corta pero la leerán personas que no te conocen. ¿<strong>Qué palabras clave</strong> pusiste y por qué esas? ¿Cómo ayudan a que tu lector ideal te encuentre?
+            <textarea placeholder="Las palabras clave que elegí son..."></textarea>
+          </li>
+          <li>
+            Al explorar el menú lateral del panel de Blogger, ¿qué <strong>sección te generó más curiosidad</strong> y cuál no entendiste para qué sirve? Investiga la que no entendiste y explícala brevemente.
+            <textarea placeholder="La sección que me llamó la atención fue... La que no entendí y ya investigué es..."></textarea>
+          </li>
+        </ol>
+      </div>
+
+      <div class="phase-nav">
+        <a class="nav-btn" data-goto="fase2">← Fase 2</a>
+        <button class="nav-btn complete" data-complete="fase3">✓ Marcar fase 3 como completada</button>
+        <a class="nav-btn primary" data-goto="fase4">Fase 4 →</a>
+      </div>
+    </section>
+
+    <!-- FASE 4 -->
+    <section class="phase" id="fase4">
+      <div class="phase-header">
+        <div class="phase-num">Fase 04 · de 07</div>
+        <h1 class="phase-title">Diseño, <em>tema</em> y personalización</h1>
+        <span class="phase-duration">⧗ Duración sugerida: 2 horas</span>
+        <p class="phase-intro">Un blog bien diseñado se lee mejor, se comparte más y transmite profesionalismo. En esta fase aprenderás a modificar el tema visual de Blogger y a configurar los elementos del diseño para que tu blog comunique la identidad de tu tema.</p>
+      </div>
+
+      <div class="objective-box">
+        <h3>Objetivo de la fase</h3>
+        <p>Que personalices visualmente tu blog de manera que el diseño refuerce —no contradiga— el tema que estás tratando. Un blog sobre ciberseguridad no puede verse como un blog de cocina.</p>
+      </div>
+
+      <h2>Parte A · Investigación sobre diseño de blogs (40 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 1</span>
+        <p>Lee los siguientes artículos sobre principios de diseño web y blogs exitosos. Anota las ideas que se repiten.</p>
+      </div>
+
+      <a class="resource-link" href="https://www.hostinger.mx/tutoriales/blogs-famosos" target="_blank" rel="noopener">
+        <span class="resource-icon">01</span>
+        <div class="resource-content">
+          <div class="resource-title">Ejemplos de blogs exitosos y qué los hace funcionar</div>
+          <div class="resource-url">hostinger.mx/tutoriales/blogs-famosos</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://support.google.com/blogger/answer/46859?hl=es" target="_blank" rel="noopener">
+        <span class="resource-icon">02</span>
+        <div class="resource-content">
+          <div class="resource-title">Tutorial oficial: Cambiar el tema de tu blog en Blogger</div>
+          <div class="resource-url">support.google.com/blogger/answer/46859</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://support.google.com/blogger/answer/46878?hl=es" target="_blank" rel="noopener">
+        <span class="resource-icon">03</span>
+        <div class="resource-content">
+          <div class="resource-title">Tutorial oficial: Personalizar el diseño (gadgets, columnas)</div>
+          <div class="resource-url">support.google.com/blogger/answer/46878</div>
+        </div>
+      </a>
+
+      <h2>Parte B · Elige tu tema visual (40 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 1</span>
+        <p>En el panel de Blogger, ve a la sección <strong>"Tema"</strong>. Verás varios temas disponibles: Contempo, Soho, Emporio, Notable, Essential, etc.</p>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 2</span>
+        <p>Prueba <strong>al menos tres temas distintos</strong>. Para cada uno usa la función de <em>Vista previa</em> antes de aplicarlo. Fíjate en:</p>
+        <ul>
+          <li>Cómo se ve el encabezado</li>
+          <li>Cómo se organiza la lista de entradas</li>
+          <li>Si tiene barra lateral o no</li>
+          <li>Cómo se ven en el celular (vista móvil)</li>
+        </ul>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 3</span>
+        <p>Elige el tema que mejor se alinee con el <strong>tono</strong> de tu blog y aplícalo. Después haz clic en "Personalizar" para ajustar:</p>
+        <ul>
+          <li>Colores de fondo, texto y enlaces</li>
+          <li>Tipografía del cuerpo y de los títulos</li>
+          <li>Ancho del blog y de la barra lateral</li>
+        </ul>
+      </div>
+
+      <h2>Parte C · Configurar el diseño y los gadgets (40 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 4</span>
+        <p>Ve a la sección <strong>"Diseño"</strong>. Ahí verás una representación de tu blog con bloques editables. Cada bloque es un <em>gadget</em>.</p>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 5</span>
+        <p>Añade al menos <strong>tres gadgets</strong> útiles de esta lista:</p>
+        <ul>
+          <li><strong>Perfil:</strong> muestra información del autor (tú).</li>
+          <li><strong>Etiquetas:</strong> muestra las categorías de tus entradas (todavía no tienes, pero lo agregas ya).</li>
+          <li><strong>Archivo del blog:</strong> organiza tus entradas por fecha.</li>
+          <li><strong>Entradas populares:</strong> muestra las más leídas.</li>
+          <li><strong>Buscar en este blog:</strong> caja de búsqueda interna.</li>
+        </ul>
+      </div>
+
+      <div class="reflection">
+        <div class="reflection-title">Preguntas de reflexión — Fase 4</div>
+        <div class="reflection-sub">Sobre diseño, identidad visual y funcionalidad</div>
+        <ol>
+          <li>
+            De los tres temas que probaste, ¿cuál elegiste y por qué? Describe una <strong>decisión visual concreta</strong> (color, tipografía, layout) que te hizo escogerlo.
+            <textarea placeholder="Elegí el tema X porque..."></textarea>
+          </li>
+          <li>
+            ¿Por qué los blogs exitosos que leíste en la Parte A tienden a usar <strong>pocos colores y tipografías legibles</strong>? ¿Qué sucede si un blog satura la pantalla de adornos?
+            <textarea placeholder="Los blogs exitosos..."></textarea>
+          </li>
+          <li>
+            De los gadgets que agregaste, ¿<strong>cuál le aporta más valor al lector</strong> y cuál es solo decorativo? Justifica.
+            <textarea placeholder="El gadget más útil es... porque... El más decorativo..."></textarea>
+          </li>
+          <li>
+            Si tu blog es sobre un tema <strong>serio</strong> (ciberseguridad, IA, privacidad), ¿por qué sería un error usar colores muy llamativos como rosa fluorescente o emojis en el título? Relaciona tu respuesta con el concepto de <em>gestión profesional de la información</em>.
+            <textarea placeholder="Sería un error porque..."></textarea>
+          </li>
+        </ol>
+      </div>
+
+      <div class="phase-nav">
+        <a class="nav-btn" data-goto="fase3">← Fase 3</a>
+        <button class="nav-btn complete" data-complete="fase4">✓ Marcar fase 4 como completada</button>
+        <a class="nav-btn primary" data-goto="fase5">Fase 5 →</a>
+      </div>
+    </section>
+
+    <!-- FASE 5 -->
+    <section class="phase" id="fase5">
+      <div class="phase-header">
+        <div class="phase-num">Fase 05 · de 07</div>
+        <h1 class="phase-title">Tu primera <em>entrada</em>: redactar y publicar</h1>
+        <span class="phase-duration">⧗ Duración sugerida: 2 horas</span>
+        <p class="phase-intro">La entrada (o post) es la unidad básica de contenido de un blog. En esta fase vas a escribir tu primera entrada real, aprender el editor de Blogger, insertar imágenes, enlaces, etiquetas y publicarla en internet.</p>
+      </div>
+
+      <div class="objective-box">
+        <h3>Objetivo de la fase</h3>
+        <p>Que publiques una entrada introductoria de tu blog con formato profesional: título claro, contenido estructurado, al menos una imagen con su atribución, enlaces verificables, y etiquetas pertinentes.</p>
+      </div>
+
+      <h2>Parte A · Anatomía de una buena entrada (30 min)</h2>
+
+      <p>Antes de escribir, observa cómo se estructuran las entradas en blogs profesionales. Lee al menos <strong>dos entradas completas</strong> de los siguientes blogs:</p>
+
+      <a class="resource-link" href="https://blog.google/intl/es-419/productos/android/" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">Blog de Google — sección Android</div>
+          <div class="resource-url">blog.google/intl/es-419/productos/android</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://www.xataka.com.mx/categoria/moviles" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">Xataka México — sección móviles</div>
+          <div class="resource-url">xataka.com.mx/categoria/moviles</div>
+        </div>
+      </a>
+
+      <p>Observa y anota:</p>
+      <ul>
+        <li>¿Cómo son los títulos? ¿Largos o cortos? ¿Usan preguntas?</li>
+        <li>¿Dónde va la imagen principal?</li>
+        <li>¿Cuántos párrafos tiene en promedio cada entrada?</li>
+        <li>¿Usan subtítulos, listas, negritas?</li>
+        <li>¿Incluyen enlaces dentro del texto?</li>
+      </ul>
+
+      <h2>Parte B · El editor de Blogger (30 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 1</span>
+        <p>En el panel de Blogger, haz clic en <strong>"Nueva entrada"</strong>. Se abrirá un editor muy parecido a Google Docs.</p>
+      </div>
+
+      <a class="resource-link" href="https://support.google.com/blogger/answer/42664?hl=es" target="_blank" rel="noopener">
+        <span class="resource-icon">01</span>
+        <div class="resource-content">
+          <div class="resource-title">Tutorial oficial: Crear, editar, gestionar y eliminar entradas</div>
+          <div class="resource-url">support.google.com/blogger/answer/42664</div>
+        </div>
+      </a>
+
+      <div class="step-box">
+        <span class="step-num">PASO 2</span>
+        <p>Familiarízate con los controles superiores del editor. Practica:</p>
+        <ul>
+          <li><strong>Encabezados (H1, H2, H3)</strong> — para los títulos y subtítulos.</li>
+          <li><strong>Negrita, cursiva y subrayado</strong>.</li>
+          <li><strong>Listas</strong> numeradas y con viñetas.</li>
+          <li><strong>Insertar enlace</strong> (icono de cadena).</li>
+          <li><strong>Insertar imagen</strong> (sube una propia o usa una libre de derechos).</li>
+          <li><strong>Vista previa</strong> (cómo se verá publicada).</li>
+        </ul>
+      </div>
+
+      <h2>Parte C · Escribir tu entrada de bienvenida (1 hora)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 3</span>
+        <p>Escribe tu <strong>primera entrada real</strong>. Se titulará algo como "Bienvenido a [nombre del blog]" o "¿Por qué este blog?". Debe cumplir <strong>toda esta estructura</strong>:</p>
+      </div>
+
+      <div class="checklist">
+        <div class="checklist-title">Estructura mínima de la entrada de bienvenida</div>
+        <ul>
+          <li>Título claro y atractivo (no "Primera entrada").</li>
+          <li>Un párrafo inicial que presente el tema del blog.</li>
+          <li>Un subtítulo (H2 o H3) que organice la segunda parte.</li>
+          <li>Mínimo 300 palabras de contenido propio.</li>
+          <li>Una imagen relevante con atribución (puede ser de Unsplash, Pexels o Pixabay).</li>
+          <li>Al menos 2 enlaces a fuentes confiables externas.</li>
+          <li>Mínimo 3 etiquetas (ejemplo: "tecnología", "inteligencia artificial", "introducción").</li>
+          <li>Una pregunta al final que invite a comentar.</li>
+        </ul>
+      </div>
+
+      <a class="resource-link" href="https://unsplash.com/es" target="_blank" rel="noopener">
+        <span class="resource-icon">◆</span>
+        <div class="resource-content">
+          <div class="resource-title">Unsplash — imágenes gratuitas de uso libre</div>
+          <div class="resource-url">unsplash.com/es</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://www.pexels.com/es-es/" target="_blank" rel="noopener">
+        <span class="resource-icon">◆</span>
+        <div class="resource-content">
+          <div class="resource-title">Pexels — fotografías y videos gratuitos</div>
+          <div class="resource-url">pexels.com/es-es</div>
+        </div>
+      </a>
+
+      <div class="step-box">
+        <span class="step-num">PASO 4</span>
+        <p>Antes de publicar, usa <strong>"Vista previa"</strong> y revisa con ojo crítico. ¿Se lee bien en desktop y en móvil? ¿Los enlaces funcionan? ¿La imagen no está deformada?</p>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 5</span>
+        <p>Haz clic en <strong>"Publicar"</strong>. Abre tu blog en una pestaña nueva y verifica que tu entrada aparezca en la página principal.</p>
+      </div>
+
+      <div class="ai-warning">
+        <div class="ai-warning-title">El texto de tu entrada debe ser tuyo</div>
+        <p style="margin: 0;">Puedes pedirle a una IA que te sugiera una estructura o te corrija ortografía. <strong>Pero el contenido sustantivo lo redactas tú</strong>. Un blog es tu voz, no la voz de un modelo de lenguaje. Si copias y pegas sin procesar, cualquier lector (y tu profesora) lo nota en el primer párrafo.</p>
+      </div>
+
+      <div class="reflection">
+        <div class="reflection-title">Preguntas de reflexión — Fase 5</div>
+        <div class="reflection-sub">Sobre el proceso de escritura y publicación</div>
+        <ol>
+          <li>
+            ¿Qué fue lo <strong>más difícil</strong> de redactar tu primera entrada? ¿Elegir el título, organizar las ideas, decidir el tono, encontrar imagen?
+            <textarea placeholder="Lo más difícil fue..."></textarea>
+          </li>
+          <li>
+            Elegiste una imagen. ¿<strong>Por qué esa</strong> y no otra? ¿Qué aporta al texto? (Si la imagen es puramente decorativa y podrías quitarla sin perder nada, replantea tu elección).
+            <textarea placeholder="Elegí esa imagen porque..."></textarea>
+          </li>
+          <li>
+            Los enlaces externos que incluiste, ¿<strong>por qué son confiables</strong>? ¿Verificaste quién los publica? ¿Qué pasaría si incluyeras un enlace a una fuente poco seria?
+            <textarea placeholder="Mis enlaces son confiables porque..."></textarea>
+          </li>
+          <li>
+            Las etiquetas no son decoración: son el sistema de <strong>categorización</strong> de tu blog. ¿Por qué elegiste esas tres y no otras? ¿Cómo te ayudarán cuando tengas 10 entradas publicadas?
+            <textarea placeholder="Las etiquetas que elegí..."></textarea>
+          </li>
+        </ol>
+      </div>
+
+      <div class="phase-nav">
+        <a class="nav-btn" data-goto="fase4">← Fase 4</a>
+        <button class="nav-btn complete" data-complete="fase5">✓ Marcar fase 5 como completada</button>
+        <a class="nav-btn primary" data-goto="fase6">Fase 6 →</a>
+      </div>
+    </section>
+
+    <!-- FASE 6 -->
+    <section class="phase" id="fase6">
+      <div class="phase-header">
+        <div class="phase-num">Fase 06 · de 07</div>
+        <h1 class="phase-title">Gestión de información: <em>curaduría</em> y fuentes</h1>
+        <span class="phase-duration">⧗ Duración sugerida: 2 horas</span>
+        <p class="phase-intro">Aquí está el corazón de la materia. Un blog no sólo publica opinión: gestiona información. Esta fase te enseña a seleccionar fuentes, a citar correctamente, a distinguir entre información verificada y opinión, y a construir entradas que aporten valor real al ecosistema digital.</p>
+      </div>
+
+      <div class="objective-box">
+        <h3>Objetivo de la fase</h3>
+        <p>Que publiques una segunda entrada que practique curaduría de contenido: investigación a partir de al menos tres fuentes diversas, análisis propio de esa información, y atribución correcta.</p>
+      </div>
+
+      <h2>Parte A · ¿Qué es curar información? (30 min)</h2>
+
+      <p>Curar contenido es <strong>seleccionar, organizar y presentar</strong> información valiosa para una audiencia específica. No es copiar. No es resumir de forma automática. Es <em>elegir qué merece ser leído</em> y explicarlo con contexto propio.</p>
+
+      <a class="resource-link" href="https://blog.hubspot.es/marketing/que-es-curacion-de-contenidos" target="_blank" rel="noopener">
+        <span class="resource-icon">01</span>
+        <div class="resource-content">
+          <div class="resource-title">Qué es la curación de contenidos y por qué importa</div>
+          <div class="resource-url">blog.hubspot.es/marketing/que-es-curacion-de-contenidos</div>
+        </div>
+      </a>
+
+      <h2>Parte B · Evaluación de fuentes (30 min)</h2>
+
+      <p>No toda fuente en internet vale lo mismo. Lee sobre cómo evaluar información y cómo detectar fuentes confiables vs poco confiables:</p>
+
+      <a class="resource-link" href="https://www.bbc.com/mundo/noticias-42916502" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">BBC Mundo — cómo identificar noticias falsas</div>
+          <div class="resource-url">bbc.com/mundo/noticias-42916502</div>
+        </div>
+      </a>
+
+      <a class="resource-link" href="https://www.animalpolitico.com/elsabueso" target="_blank" rel="noopener">
+        <span class="resource-icon">◇</span>
+        <div class="resource-content">
+          <div class="resource-title">El Sabueso (Animal Político) — verificación de hechos en México</div>
+          <div class="resource-url">animalpolitico.com/elsabueso</div>
+        </div>
+      </a>
+
+      <p>Criterios básicos para evaluar una fuente: <strong>autor</strong>, <strong>fecha de publicación</strong>, <strong>propósito</strong> (informar vs vender vs opinar), <strong>evidencia</strong> (¿citan datos o solo afirman?) y <strong>reputación</strong> (¿quién está detrás?).</p>
+
+      <h2>Parte C · Escribir una entrada de análisis (1 hora)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 1</span>
+        <p>Busca <strong>tres fuentes distintas y confiables</strong> que hablen del tema específico de tu blog. Deben ser de tipos variados: por ejemplo, un artículo de periodismo, un reporte oficial o académico, y un artículo especializado. Anota para cada una: título, autor, sitio y fecha.</p>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 2</span>
+        <p>Redacta una nueva entrada titulada algo como "Tres miradas sobre [tu tema]". La entrada debe:</p>
+        <ul>
+          <li>Presentar brevemente cada una de las tres fuentes (2-3 oraciones por fuente, con sus propias palabras).</li>
+          <li>Identificar <strong>en qué coinciden</strong> y <strong>en qué discrepan</strong> las tres.</li>
+          <li>Cerrar con una reflexión tuya: ¿qué aprendiste al compararlas?</li>
+          <li>Enlazar correctamente a las tres fuentes originales.</li>
+          <li>Tener mínimo 500 palabras y al menos una imagen propia o con atribución.</li>
+        </ul>
+      </div>
+
+      <div class="warning-note">
+        <strong>Regla de curaduría:</strong> si tu entrada consiste en copiar los títulos y pegar los enlaces, no estás curando, estás agregando. La curaduría exige que <em>tú</em> expliques por qué cada fuente importa y cómo se relacionan entre sí.
+      </div>
+
+      <h2>Parte D · Citar correctamente (30 min)</h2>
+
+      <p>Cuando usas información de otro sitio, debes atribuirla. En un blog hay dos formas válidas:</p>
+
+      <ol>
+        <li><strong>Enlace en contexto:</strong> "Según <u>un reporte de la UNAM</u>, el 60% de los adolescentes...". El texto subrayado es el enlace a la fuente.</li>
+        <li><strong>Lista de fuentes al final:</strong> una sección llamada "Fuentes consultadas" con el título, autor y URL de cada una.</li>
+      </ol>
+
+      <div class="step-box">
+        <span class="step-num">PASO 3</span>
+        <p>Al final de tu entrada de esta fase, agrega una sección titulada <strong>"Fuentes consultadas"</strong> con las tres referencias correctamente listadas.</p>
+      </div>
+
+      <div class="reflection">
+        <div class="reflection-title">Preguntas de reflexión — Fase 6</div>
+        <div class="reflection-sub">El corazón de la materia: la gestión responsable de información</div>
+        <ol>
+          <li>
+            De las tres fuentes que elegiste, ¿cuál te pareció <strong>más confiable</strong> y cuál la <strong>menos</strong>? ¿Qué criterio usaste para ordenarlas?
+            <textarea placeholder="La más confiable fue... porque..."></textarea>
+          </li>
+          <li>
+            Explica con tus propias palabras la <strong>diferencia entre agregar, resumir y curar</strong> información. ¿Cuál de las tres crees que hiciste tú?
+            <textarea placeholder="Agregar es... resumir es... curar es..."></textarea>
+          </li>
+          <li>
+            Si publicaras información falsa sin darte cuenta, ¿<strong>qué consecuencias</strong> tendría? Piensa en consecuencias para: tus lectores, tu credibilidad, el tema en sí.
+            <textarea placeholder="Las consecuencias serían..."></textarea>
+          </li>
+          <li>
+            ¿Por qué <strong>citar las fuentes</strong> no es solo una regla académica, sino una responsabilidad ética en la era digital? Conecta con lo que viste sobre noticias falsas.
+            <textarea placeholder="Citar es ético porque..."></textarea>
+          </li>
+          <li>
+            Si una IA te ayudara a "resumir" las tres fuentes pero tú no las leíste, ¿<strong>qué parte del aprendizaje te estarías perdiendo</strong>? Sé honesta.
+            <textarea placeholder="Me perdería..."></textarea>
+          </li>
+        </ol>
+      </div>
+
+      <div class="phase-nav">
+        <a class="nav-btn" data-goto="fase5">← Fase 5</a>
+        <button class="nav-btn complete" data-complete="fase6">✓ Marcar fase 6 como completada</button>
+        <a class="nav-btn primary" data-goto="fase7">Fase 7 →</a>
+      </div>
+    </section>
+
+    <!-- FASE 7 -->
+    <section class="phase" id="fase7">
+      <div class="phase-header">
+        <div class="phase-num">Fase 07 · de 07</div>
+        <h1 class="phase-title">Difusión, <em>ética</em> y privacidad</h1>
+        <span class="phase-duration">⧗ Duración sugerida: 1 hora</span>
+        <p class="phase-intro">Tu blog ya es público. Pero publicar no basta: hay que difundirlo responsablemente, configurar la privacidad y entender las implicaciones éticas de poner información en internet. Esta fase cierra el ciclo antes del reto final.</p>
+      </div>
+
+      <div class="objective-box">
+        <h3>Objetivo de la fase</h3>
+        <p>Que configures correctamente los aspectos de privacidad, comentarios y visibilidad de tu blog, y que reflexiones sobre la responsabilidad que implica publicar contenido en una plataforma abierta.</p>
+      </div>
+
+      <h2>Parte A · Configuración de privacidad y comentarios (30 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 1</span>
+        <p>Ve a <strong>Configuración → Privacidad</strong> y revisa:</p>
+        <ul>
+          <li>¿Tu blog es visible para motores de búsqueda (Google)? Decide si quieres que sí o no.</li>
+          <li>¿Aparece en la lista pública de Blogger?</li>
+        </ul>
+      </div>
+
+      <div class="step-box">
+        <span class="step-num">PASO 2</span>
+        <p>Ve a <strong>Configuración → Comentarios</strong>. Decide:</p>
+        <ul>
+          <li>¿Quién puede comentar? (Todos, solo usuarios de Google, nadie).</li>
+          <li>¿Los comentarios requieren moderación antes de publicarse?</li>
+          <li>¿Quieres que tenga captcha para evitar spam?</li>
+        </ul>
+      </div>
+
+      <a class="resource-link" href="https://support.google.com/blogger/answer/42399?hl=es" target="_blank" rel="noopener">
+        <span class="resource-icon">01</span>
+        <div class="resource-content">
+          <div class="resource-title">Tutorial oficial: Gestionar los comentarios del blog</div>
+          <div class="resource-url">support.google.com/blogger/answer/42399</div>
+        </div>
+      </a>
+
+      <h2>Parte B · Redes sociales y difusión (20 min)</h2>
+
+      <div class="step-box">
+        <span class="step-num">PASO 3</span>
+        <p>Un blog publicado que nadie lee es un árbol que cae en un bosque vacío. Decide <strong>cómo difundirás tu blog</strong>:</p>
+        <ul>
+          <li>¿Por qué red social lo compartirás?</li>
+          <li>¿Lo pondrás en tu biografía de Instagram, X o TikTok?</li>
+          <li>¿Compartirás cada entrada o solo algunas?</li>
+        </ul>
+      </div>
+
+      <h2>Parte C · Ética y huella digital (10 min)</h2>
+
+      <p>Todo lo que publicas en tu blog se puede indexar, archivar y viralizar. Antes de dar por cerrada esta fase, reflexiona:</p>
+
+      <div class="warning-note">
+        <strong>Regla de oro de la publicación digital:</strong> nunca publiques algo que no te atreverías a mostrarle a tu familia, a un futuro empleador o a ti misma dentro de diez años.
+      </div>
+
+      <div class="reflection">
+        <div class="reflection-title">Preguntas de reflexión — Fase 7</div>
+        <div class="reflection-sub">Tu blog ahora es parte de internet. ¿Qué implica eso?</div>
+        <ol>
+          <li>
+            ¿Decidiste que tu blog fuera visible para Google o no? ¿Por qué? ¿Qué ventaja o desventaja tiene cada opción?
+            <textarea placeholder="Decidí que sí/no porque..."></textarea>
+          </li>
+          <li>
+            Elegiste un tipo de moderación de comentarios. Justifica: ¿por qué no permitiste que <strong>cualquiera</strong> comente sin filtro, o por qué sí?
+            <textarea placeholder="Mi decisión sobre comentarios..."></textarea>
+          </li>
+          <li>
+            Piensa en algo que <strong>NO publicarías</strong> nunca en tu blog aunque te interesara el tema. ¿Por qué? ¿Qué criterio ético aplicas?
+            <textarea placeholder="No publicaría... porque..."></textarea>
+          </li>
+          <li>
+            Si en 5 años quisieras aplicar a una universidad o a un trabajo, ¿cómo te ayudaría o perjudicaría tener este blog? ¿Qué decisiones actuales podrían afectarte?
+            <textarea placeholder="Me ayudaría/perjudicaría porque..."></textarea>
+          </li>
+        </ol>
+      </div>
+
+      <div class="phase-nav">
+        <a class="nav-btn" data-goto="fase6">← Fase 6</a>
+        <button class="nav-btn complete" data-complete="fase7">✓ Marcar fase 7 como completada</button>
+        <a class="nav-btn primary" data-goto="reto">Reto final ★</a>
+      </div>
+    </section>
+
+    <!-- RETO FINAL / EXAMEN -->
+    <section class="phase" id="reto">
+      <div class="challenge-banner">
+        <h2>Reto final: Blog completo publicado</h2>
+        <p style="margin-top: 0.8rem; font-size: 1.1rem; font-family: 'Fraunces', serif;">Esta es tu evaluación del parcial. Durante las últimas <strong>2 horas</strong> vas a consolidar todo lo aprendido en un blog completo y listo para ser entregado.</p>
+      </div>
+
+      <div class="phase-header">
+        <div class="phase-num">Examen parcial · 2 horas</div>
+        <h1 class="phase-title">Tu <em>blog</em> como entregable final</h1>
+        <p class="phase-intro">El entregable es la URL pública de tu blog terminado. Tu profesora abrirá el enlace y revisará que cumpla con los criterios de la rúbrica. No entregues un documento: entrega el link.</p>
+      </div>
+
+      <h2>Requisitos del blog final</h2>
+
+      <div class="checklist">
+        <div class="checklist-title">Tu blog debe cumplir TODO esto para ser aceptado</div>
+        <ul>
+          <li>URL pública en blogspot.com, accesible sin contraseña.</li>
+          <li>Título del blog y descripción coherentes con el tema elegido.</li>
+          <li>Tema visual personalizado (no el tema predeterminado sin modificar).</li>
+          <li>Mínimo <strong>4 entradas publicadas</strong>: bienvenida + análisis de fuentes + 2 adicionales sobre sub-temas.</li>
+          <li>Cada entrada con mínimo 300 palabras, imagen con atribución, enlaces y etiquetas.</li>
+          <li>Al menos una entrada de curaduría con 3 fuentes citadas correctamente.</li>
+          <li>Sección o página "Acerca de" que presente al autor y el propósito del blog.</li>
+          <li>Mínimo 3 gadgets configurados (perfil, etiquetas, archivo, búsqueda, etc.).</li>
+          <li>Configuración de comentarios y privacidad revisada conscientemente.</li>
+          <li>Revisión ortográfica completa (usa un corrector, lee en voz alta).</li>
+        </ul>
+      </div>
+
+      <h2>Rúbrica de evaluación</h2>
+
+      <table class="rubric-table">
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th>Descripción</th>
+            <th>Puntos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Configuración técnica</strong></td>
+            <td>Blog creado, URL pública, tema personalizado, gadgets, privacidad configurada.</td>
+            <td class="rubric-points">15</td>
+          </tr>
+          <tr>
+            <td><strong>Identidad y coherencia</strong></td>
+            <td>Título, descripción, diseño y contenido alineados con el tema elegido.</td>
+            <td class="rubric-points">10</td>
+          </tr>
+          <tr>
+            <td><strong>Contenido propio</strong></td>
+            <td>4 entradas mínimo, con redacción propia, buena ortografía, formato y estructura.</td>
+            <td class="rubric-points">25</td>
+          </tr>
+          <tr>
+            <td><strong>Curaduría y fuentes</strong></td>
+            <td>Entrada de análisis con mínimo 3 fuentes citadas, enlaces verificables, análisis original.</td>
+            <td class="rubric-points">20</td>
+          </tr>
+          <tr>
+            <td><strong>Uso responsable de imágenes</strong></td>
+            <td>Todas las imágenes son propias o con licencia adecuada y atribución visible.</td>
+            <td class="rubric-points">10</td>
+          </tr>
+          <tr>
+            <td><strong>Reflexiones de las 7 fases</strong></td>
+            <td>Entregadas aparte en un documento, con respuestas propias y razonadas.</td>
+            <td class="rubric-points">15</td>
+          </tr>
+          <tr>
+            <td><strong>Detalles y pulido</strong></td>
+            <td>Revisión ortográfica, ausencia de entradas de prueba, coherencia visual general.</td>
+            <td class="rubric-points">5</td>
+          </tr>
+          <tr style="background: var(--ink) !important;">
+            <td style="color: var(--paper); font-weight: 700;">TOTAL</td>
+            <td style="color: var(--paper);"></td>
+            <td class="rubric-points" style="color: var(--highlight); font-size: 1.2rem;">100</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Entrega</h2>
+
+      <div class="step-box">
+        <span class="step-num">ENTREGA</span>
+        <p>En la plataforma del curso, sube un documento <strong>único</strong> (Word o PDF) con:</p>
+        <ol>
+          <li>Tu nombre completo y grupo.</li>
+          <li>La <strong>URL pública</strong> de tu blog (verifica que se abra en otra computadora).</li>
+          <li>Las respuestas a las <strong>preguntas de reflexión</strong> de las 7 fases, numeradas por fase.</li>
+          <li>Un párrafo final: "¿Qué fue lo más valioso que aprendí en esta actividad?".</li>
+        </ol>
+      </div>
+
+      <div class="ai-warning">
+        <div class="ai-warning-title">Nota final sobre la integridad académica</div>
+        <p style="margin: 0;">Esta actividad fue diseñada para que aprendieras a <em>pensar sobre información digital</em>, no para que una IA resuelva tu examen. Si tus reflexiones suenan genéricas, si el blog está lleno de texto plano que cualquiera reconoce como generado, o si no puedes explicar verbalmente ninguna decisión que tomaste — la calificación lo va a reflejar. Hazlo tuyo. Ese es el aprendizaje significativo que buscamos.</p>
+      </div>
+
+      <div class="ornament">❋ fin de la actividad ❋</div>
+
+      <div class="phase-nav">
+        <a class="nav-btn" data-goto="fase7">← Fase 7</a>
+        <button class="nav-btn complete" data-complete="reto">✓ Marcar reto final como completado</button>
+        <a class="nav-btn primary" data-goto="inicio">Volver a portada</a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Navegación entre fases
+  const phases = ['inicio', 'fase1', 'fase2', 'fase3', 'fase4', 'fase5', 'fase6', 'fase7', 'reto'];
+  const completed = new Set();
+
+  function showPhase(id) {
+    document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+    const phase = document.getElementById(id);
+    if (phase) {
+      phase.classList.add('active');
+      const link = document.querySelector(`nav a[data-phase="${id}"]`);
+      if (link) link.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // Links laterales
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = link.dataset.phase;
+      showPhase(target);
+    });
+  });
+
+  // Botones data-goto
+  document.querySelectorAll('[data-goto]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = btn.dataset.goto;
+      showPhase(target);
+    });
+  });
+
+  // Botones de completar fase
+  document.querySelectorAll('[data-complete]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const phase = btn.dataset.complete;
+      completed.add(phase);
+      const navLink = document.querySelector(`nav a[data-phase="${phase}"]`);
+      if (navLink) navLink.classList.add('completed');
+      btn.textContent = '✓ Fase completada';
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+      updateProgress();
+    });
+  });
+
+  // Actualizar barra de progreso
+  function updateProgress() {
+    const total = 9;
+    const done = completed.size;
+    const percent = (done / total) * 100;
+    document.getElementById('progress-fill').style.width = percent + '%';
+    document.getElementById('progress-text').textContent = `${done} / ${total} fases`;
+  }
+
+  // Checklist interactivo
+  document.querySelectorAll('.checklist li').forEach(item => {
+    item.addEventListener('click', () => {
+      item.classList.toggle('checked');
+    });
+  });
+
+  // Inicial
+  showPhase('inicio');
+</script>
+
+</body>
+</html>
