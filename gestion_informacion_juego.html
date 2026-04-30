@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reto Digital · Gestión de Información de Plataformas Digitales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0f;
+    --bg-2:#11111a;
+    --panel:#15151f;
+    --panel-2:#1c1c2a;
+    --line:#2a2a3a;
+    --ink:#f4f4f8;
+    --ink-dim:#a0a0b8;
+    --ink-mute:#6b6b80;
+    --accent:#d6ff5e;     /* lime sharp */
+    --accent-2:#ff5ea3;   /* hot pink for niñas */
+    --accent-3:#5ec8ff;   /* cyan for niños */
+    --accent-4:#ffb35e;   /* amber for profesor */
+    --accent-5:#b388ff;   /* lila */
+    --shadow: 0 20px 50px -20px rgba(0,0,0,.6);
+    --display:'Bricolage Grotesque', sans-serif;
+    --serif:'Instrument Serif', serif;
+    --mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:var(--display);overflow-x:hidden}
+  body{
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(214,255,94,.08), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(255,94,163,.06), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(94,200,255,.04), transparent 50%);
+    min-height:100vh;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    opacity:.04;mix-blend-mode:overlay;
+  }
+  .wrap{max-width:1400px;margin:0 auto;padding:32px 28px 100px;position:relative;z-index:2}
+
+  /* =============== HEADER =============== */
+  header.top{
+    display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;
+    padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:36px;
+  }
+  .brand{display:flex;flex-direction:column;gap:4px}
+  .brand .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--ink-mute);
+    text-transform:uppercase;
+  }
+  .brand h1{
+    font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,4.5vw,3.6rem);
+    letter-spacing:-.03em;line-height:.95;
+  }
+  .brand h1 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+  .brand .sub{font-family:var(--serif);font-style:italic;color:var(--ink-dim);font-size:1.1rem;margin-top:4px}
+  .meta{
+    display:flex;gap:14px;font-family:var(--mono);font-size:11px;color:var(--ink-mute);
+    text-transform:uppercase;letter-spacing:.15em;
+  }
+  .meta span{padding:6px 10px;border:1px solid var(--line);border-radius:99px}
+  .live-dot{display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:99px;margin-right:6px;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  /* =============== SCOREBOARD =============== */
+  .scoreboard{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:36px;
+  }
+  .score-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 24px;
+    position:relative;overflow:hidden;transition:transform .25s ease, border-color .25s;
+  }
+  .score-card::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  }
+  .score-card.kids-b::before{background:var(--accent-3)}
+  .score-card.kids-g::before{background:var(--accent-2)}
+  .score-card.teacher::before{background:var(--accent-4)}
+  .score-card .label{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:6px;
+  }
+  .score-card .team{
+    font-family:var(--display);font-size:1.4rem;font-weight:800;letter-spacing:-.02em;
+  }
+  .score-card.kids-b .team{color:var(--accent-3)}
+  .score-card.kids-g .team{color:var(--accent-2)}
+  .score-card.teacher .team{color:var(--accent-4)}
+  .score-card .points{
+    font-family:var(--display);font-weight:800;font-size:3.2rem;letter-spacing:-.04em;
+    line-height:1;margin-top:8px;
+  }
+  .score-card .pts-label{font-family:var(--mono);font-size:10px;color:var(--ink-mute);letter-spacing:.2em;text-transform:uppercase}
+  .score-card.leading{transform:translateY(-4px);border-color:var(--accent)}
+  .score-card.leading::after{
+    content:"LIDER";position:absolute;top:14px;right:14px;
+    font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+    background:var(--accent);color:#000;padding:3px 7px;border-radius:99px;font-weight:700;
+  }
+
+  /* =============== GAME SELECTOR =============== */
+  .games-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-bottom:36px;
+  }
+  .game-tile{
+    background:var(--panel);border:1px solid var(--line);border-radius:22px;
+    padding:26px 24px 22px;cursor:pointer;position:relative;overflow:hidden;
+    transition:all .3s cubic-bezier(.4,0,.2,1);text-align:left;color:inherit;
+    font-family:inherit;
+  }
+  .game-tile:hover{transform:translateY(-6px);border-color:var(--accent)}
+  .game-tile .num{
+    font-family:var(--mono);font-size:11px;color:var(--ink-mute);letter-spacing:.2em;
+  }
+  .game-tile h3{
+    font-family:var(--display);font-weight:800;font-size:1.6rem;letter-spacing:-.02em;
+    margin:8px 0 6px;line-height:1.05;
+  }
+  .game-tile h3 em{font-family:var(--serif);font-style:italic;font-weight:400}
+  .game-tile p{font-family:var(--serif);font-style:italic;color:var(--ink-dim);font-size:1rem;margin-bottom:18px}
+  .game-tile .stats{
+    display:flex;gap:10px;font-family:var(--mono);font-size:10px;color:var(--ink-mute);
+    letter-spacing:.15em;text-transform:uppercase;
+  }
+  .game-tile .stats span{padding:4px 9px;border:1px solid var(--line);border-radius:99px}
+  .game-tile .arrow{
+    position:absolute;top:24px;right:24px;width:36px;height:36px;border-radius:50%;
+    border:1px solid var(--line);display:grid;place-items:center;
+    transition:all .25s;
+  }
+  .game-tile:hover .arrow{background:var(--accent);color:#000;border-color:var(--accent);transform:rotate(-45deg)}
+  .game-tile .progress{
+    position:absolute;bottom:0;left:0;height:3px;background:var(--accent);
+    transition:width .4s;
+  }
+  .game-tile .done-badge{
+    position:absolute;top:24px;right:24px;font-family:var(--mono);font-size:9px;
+    background:var(--accent);color:#000;padding:5px 9px;border-radius:99px;
+    letter-spacing:.15em;font-weight:700;display:none;
+  }
+  .game-tile.completed .done-badge{display:block}
+  .game-tile.completed .arrow{display:none}
+
+  /* =============== PANELS =============== */
+  .panel-view{display:none;animation:fadeUp .5s cubic-bezier(.4,0,.2,1)}
+  .panel-view.active{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  .panel-header{
+    display:flex;justify-content:space-between;align-items:center;gap:20px;
+    padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:32px;flex-wrap:wrap;
+  }
+  .panel-header h2{
+    font-family:var(--display);font-weight:800;font-size:2.4rem;letter-spacing:-.03em;line-height:1;
+  }
+  .panel-header h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)}
+  .back-btn{
+    background:transparent;border:1px solid var(--line);color:var(--ink);
+    padding:10px 18px;border-radius:99px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s;
+  }
+  .back-btn:hover{background:var(--ink);color:var(--bg)}
+
+  /* =============== JEOPARDY BOARD =============== */
+  .jeopardy-board{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+  }
+  .jeo-cat{
+    background:var(--panel-2);padding:18px 12px;border-radius:12px;text-align:center;
+    font-family:var(--display);font-weight:800;font-size:.9rem;letter-spacing:-.01em;
+    line-height:1.2;border:1px solid var(--line);min-height:80px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .jeo-cell{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:24px 12px;min-height:90px;display:grid;place-items:center;
+    font-family:var(--display);font-weight:800;font-size:1.6rem;letter-spacing:-.02em;
+    color:var(--accent);cursor:pointer;transition:all .2s;
+  }
+  .jeo-cell:hover:not(.used){background:var(--accent);color:#000;transform:scale(1.03)}
+  .jeo-cell.used{
+    color:var(--ink-mute);background:var(--bg-2);cursor:not-allowed;
+    text-decoration:line-through;opacity:.4;
+  }
+
+  /* =============== MILLONARIO =============== */
+  .millonario-list{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;
+  }
+  .mill-step{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:18px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;
+    transition:all .2s;
+  }
+  .mill-step:hover:not(.used){border-color:var(--accent);transform:translateX(4px)}
+  .mill-step .lvl{font-family:var(--mono);font-size:11px;color:var(--ink-mute);letter-spacing:.15em}
+  .mill-step .val{font-family:var(--display);font-weight:800;font-size:1.4rem;color:var(--accent)}
+  .mill-step.used{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+
+  /* =============== RELACIONAR =============== */
+  .relacionar-wrap{
+    display:grid;grid-template-columns:1fr 1fr;gap:30px;
+  }
+  .rel-col h4{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:14px;
+  }
+  .rel-item{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:14px 18px;margin-bottom:8px;cursor:pointer;transition:all .2s;
+    font-size:.98rem;line-height:1.4;
+  }
+  .rel-item:hover:not(.matched){border-color:var(--accent)}
+  .rel-item.selected{border-color:var(--accent);background:rgba(214,255,94,.08)}
+  .rel-item.matched{
+    background:rgba(214,255,94,.05);border-color:rgba(214,255,94,.3);
+    opacity:.6;cursor:not-allowed;
+  }
+  .rel-item.matched::after{
+    content:" ✓";color:var(--accent);font-weight:bold;
+  }
+  .rel-item.error{border-color:#ff5e5e;background:rgba(255,94,94,.08);animation:shake .35s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  /* =============== CRUCIGRAMA =============== */
+  .crucigrama-layout{
+    display:grid;grid-template-columns:auto 1fr;gap:30px;
+  }
+  .crucigrama-grid{
+    display:grid;gap:2px;background:var(--line);padding:2px;border-radius:8px;
+    width:max-content;
+  }
+  .cell{
+    width:38px;height:38px;background:var(--panel);position:relative;
+    display:grid;place-items:center;
+  }
+  .cell.empty{background:transparent}
+  .cell input{
+    width:100%;height:100%;background:transparent;border:none;color:var(--ink);
+    text-align:center;font-family:var(--mono);font-weight:700;font-size:1rem;
+    text-transform:uppercase;outline:none;
+  }
+  .cell input:focus{background:rgba(214,255,94,.15)}
+  .cell.correct input{background:rgba(214,255,94,.2);color:var(--accent)}
+  .cell .num{
+    position:absolute;top:1px;left:3px;font-family:var(--mono);font-size:8px;color:var(--ink-mute);
+  }
+  .clues-col h4{
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-dim);margin:0 0 12px;
+  }
+  .clue{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;margin-bottom:8px;cursor:pointer;font-size:.92rem;line-height:1.4;
+    transition:all .2s;
+  }
+  .clue:hover:not(.solved){border-color:var(--accent)}
+  .clue.solved{opacity:.5;background:rgba(214,255,94,.05)}
+  .clue.solved::after{content:" ✓";color:var(--accent)}
+  .clue strong{color:var(--accent);font-family:var(--mono);font-size:.85rem;margin-right:6px}
+  .clue .pts{font-family:var(--mono);font-size:10px;color:var(--ink-mute);float:right}
+
+  /* =============== MODAL DE PREGUNTA =============== */
+  .modal-back{
+    position:fixed;inset:0;background:rgba(5,5,12,.85);backdrop-filter:blur(12px);
+    display:none;align-items:center;justify-content:center;z-index:100;padding:20px;
+    animation:fadeIn .3s;
+  }
+  .modal-back.show{display:flex}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{
+    background:var(--panel);border:1px solid var(--line);border-radius:24px;
+    max-width:780px;width:100%;padding:38px 38px 32px;position:relative;
+    animation:popIn .4s cubic-bezier(.34,1.56,.64,1);box-shadow:var(--shadow);
+  }
+  @keyframes popIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+  .modal .ribbon{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .modal .ribbon .pts-tag{
+    background:var(--accent);color:#000;padding:6px 12px;border-radius:99px;font-weight:700;
+  }
+  .modal .question{
+    font-family:var(--display);font-weight:800;font-size:1.6rem;letter-spacing:-.02em;
+    line-height:1.2;margin-bottom:28px;
+  }
+  .modal .question em{font-family:var(--serif);font-style:italic;font-weight:400}
+  .options{display:grid;gap:10px;margin-bottom:24px}
+  .option{
+    background:var(--panel-2);border:1px solid var(--line);border-radius:12px;
+    padding:14px 18px;cursor:pointer;transition:all .2s;font-size:1rem;
+    display:flex;align-items:center;gap:14px;color:inherit;font-family:inherit;text-align:left;
+  }
+  .option:hover{border-color:var(--accent);background:rgba(214,255,94,.05)}
+  .option .letter{
+    width:30px;height:30px;border-radius:50%;background:var(--bg);
+    display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:.85rem;
+    flex-shrink:0;
+  }
+  .option.correct{border-color:var(--accent);background:rgba(214,255,94,.15)}
+  .option.correct .letter{background:var(--accent);color:#000}
+  .option.wrong{border-color:#ff5e5e;background:rgba(255,94,94,.1)}
+  .option.wrong .letter{background:#ff5e5e;color:#fff}
+
+  .reveal-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 0;border-top:1px solid var(--line);margin-top:8px;
+  }
+  .reveal-row .answer-tag{
+    font-family:var(--mono);font-size:11px;color:var(--ink-mute);letter-spacing:.15em;text-transform:uppercase;
+  }
+  .reveal-btn{
+    background:transparent;border:1px solid var(--line);color:var(--ink);padding:8px 16px;
+    border-radius:99px;font-family:var(--mono);font-size:11px;letter-spacing:.15em;
+    text-transform:uppercase;cursor:pointer;transition:all .2s;
+  }
+  .reveal-btn:hover{background:var(--ink);color:var(--bg)}
+
+  /* ASIGNACION DE PUNTOS */
+  .assign-section{
+    border-top:1px solid var(--line);padding-top:22px;margin-top:18px;display:none;
+  }
+  .assign-section.show{display:block;animation:fadeUp .35s}
+  .assign-section h4{
+    font-family:var(--display);font-weight:800;font-size:1.2rem;margin-bottom:6px;letter-spacing:-.01em;
+  }
+  .assign-section .help{font-family:var(--serif);font-style:italic;color:var(--ink-dim);margin-bottom:16px;font-size:.95rem}
+  .assign-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .assign-btn{
+    background:var(--panel-2);border:2px solid var(--line);border-radius:14px;
+    padding:18px 14px;cursor:pointer;transition:all .2s;text-align:center;
+    font-family:inherit;color:inherit;
+  }
+  .assign-btn .ico{font-size:1.6rem;margin-bottom:4px}
+  .assign-btn .nm{font-family:var(--display);font-weight:800;font-size:1rem;letter-spacing:-.01em}
+  .assign-btn .lb{font-family:var(--mono);font-size:9px;color:var(--ink-mute);letter-spacing:.15em;text-transform:uppercase;display:block;margin-top:2px}
+  .assign-btn[data-team="boys"]:hover{border-color:var(--accent-3);background:rgba(94,200,255,.1)}
+  .assign-btn[data-team="girls"]:hover{border-color:var(--accent-2);background:rgba(255,94,163,.1)}
+  .assign-btn[data-team="teacher"]:hover{border-color:var(--accent-4);background:rgba(255,179,94,.1)}
+
+  /* ESTADO DESPUES DE ASIGNAR */
+  .post-assign{
+    border-top:1px solid var(--line);padding-top:18px;margin-top:18px;display:none;
+    text-align:center;
+  }
+  .post-assign.show{display:block}
+  .post-assign p{font-family:var(--serif);font-style:italic;color:var(--ink-dim);margin-bottom:14px;font-size:1.05rem}
+  .close-modal-btn{
+    background:var(--accent);color:#000;border:none;padding:12px 26px;border-radius:99px;
+    font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;cursor:pointer;transition:all .2s;
+  }
+  .close-modal-btn:hover{transform:scale(1.05)}
+
+  /* =============== FINAL WINNER =============== */
+  .final-screen{display:none;text-align:center;padding:60px 20px}
+  .final-screen.show{display:block;animation:fadeUp .6s}
+  .final-screen .crown{font-size:5rem;margin-bottom:18px;animation:bounce 2s infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .final-screen h1{
+    font-family:var(--display);font-weight:800;font-size:clamp(3rem,8vw,6rem);
+    letter-spacing:-.04em;line-height:.9;margin-bottom:8px;
+  }
+  .final-screen .winner-name{font-family:var(--serif);font-style:italic;font-weight:400}
+  .final-screen .recap{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:780px;margin:40px auto 0;
+  }
+  .final-screen .recap-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;
+  }
+  .final-screen .recap-card .team-nm{
+    font-family:var(--display);font-weight:800;font-size:1.2rem;margin-bottom:4px;
+  }
+  .final-screen .recap-card .pts{
+    font-family:var(--display);font-weight:800;font-size:2.4rem;letter-spacing:-.03em;
+  }
+  .reset-btn{
+    margin-top:40px;background:transparent;border:1px solid var(--line);color:var(--ink);
+    padding:12px 24px;border-radius:99px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.2em;text-transform:uppercase;cursor:pointer;
+  }
+  .reset-btn:hover{background:var(--ink);color:var(--bg)}
+
+  .show-winner-btn{
+    display:none;margin:24px auto 0;background:var(--accent);color:#000;border:none;
+    padding:16px 32px;border-radius:99px;font-family:var(--mono);font-weight:700;
+    font-size:12px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;
+    transition:all .25s;
+  }
+  .show-winner-btn:hover{transform:scale(1.05)}
+  .show-winner-btn.show{display:block;animation:fadeUp .5s}
+
+  /* responsive */
+  @media (max-width:780px){
+    .scoreboard{grid-template-columns:1fr}
+    .relacionar-wrap{grid-template-columns:1fr}
+    .crucigrama-layout{grid-template-columns:1fr}
+    .jeopardy-board{grid-template-columns:repeat(3,1fr);font-size:.8rem}
+    .millonario-list{grid-template-columns:repeat(2,1fr)}
+    .modal{padding:26px 22px}
+    .assign-grid{grid-template-columns:1fr}
+    .final-screen .recap{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow">Preparatoria Técnica · Computación · Reforzamiento</span>
+      <h1>Reto Digital <em>en vivo</em></h1>
+      <span class="sub">Gestión de la información en plataformas digitales</span>
+    </div>
+    <div class="meta">
+      <span><span class="live-dot"></span>SESION ACTIVA</span>
+      <span id="meta-progress">0 / 40 PREGUNTAS</span>
+    </div>
+  </header>
+
+  <!-- ========== SCOREBOARD ========== -->
+  <section class="scoreboard" id="scoreboard">
+    <div class="score-card kids-b" data-team="boys">
+      <div class="label">Equipo</div>
+      <div class="team">Niños</div>
+      <div class="points" id="pts-boys">0</div>
+      <div class="pts-label">puntos</div>
+    </div>
+    <div class="score-card kids-g" data-team="girls">
+      <div class="label">Equipo</div>
+      <div class="team">Niñas</div>
+      <div class="points" id="pts-girls">0</div>
+      <div class="pts-label">puntos</div>
+    </div>
+    <div class="score-card teacher" data-team="teacher">
+      <div class="label">Casa</div>
+      <div class="team">Profesor</div>
+      <div class="points" id="pts-teacher">0</div>
+      <div class="pts-label">puntos</div>
+    </div>
+  </section>
+
+  <!-- ========== HOME / GAMES SELECTOR ========== -->
+  <section id="home-view" class="panel-view active">
+    <div style="margin-bottom:22px">
+      <h2 style="font-family:var(--display);font-weight:800;font-size:1.8rem;letter-spacing:-.02em">
+        Elige un <em style="font-family:var(--serif);font-style:italic;font-weight:400;color:var(--accent)">juego</em>
+      </h2>
+      <p style="font-family:var(--serif);font-style:italic;color:var(--ink-dim);margin-top:4px">
+        Cuatro retos · cuarenta preguntas · puntos múltiplos de 100 hasta 600
+      </p>
+    </div>
+    <div class="games-grid">
+      <button class="game-tile" data-game="jeopardy">
+        <div class="num">01 / RETO</div>
+        <h3>Jeopardy <em>digital</em></h3>
+        <p>Cinco categorías por puntaje creciente. Elige la casilla y revela la pregunta.</p>
+        <div class="stats"><span>10 PREGUNTAS</span><span id="jeop-progress">0/10</span></div>
+        <div class="arrow">→</div>
+        <div class="done-badge">COMPLETADO</div>
+        <div class="progress" id="prog-jeopardy" style="width:0%"></div>
+      </button>
+
+      <button class="game-tile" data-game="millonario">
+        <div class="num">02 / RETO</div>
+        <h3>¿Quién <em>quiere</em> ser millonario?</h3>
+        <p>Escalera de dificultad de 100 hasta 1000 puntos. Una pregunta a la vez.</p>
+        <div class="stats"><span>10 PREGUNTAS</span><span id="mill-progress">0/10</span></div>
+        <div class="arrow">→</div>
+        <div class="done-badge">COMPLETADO</div>
+        <div class="progress" id="prog-millonario" style="width:0%"></div>
+      </button>
+
+      <button class="game-tile" data-game="relacionar">
+        <div class="num">03 / RETO</div>
+        <h3>Relacionar <em>conceptos</em></h3>
+        <p>Une el término con su definición. Cada acierto suma según valor de la pareja.</p>
+        <div class="stats"><span>10 PAREJAS</span><span id="rel-progress">0/10</span></div>
+        <div class="arrow">→</div>
+        <div class="done-badge">COMPLETADO</div>
+        <div class="progress" id="prog-relacionar" style="width:0%"></div>
+      </button>
+
+      <button class="game-tile" data-game="crucigrama">
+        <div class="num">04 / RETO</div>
+        <h3>Crucigrama <em>en línea</em></h3>
+        <p>Resuelve las pistas horizontales y verticales con conceptos vistos en clase.</p>
+        <div class="stats"><span>10 PISTAS</span><span id="cruc-progress">0/10</span></div>
+        <div class="arrow">→</div>
+        <div class="done-badge">COMPLETADO</div>
+        <div class="progress" id="prog-crucigrama" style="width:0%"></div>
+      </button>
+    </div>
+
+    <button class="show-winner-btn" id="show-winner-btn" onclick="showWinner()">
+      🏆 VER GANADOR FINAL
+    </button>
+  </section>
+
+  <!-- ========== JEOPARDY ========== -->
+  <section id="jeopardy-view" class="panel-view">
+    <div class="panel-header">
+      <h2>Jeopardy <em>digital</em></h2>
+      <button class="back-btn" onclick="showHome()">← Tablero</button>
+    </div>
+    <div class="jeopardy-board" id="jeo-board"></div>
+  </section>
+
+  <!-- ========== MILLONARIO ========== -->
+  <section id="millonario-view" class="panel-view">
+    <div class="panel-header">
+      <h2>¿Quién quiere ser <em>millonario?</em></h2>
+      <button class="back-btn" onclick="showHome()">← Tablero</button>
+    </div>
+    <div class="millonario-list" id="mill-list"></div>
+  </section>
+
+  <!-- ========== RELACIONAR ========== -->
+  <section id="relacionar-view" class="panel-view">
+    <div class="panel-header">
+      <h2>Relacionar <em>conceptos</em></h2>
+      <button class="back-btn" onclick="showHome()">← Tablero</button>
+    </div>
+    <p style="font-family:var(--serif);font-style:italic;color:var(--ink-dim);margin-bottom:20px">
+      Toca un concepto de la izquierda y luego su definición a la derecha. El profesor decide a qué equipo se asigna el puntaje.
+    </p>
+    <div class="relacionar-wrap">
+      <div class="rel-col">
+        <h4>Conceptos</h4>
+        <div id="rel-left"></div>
+      </div>
+      <div class="rel-col">
+        <h4>Definiciones</h4>
+        <div id="rel-right"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CRUCIGRAMA ========== -->
+  <section id="crucigrama-view" class="panel-view">
+    <div class="panel-header">
+      <h2>Crucigrama <em>en línea</em></h2>
+      <button class="back-btn" onclick="showHome()">← Tablero</button>
+    </div>
+    <p style="font-family:var(--serif);font-style:italic;color:var(--ink-dim);margin-bottom:20px">
+      Toca una pista para revelar la palabra. El profesor decide a quién asignar los puntos.
+    </p>
+    <div class="crucigrama-layout">
+      <div class="crucigrama-grid" id="cruc-grid"></div>
+      <div class="clues-col">
+        <h4>Pistas</h4>
+        <div id="cruc-clues"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FINAL ========== -->
+  <section id="final-view" class="panel-view">
+    <div class="final-screen show" id="final-screen">
+      <div class="crown">👑</div>
+      <h1 id="winner-text">Ganador: <span class="winner-name" id="winner-name">—</span></h1>
+      <p style="font-family:var(--serif);font-style:italic;color:var(--ink-dim);font-size:1.2rem;margin-top:14px" id="winner-points">— puntos</p>
+      <div class="recap" id="recap"></div>
+      <button class="reset-btn" onclick="resetAll()">Reiniciar concurso</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- ========== MODAL DE PREGUNTA ========== -->
+<div class="modal-back" id="modal-back">
+  <div class="modal">
+    <div class="ribbon">
+      <span id="modal-source">JUEGO · CATEGORIA</span>
+      <span class="pts-tag" id="modal-pts">100 PTS</span>
+    </div>
+    <div class="question" id="modal-question">Pregunta...</div>
+    <div class="options" id="modal-options"></div>
+    <div class="reveal-row" id="modal-reveal-row" style="display:none">
+      <span class="answer-tag">Respuesta correcta:</span>
+      <span style="font-family:var(--serif);font-style:italic" id="modal-answer">—</span>
+    </div>
+
+    <!-- Asignación de puntos -->
+    <div class="assign-section" id="assign-section">
+      <h4 id="assign-title">¿A quién se asigna el puntaje?</h4>
+      <p class="help" id="assign-help">Selecciona el equipo que respondió correctamente.</p>
+      <div class="assign-grid">
+        <button class="assign-btn" data-team="boys"><div class="ico">👦</div><div class="nm" style="color:var(--accent-3)">Niños</div><span class="lb">+ Puntos</span></button>
+        <button class="assign-btn" data-team="girls"><div class="ico">👧</div><div class="nm" style="color:var(--accent-2)">Niñas</div><span class="lb">+ Puntos</span></button>
+        <button class="assign-btn" data-team="teacher"><div class="ico">🎓</div><div class="nm" style="color:var(--accent-4)">Profesor</div><span class="lb">+ Puntos</span></button>
+      </div>
+    </div>
+
+    <!-- Confirmación -->
+    <div class="post-assign" id="post-assign">
+      <p id="post-msg">Puntos asignados.</p>
+      <button class="close-modal-btn" onclick="closeModal()">Continuar →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   DATOS DEL JUEGO
+   ========================================================= */
+
+// Categorías para Jeopardy (5 categorías x 2 preguntas = 10)
+// Puntajes: 200, 400 (ascendente entre las dos preguntas de cada categoría)
+const JEOPARDY_CATEGORIES = [
+  {
+    name: "Sites de Chrome",
+    questions: [
+      { pts:200, q:"¿Qué tipo de plataforma es Google Sites?", opts:["Una hoja de cálculo","Un creador de sitios web sin código","Un sistema operativo","Un buscador"], ans:1 },
+      { pts:400, q:"¿Cuál es la principal ventaja de Google Sites para gestionar información en clase?", opts:["Permite videojuegos online","Integra contenido de Drive y se publica en línea fácilmente","Reemplaza al sistema operativo","Solo funciona offline"], ans:1 }
+    ]
+  },
+  {
+    name: "Drive y colaboración",
+    questions: [
+      { pts:200, q:"En Google Drive, ¿qué permite que varios usuarios editen el mismo documento al mismo tiempo?", opts:["Modo lectura","Edición colaborativa en tiempo real","Compresión zip","Modo offline"], ans:1 },
+      { pts:400, q:"¿Cuál NO es un permiso típico al compartir un archivo en Drive?", opts:["Lector","Comentador","Editor","Programador"], ans:3 }
+    ]
+  },
+  {
+    name: "Roblox & gamificación",
+    questions: [
+      { pts:200, q:"¿Para qué se usa Roblox en una clase de gestión de información?", opts:["Para jugar sin un objetivo educativo","Para crear experiencias interactivas que organizan información","Solo para chatear","Para hacer hojas de cálculo"], ans:1 },
+      { pts:400, q:"En Roblox Studio, ¿con qué lenguaje se programan las experiencias?", opts:["Python","Java","Lua","C++"], ans:2 }
+    ]
+  },
+  {
+    name: "Blogger & blogs",
+    questions: [
+      { pts:200, q:"Un blog se caracteriza por publicar entradas:", opts:["En orden cronológico inverso","Sin orden","Únicamente en PDF","Sin fecha"], ans:0 },
+      { pts:400, q:"¿Cuál es el dominio gratuito que asigna Blogger por defecto?", opts:[".wordpress.com",".blogspot.com",".wix.com",".github.io"], ans:1 }
+    ]
+  },
+  {
+    name: "Buscadores & web",
+    questions: [
+      { pts:200, q:"¿Quién creó la World Wide Web (WWW) en 1989?", opts:["Bill Gates","Tim Berners-Lee","Steve Jobs","Mark Zuckerberg"], ans:1 },
+      { pts:400, q:"Un operador de búsqueda usado para buscar una frase exacta en Google es:", opts:["Mayúsculas","Comillas \" \"","Asteriscos *","Guion bajo _"], ans:1 }
+    ]
+  }
+];
+
+// ¿Quién quiere ser millonario? - 10 preguntas, escalera de dificultad
+// Puntajes: 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
+const MILLONARIO_QUESTIONS = [
+  { pts:100, q:"¿Qué significa la sigla URL?", opts:["Universal Resource Locator","Uniform Resource Locator","Unified Reference Link","User Reference Locator"], ans:1 },
+  { pts:200, q:"¿Cuál de estas plataformas pertenece al ecosistema de Google?", opts:["Blogger","Wix","WordPress","Tumblr"], ans:0 },
+  { pts:300, q:"En Google Drive el ícono de un triángulo amarillo en un archivo significa:", opts:["Archivo nuevo","Archivo en sincronización o sin conexión","Archivo eliminado","Archivo bloqueado"], ans:1 },
+  { pts:400, q:"La 'democratización del acceso a la información' en internet significa:", opts:["Que solo gobiernos publican datos","Que la información es accesible para casi cualquier persona conectada","Que se cobra por toda la información","Que solo empresas pueden publicar"], ans:1 },
+  { pts:500, q:"En Google Sites, ¿qué elemento permite mostrar un documento de Drive embebido dentro del sitio?", opts:["Un enlace simple","La función Insertar > Drive","Una captura de pantalla","Un correo electrónico"], ans:1 },
+  { pts:600, q:"¿Qué es el SEO en gestión de información web?", opts:["Un lenguaje de programación","Un buscador alterno","Optimización para motores de búsqueda","Un protocolo de red"], ans:2 },
+  { pts:700, q:"En Blogger, las 'etiquetas' (labels) sirven principalmente para:", opts:["Cambiar el color del blog","Clasificar y filtrar entradas por tema","Eliminar comentarios","Cambiar la URL"], ans:1 },
+  { pts:800, q:"Un buscador como Google ordena los resultados con base en:", opts:["Orden alfabético","Algoritmos de relevancia y autoridad","Quien pague más siempre","Orden cronológico estricto"], ans:1 },
+  { pts:900, q:"En Roblox Studio, un 'Script' se utiliza para:", opts:["Diseñar texturas","Definir el comportamiento e interacción de los objetos","Crear cuentas de usuario","Reproducir música únicamente"], ans:1 },
+  { pts:1000, q:"¿Qué año marcó el inicio público de la World Wide Web tal como la conocemos hoy?", opts:["1969","1983","1991","2001"], ans:2 }
+];
+
+// Relacionar conceptos - 10 parejas
+// Puntajes: 100,100,200,200,300,300,400,400,500,500
+const RELACIONAR_PAIRS = [
+  { id:1, pts:100, term:"URL", def:"Dirección única que identifica un recurso en la web." },
+  { id:2, pts:100, term:"Navegador", def:"Programa que permite acceder y visualizar páginas web." },
+  { id:3, pts:200, term:"Google Drive", def:"Servicio de almacenamiento y colaboración en la nube de Google." },
+  { id:4, pts:200, term:"Blogger", def:"Plataforma gratuita para crear y publicar blogs." },
+  { id:5, pts:300, term:"Roblox Studio", def:"Editor donde se diseñan y programan experiencias interactivas." },
+  { id:6, pts:300, term:"Google Sites", def:"Herramienta sin código para crear sitios web colaborativos." },
+  { id:7, pts:400, term:"Etiqueta (tag)", def:"Palabra clave que clasifica una entrada o contenido." },
+  { id:8, pts:400, term:"Hipervínculo", def:"Enlace que conecta un recurso digital con otro." },
+  { id:9, pts:500, term:"WWW", def:"Sistema de información distribuido fundado por Tim Berners-Lee." },
+  { id:10, pts:500, term:"SEO", def:"Conjunto de técnicas para mejorar la visibilidad en buscadores." }
+];
+
+// Crucigrama - 10 palabras
+// Layout simplificado tipo lista de pistas con visualización en grid pequeño
+// Las palabras se cruzan en una rejilla de 14x12
+const CRUCIGRAMA = {
+  size:{cols:14, rows:12},
+  words:[
+    // {num, word, row, col, dir, clue, pts}
+    {num:1, word:"URL",        row:1, col:1,  dir:"H", pts:100, clue:"Dirección única de un recurso en la web (sigla)."},
+    {num:2, word:"DRIVE",      row:1, col:5,  dir:"H", pts:100, clue:"Servicio de almacenamiento en la nube de Google."},
+    {num:3, word:"BLOG",       row:3, col:2,  dir:"H", pts:200, clue:"Sitio donde se publican entradas en orden cronológico inverso."},
+    {num:4, word:"SITES",      row:3, col:8,  dir:"H", pts:200, clue:"Herramienta de Google para crear páginas web sin código."},
+    {num:5, word:"ROBLOX",     row:5, col:1,  dir:"H", pts:300, clue:"Plataforma para crear experiencias interactivas educativas."},
+    {num:6, word:"NUBE",       row:5, col:9,  dir:"H", pts:300, clue:"Modelo donde la información se almacena en servidores remotos."},
+    {num:7, word:"WEB",        row:7, col:3,  dir:"H", pts:400, clue:"Red mundial de documentos enlazados (sigla corta)."},
+    {num:8, word:"BUSCADOR",   row:7, col:7,  dir:"H", pts:400, clue:"Herramienta que indexa y devuelve resultados según relevancia."},
+    {num:9, word:"INTERNET",   row:9, col:2,  dir:"H", pts:500, clue:"Red global que conecta dispositivos en todo el mundo."},
+    {num:10,word:"GOOGLE",     row:11,col:5,  dir:"H", pts:600, clue:"Empresa cuyo buscador domina el mercado mundial."}
+  ]
+};
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+const STATE = {
+  scores: { boys:0, girls:0, teacher:0 },
+  jeopardy: {used:new Array(10).fill(false), order:[]},
+  millonario: {used:new Array(10).fill(false)},
+  relacionar: {matched:new Array(10).fill(false)},
+  crucigrama: {solved:new Array(10).fill(false)},
+  current: null, // {gameKey, idx, pts, source, q, opts, ans, type}
+  answeredCorrect: null, // null | true | false antes de asignar
+};
+
+/* =========================================================
+   NAVEGACION
+   ========================================================= */
+function showView(id){
+  document.querySelectorAll('.panel-view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function showHome(){
+  showView('home-view');
+  updateProgressUI();
+}
+
+document.querySelectorAll('.game-tile').forEach(tile=>{
+  tile.addEventListener('click', ()=>{
+    const g = tile.dataset.game;
+    showView(g+'-view');
+  });
+});
+
+/* =========================================================
+   RENDER: JEOPARDY
+   ========================================================= */
+function renderJeopardy(){
+  const board = document.getElementById('jeo-board');
+  board.innerHTML = '';
+  // Fila 1: categorías
+  JEOPARDY_CATEGORIES.forEach(cat=>{
+    const c = document.createElement('div');
+    c.className='jeo-cat';
+    c.textContent = cat.name;
+    board.appendChild(c);
+  });
+  // Filas 2 y 3: 200 y 400
+  for(let qi=0; qi<2; qi++){
+    JEOPARDY_CATEGORIES.forEach((cat,ci)=>{
+      const flatIdx = ci*2 + qi;
+      const cell = document.createElement('div');
+      cell.className='jeo-cell';
+      if(STATE.jeopardy.used[flatIdx]) cell.classList.add('used');
+      cell.textContent = cat.questions[qi].pts;
+      cell.dataset.cat = ci;
+      cell.dataset.qi = qi;
+      cell.dataset.idx = flatIdx;
+      cell.addEventListener('click', ()=>{
+        if(STATE.jeopardy.used[flatIdx]) return;
+        openQuestion({
+          gameKey:'jeopardy',
+          idx:flatIdx,
+          source:`Jeopardy · ${cat.name}`,
+          ...cat.questions[qi],
+          type:'multiple'
+        });
+      });
+      board.appendChild(cell);
+    });
+  }
+}
+
+/* =========================================================
+   RENDER: MILLONARIO
+   ========================================================= */
+function renderMillonario(){
+  const list = document.getElementById('mill-list');
+  list.innerHTML = '';
+  MILLONARIO_QUESTIONS.forEach((qq,i)=>{
+    const step = document.createElement('div');
+    step.className='mill-step';
+    if(STATE.millonario.used[i]) step.classList.add('used');
+    step.innerHTML = `<span class="lvl">P${String(i+1).padStart(2,'0')}</span><span class="val">${qq.pts}</span>`;
+    step.addEventListener('click', ()=>{
+      if(STATE.millonario.used[i]) return;
+      openQuestion({
+        gameKey:'millonario',
+        idx:i,
+        source:`Millonario · Pregunta ${i+1}`,
+        ...qq,
+        type:'multiple'
+      });
+    });
+    list.appendChild(step);
+  });
+}
+
+/* =========================================================
+   RENDER: RELACIONAR
+   ========================================================= */
+let relSelectedTerm = null;
+function renderRelacionar(){
+  const left = document.getElementById('rel-left');
+  const right = document.getElementById('rel-right');
+  left.innerHTML = '';
+  right.innerHTML = '';
+
+  const terms = [...RELACIONAR_PAIRS];
+  const defs = [...RELACIONAR_PAIRS].sort(()=>Math.random()-0.5);
+
+  terms.forEach(p=>{
+    const el = document.createElement('div');
+    el.className='rel-item';
+    if(STATE.relacionar.matched[p.id-1]) el.classList.add('matched');
+    el.innerHTML = `<strong>${p.term}</strong> <span style="float:right;font-family:var(--mono);font-size:11px;color:var(--ink-mute)">${p.pts} pts</span>`;
+    el.dataset.id = p.id;
+    el.dataset.role = 'term';
+    el.addEventListener('click', ()=>handleRelClick(el,'term',p));
+    left.appendChild(el);
+  });
+
+  defs.forEach(p=>{
+    const el = document.createElement('div');
+    el.className='rel-item';
+    if(STATE.relacionar.matched[p.id-1]) el.classList.add('matched');
+    el.textContent = p.def;
+    el.dataset.id = p.id;
+    el.dataset.role = 'def';
+    el.addEventListener('click', ()=>handleRelClick(el,'def',p));
+    right.appendChild(el);
+  });
+}
+
+function handleRelClick(el, role, pair){
+  if(el.classList.contains('matched')) return;
+
+  if(role === 'term'){
+    document.querySelectorAll('#rel-left .rel-item').forEach(x=>x.classList.remove('selected'));
+    el.classList.add('selected');
+    relSelectedTerm = pair;
+  } else {
+    if(!relSelectedTerm){
+      el.classList.add('error');
+      setTimeout(()=>el.classList.remove('error'), 350);
+      return;
+    }
+    if(relSelectedTerm.id === pair.id){
+      // Acierto: abrir modal de asignación con el formato típico
+      openMatchAssign(pair);
+      relSelectedTerm = null;
+    } else {
+      el.classList.add('error');
+      setTimeout(()=>el.classList.remove('error'), 350);
+    }
+  }
+}
+
+function openMatchAssign(pair){
+  STATE.current = {
+    gameKey:'relacionar',
+    idx: pair.id - 1,
+    pts: pair.pts,
+    source: `Relacionar · Pareja ${pair.id}`,
+    q: `Pareja correcta: <em>${pair.term}</em>`,
+    answer: pair.def,
+    type:'match'
+  };
+  STATE.answeredCorrect = true;
+  renderModalForMatch(pair);
+  document.getElementById('modal-back').classList.add('show');
+}
+
+function renderModalForMatch(pair){
+  document.getElementById('modal-source').textContent = STATE.current.source;
+  document.getElementById('modal-pts').textContent = pair.pts + ' PTS';
+  document.getElementById('modal-question').innerHTML = `Han relacionado correctamente: <em>${pair.term}</em>`;
+  document.getElementById('modal-options').innerHTML = `
+    <div class="option correct">
+      <div class="letter">✓</div>
+      <div>${pair.def}</div>
+    </div>`;
+  document.getElementById('modal-reveal-row').style.display='none';
+  // Asignación inmediata - acierto
+  showAssign(true);
+  document.getElementById('post-assign').classList.remove('show');
+}
+
+/* =========================================================
+   RENDER: CRUCIGRAMA
+   ========================================================= */
+function renderCrucigrama(){
+  const grid = document.getElementById('cruc-grid');
+  grid.innerHTML = '';
+  grid.style.gridTemplateColumns = `repeat(${CRUCIGRAMA.size.cols}, 38px)`;
+  grid.style.gridTemplateRows = `repeat(${CRUCIGRAMA.size.rows}, 38px)`;
+
+  // Crear matriz vacía
+  const matrix = [];
+  for(let r=0;r<CRUCIGRAMA.size.rows;r++){
+    matrix.push(new Array(CRUCIGRAMA.size.cols).fill(null));
+  }
+  // Colocar palabras
+  CRUCIGRAMA.words.forEach(w=>{
+    for(let i=0;i<w.word.length;i++){
+      const r = w.dir==='H' ? w.row : w.row + i;
+      const c = w.dir==='H' ? w.col + i : w.col;
+      if(r >= CRUCIGRAMA.size.rows || c >= CRUCIGRAMA.size.cols) continue;
+      if(!matrix[r][c]) matrix[r][c] = {ch:w.word[i], num: i===0 ? w.num : null};
+      else if(i===0) matrix[r][c].num = w.num;
+    }
+  });
+  // Render
+  for(let r=0;r<CRUCIGRAMA.size.rows;r++){
+    for(let c=0;c<CRUCIGRAMA.size.cols;c++){
+      const cell = document.createElement('div');
+      cell.className='cell';
+      const data = matrix[r][c];
+      if(!data){
+        cell.classList.add('empty');
+      } else {
+        if(data.num) cell.innerHTML = `<span class="num">${data.num}</span>`;
+        const inp = document.createElement('input');
+        inp.maxLength = 1;
+        inp.dataset.r=r;
+        inp.dataset.c=c;
+        cell.appendChild(inp);
+      }
+      grid.appendChild(cell);
+    }
+  }
+
+  const cluesEl = document.getElementById('cruc-clues');
+  cluesEl.innerHTML = '';
+  CRUCIGRAMA.words.forEach((w,i)=>{
+    const cl = document.createElement('div');
+    cl.className='clue';
+    if(STATE.crucigrama.solved[i]) cl.classList.add('solved');
+    cl.innerHTML = `<strong>${w.num}.</strong>${w.clue} <span class="pts">${w.pts} pts</span>`;
+    cl.addEventListener('click', ()=>{
+      if(STATE.crucigrama.solved[i]) return;
+      openQuestion({
+        gameKey:'crucigrama',
+        idx:i,
+        source:`Crucigrama · Pista ${w.num}`,
+        pts:w.pts,
+        q: w.clue,
+        answer: w.word,
+        type:'open'
+      });
+    });
+    cluesEl.appendChild(cl);
+  });
+}
+
+function fillCrucigramaWord(wordObj){
+  for(let i=0;i<wordObj.word.length;i++){
+    const r = wordObj.dir==='H' ? wordObj.row : wordObj.row + i;
+    const c = wordObj.dir==='H' ? wordObj.col + i : wordObj.col;
+    const inp = document.querySelector(`#cruc-grid input[data-r="${r}"][data-c="${c}"]`);
+    if(inp){
+      inp.value = wordObj.word[i];
+      inp.parentElement.classList.add('correct');
+    }
+  }
+}
+
+/* =========================================================
+   MODAL DE PREGUNTA
+   ========================================================= */
+function openQuestion(q){
+  STATE.current = q;
+  STATE.answeredCorrect = null;
+  const m = document.getElementById('modal-back');
+  document.getElementById('modal-source').textContent = q.source;
+  document.getElementById('modal-pts').textContent = q.pts + ' PTS';
+  document.getElementById('modal-question').textContent = q.q;
+  document.getElementById('modal-options').innerHTML = '';
+  document.getElementById('modal-reveal-row').style.display='none';
+  document.getElementById('assign-section').classList.remove('show');
+  document.getElementById('post-assign').classList.remove('show');
+
+  if(q.type === 'multiple'){
+    q.opts.forEach((opt,i)=>{
+      const btn = document.createElement('button');
+      btn.className='option';
+      btn.innerHTML = `<div class="letter">${String.fromCharCode(65+i)}</div><div>${opt}</div>`;
+      btn.addEventListener('click', ()=>handleMultipleClick(btn,i));
+      document.getElementById('modal-options').appendChild(btn);
+    });
+  } else if (q.type === 'open'){
+    // Para crucigrama: mostrar campo abierto + botón Revelar
+    const wrap = document.createElement('div');
+    wrap.style.padding = '10px 0';
+    wrap.innerHTML = `
+      <input id="open-input" placeholder="Escribe la palabra..." style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:14px 18px;color:var(--ink);font-family:var(--mono);text-transform:uppercase;font-size:1.1rem;letter-spacing:.1em;outline:none" />
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button class="reveal-btn" id="open-check" style="border-color:var(--accent);color:var(--accent)">VERIFICAR</button>
+        <button class="reveal-btn" id="open-reveal">VER RESPUESTA</button>
+      </div>
+    `;
+    document.getElementById('modal-options').appendChild(wrap);
+    setTimeout(()=>{ document.getElementById('open-input').focus(); }, 100);
+    document.getElementById('open-check').addEventListener('click', ()=>{
+      const v = document.getElementById('open-input').value.trim().toUpperCase();
+      if(v === q.answer){
+        document.getElementById('open-input').style.borderColor = 'var(--accent)';
+        document.getElementById('open-input').style.background = 'rgba(214,255,94,.1)';
+        STATE.answeredCorrect = true;
+        showAssign(true);
+      } else {
+        document.getElementById('open-input').style.borderColor = '#ff5e5e';
+        document.getElementById('open-input').style.background = 'rgba(255,94,94,.08)';
+        STATE.answeredCorrect = false;
+        document.getElementById('modal-reveal-row').style.display='flex';
+        document.getElementById('modal-answer').textContent = q.answer;
+        showAssign(false);
+      }
+    });
+    document.getElementById('open-reveal').addEventListener('click', ()=>{
+      document.getElementById('modal-reveal-row').style.display='flex';
+      document.getElementById('modal-answer').textContent = q.answer;
+      STATE.answeredCorrect = false;
+      showAssign(false);
+    });
+  }
+  m.classList.add('show');
+}
+
+function handleMultipleClick(btn, idx){
+  if(STATE.answeredCorrect !== null) return;
+  const q = STATE.current;
+  const allOptions = document.querySelectorAll('#modal-options .option');
+  if(idx === q.ans){
+    btn.classList.add('correct');
+    STATE.answeredCorrect = true;
+    showAssign(true);
+  } else {
+    btn.classList.add('wrong');
+    // Marcar la correcta
+    allOptions[q.ans].classList.add('correct');
+    STATE.answeredCorrect = false;
+    document.getElementById('modal-reveal-row').style.display='flex';
+    document.getElementById('modal-answer').textContent = q.opts[q.ans];
+    showAssign(false);
+  }
+  // bloquear demás
+  allOptions.forEach(o=>o.style.pointerEvents='none');
+}
+
+function showAssign(correct){
+  const sec = document.getElementById('assign-section');
+  const title = document.getElementById('assign-title');
+  const help = document.getElementById('assign-help');
+  if(correct){
+    title.textContent = '¡Correcto! ¿A quién se asigna el puntaje?';
+    help.textContent = 'Indica si los puntos van para Niños, Niñas o Profesor.';
+  } else {
+    title.textContent = 'Respuesta incorrecta';
+    help.innerHTML = 'Puedes <strong style="color:var(--accent)">asignar la pregunta al siguiente equipo</strong> para que la conteste, o <strong style="color:var(--accent-4)">otorgar el punto al Profesor</strong> si nadie acierta.';
+  }
+  sec.classList.add('show');
+}
+
+// Botones de asignación
+document.querySelectorAll('.assign-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    const team = b.dataset.team;
+    const q = STATE.current;
+    const pts = q.pts;
+    STATE.scores[team] += pts;
+
+    // Marcar como usada y aplicar efectos
+    if(q.gameKey === 'jeopardy') STATE.jeopardy.used[q.idx] = true;
+    else if(q.gameKey === 'millonario') STATE.millonario.used[q.idx] = true;
+    else if(q.gameKey === 'relacionar') STATE.relacionar.matched[q.idx] = true;
+    else if(q.gameKey === 'crucigrama'){
+      STATE.crucigrama.solved[q.idx] = true;
+      fillCrucigramaWord(CRUCIGRAMA.words[q.idx]);
+    }
+
+    document.getElementById('assign-section').classList.remove('show');
+    const teamName = team==='boys' ? 'Niños' : team==='girls' ? 'Niñas' : 'Profesor';
+    document.getElementById('post-msg').innerHTML = `<strong style="color:var(--accent)">+${pts} puntos</strong> para <em>${teamName}</em>`;
+    document.getElementById('post-assign').classList.add('show');
+
+    updateScores();
+    updateProgressUI();
+  });
+});
+
+function closeModal(){
+  document.getElementById('modal-back').classList.remove('show');
+  // Re-render de los juegos para reflejar el estado
+  renderJeopardy();
+  renderMillonario();
+  renderRelacionar();
+  // crucigrama: las celdas marcadas se mantienen, solo actualizamos las pistas
+  document.querySelectorAll('#cruc-clues .clue').forEach((cl,i)=>{
+    if(STATE.crucigrama.solved[i]) cl.classList.add('solved');
+  });
+
+  // Verificar si el juego completo terminó
+  if(allGamesComplete()){
+    document.getElementById('show-winner-btn').classList.add('show');
+  }
+}
+
+/* =========================================================
+   SCORES
+   ========================================================= */
+function updateScores(){
+  document.getElementById('pts-boys').textContent = STATE.scores.boys;
+  document.getElementById('pts-girls').textContent = STATE.scores.girls;
+  document.getElementById('pts-teacher').textContent = STATE.scores.teacher;
+
+  // Marcar lider
+  const max = Math.max(STATE.scores.boys, STATE.scores.girls, STATE.scores.teacher);
+  document.querySelectorAll('.score-card').forEach(c=>c.classList.remove('leading'));
+  if(max > 0){
+    if(STATE.scores.boys === max) document.querySelector('.score-card.kids-b').classList.add('leading');
+    else if(STATE.scores.girls === max) document.querySelector('.score-card.kids-g').classList.add('leading');
+    else document.querySelector('.score-card.teacher').classList.add('leading');
+  }
+}
+
+function updateProgressUI(){
+  const j = STATE.jeopardy.used.filter(x=>x).length;
+  const m = STATE.millonario.used.filter(x=>x).length;
+  const r = STATE.relacionar.matched.filter(x=>x).length;
+  const c = STATE.crucigrama.solved.filter(x=>x).length;
+  document.getElementById('jeop-progress').textContent = `${j}/10`;
+  document.getElementById('mill-progress').textContent = `${m}/10`;
+  document.getElementById('rel-progress').textContent = `${r}/10`;
+  document.getElementById('cruc-progress').textContent = `${c}/10`;
+  document.getElementById('prog-jeopardy').style.width = (j*10)+'%';
+  document.getElementById('prog-millonario').style.width = (m*10)+'%';
+  document.getElementById('prog-relacionar').style.width = (r*10)+'%';
+  document.getElementById('prog-crucigrama').style.width = (c*10)+'%';
+  document.getElementById('meta-progress').textContent = `${j+m+r+c} / 40 PREGUNTAS`;
+
+  document.querySelectorAll('.game-tile').forEach(t=>{
+    const g = t.dataset.game;
+    const cnt = g==='jeopardy'?j : g==='millonario'?m : g==='relacionar'?r : c;
+    if(cnt===10) t.classList.add('completed'); else t.classList.remove('completed');
+  });
+
+  if(allGamesComplete()){
+    document.getElementById('show-winner-btn').classList.add('show');
+  }
+}
+
+function allGamesComplete(){
+  return STATE.jeopardy.used.every(x=>x) &&
+         STATE.millonario.used.every(x=>x) &&
+         STATE.relacionar.matched.every(x=>x) &&
+         STATE.crucigrama.solved.every(x=>x);
+}
+
+/* =========================================================
+   FINAL
+   ========================================================= */
+function showWinner(){
+  showView('final-view');
+  const s = STATE.scores;
+  const max = Math.max(s.boys, s.girls, s.teacher);
+  let winner = '', winnerPts = max;
+  if(s.boys === max && s.girls === max && s.teacher === max){
+    winner = 'Empate triple';
+  } else if(s.boys === max && s.girls === max){
+    winner = 'Empate · Niños y Niñas';
+  } else if(s.boys === max && s.teacher === max){
+    winner = 'Empate · Niños y Profesor';
+  } else if(s.girls === max && s.teacher === max){
+    winner = 'Empate · Niñas y Profesor';
+  } else if(s.boys === max){
+    winner = '¡Ganan los Niños!';
+  } else if(s.girls === max){
+    winner = '¡Ganan las Niñas!';
+  } else {
+    winner = 'Gana el Profesor';
+  }
+  document.getElementById('winner-name').textContent = winner;
+  document.getElementById('winner-points').textContent = `${winnerPts} puntos`;
+
+  const recap = document.getElementById('recap');
+  recap.innerHTML = `
+    <div class="recap-card"><div class="team-nm" style="color:var(--accent-3)">Niños</div><div class="pts">${s.boys}</div></div>
+    <div class="recap-card"><div class="team-nm" style="color:var(--accent-2)">Niñas</div><div class="pts">${s.girls}</div></div>
+    <div class="recap-card"><div class="team-nm" style="color:var(--accent-4)">Profesor</div><div class="pts">${s.teacher}</div></div>
+  `;
+}
+
+function resetAll(){
+  if(!confirm('¿Reiniciar el concurso? Se perderán los puntajes.')) return;
+  STATE.scores = {boys:0,girls:0,teacher:0};
+  STATE.jeopardy.used = new Array(10).fill(false);
+  STATE.millonario.used = new Array(10).fill(false);
+  STATE.relacionar.matched = new Array(10).fill(false);
+  STATE.crucigrama.solved = new Array(10).fill(false);
+  STATE.current = null;
+  STATE.answeredCorrect = null;
+  document.getElementById('show-winner-btn').classList.remove('show');
+  renderJeopardy();
+  renderMillonario();
+  renderRelacionar();
+  renderCrucigrama();
+  updateScores();
+  updateProgressUI();
+  showHome();
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+renderJeopardy();
+renderMillonario();
+renderRelacionar();
+renderCrucigrama();
+updateScores();
+updateProgressUI();
+
+// Cerrar modal al hacer click fuera
+document.getElementById('modal-back').addEventListener('click',(e)=>{
+  if(e.target.id === 'modal-back'){
+    // Solo permitir cerrar si ya se asignó o no se ha respondido aún
+    const assignVisible = document.getElementById('assign-section').classList.contains('show');
+    const postVisible = document.getElementById('post-assign').classList.contains('show');
+    if(!assignVisible || postVisible){
+      closeModal();
+    }
+  }
+});
+</script>
+</body>
+</html>
