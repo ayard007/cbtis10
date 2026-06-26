@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matemáticas en el Ring | Ecuaciones Lineales y Sistemas 2x2</title>
+<style>
+  :root{
+    --negro:#0d0d0f;
+    --carbon:#16161a;
+    --panel:#1d1d22;
+    --rojo:#c1121f;
+    --rojo-claro:#e63946;
+    --oro:#d4a017;
+    --oro-claro:#f0c64a;
+    --hueso:#f4f1ea;
+    --gris:#8a8a93;
+    --verde:#2a9d5c;
+    --linea:#2c2c33;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Segoe UI",system-ui,sans-serif;
+    background:var(--negro);
+    color:var(--hueso);
+    line-height:1.65;
+    font-size:18px;
+  }
+  /* ====== ENCABEZADO / CARTEL ====== */
+  header{
+    background:
+      radial-gradient(circle at 20% 20%, rgba(193,18,31,.25), transparent 45%),
+      radial-gradient(circle at 80% 80%, rgba(212,160,23,.15), transparent 45%),
+      var(--carbon);
+    border-bottom:4px solid var(--rojo);
+    padding:48px 24px 40px;
+    text-align:center;
+  }
+  .etiqueta{
+    display:inline-block;
+    color:var(--oro);
+    letter-spacing:5px;
+    font-size:.8rem;
+    font-weight:700;
+    text-transform:uppercase;
+    border:1px solid var(--oro);
+    padding:6px 16px;
+    border-radius:2px;
+    margin-bottom:18px;
+  }
+  header h1{
+    font-size:clamp(2rem,6vw,3.6rem);
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    line-height:1.05;
+    text-shadow:3px 3px 0 var(--rojo);
+  }
+  header h1 span{color:var(--oro);}
+  header p.sub{
+    color:var(--gris);
+    margin-top:14px;
+    max-width:620px;
+    margin-left:auto;
+    margin-right:auto;
+    font-size:1.05rem;
+  }
+  /* ====== AVISO TDA ====== */
+  .aviso{
+    max-width:820px;
+    margin:28px auto 0;
+    background:var(--panel);
+    border-left:5px solid var(--oro);
+    padding:18px 22px;
+    border-radius:4px;
+    text-align:left;
+    font-size:.95rem;
+  }
+  .aviso strong{color:var(--oro-claro);}
+
+  /* ====== NAVEGACIÓN POR ROUNDS ====== */
+  nav{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(13,13,15,.96);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--linea);
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:8px;
+    padding:12px;
+  }
+  nav button{
+    background:transparent;
+    color:var(--hueso);
+    border:1px solid var(--linea);
+    padding:8px 16px;
+    border-radius:30px;
+    cursor:pointer;
+    font-size:.85rem;
+    font-weight:600;
+    transition:.2s;
+  }
+  nav button:hover{border-color:var(--oro);color:var(--oro);}
+  nav button.activo{background:var(--rojo);border-color:var(--rojo);color:#fff;}
+
+  main{max-width:880px;margin:0 auto;padding:40px 20px 80px;}
+
+  /* ====== SECCIONES / TEMAS ====== */
+  .tema{display:none;}
+  .tema.visible{display:block;animation:fade .4s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  .tema-cabecera{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:8px;
+  }
+  .num-tema{
+    flex:0 0 auto;
+    width:64px;height:64px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--rojo);
+    color:#fff;
+    font-size:1.6rem;
+    font-weight:900;
+    border-radius:50%;
+    border:3px solid var(--oro);
+  }
+  .tema-cabecera h2{
+    font-size:clamp(1.4rem,4vw,2rem);
+    text-transform:uppercase;
+    letter-spacing:.5px;
+  }
+  .intro-tema{
+    background:var(--carbon);
+    border:1px solid var(--linea);
+    border-radius:8px;
+    padding:22px 24px;
+    margin:20px 0 30px;
+  }
+  .intro-tema h3{color:var(--oro);margin-bottom:8px;font-size:1.1rem;}
+
+  /* ====== TEORÍA / CONCEPTO ====== */
+  .concepto{
+    background:var(--panel);
+    border-radius:8px;
+    padding:24px;
+    margin-bottom:30px;
+    border-top:3px solid var(--oro);
+  }
+  .concepto h3{color:var(--oro-claro);margin-bottom:12px;}
+  .concepto .formula{
+    display:inline-block;
+    background:var(--negro);
+    border:1px dashed var(--oro);
+    color:var(--oro-claro);
+    padding:10px 18px;
+    margin:10px 0;
+    border-radius:6px;
+    font-family:"Courier New",monospace;
+    font-size:1.2rem;
+    font-weight:700;
+  }
+  .pasos{counter-reset:paso;list-style:none;margin-top:14px;}
+  .pasos li{
+    position:relative;
+    padding:10px 0 10px 46px;
+    border-bottom:1px solid var(--linea);
+  }
+  .pasos li:last-child{border-bottom:none;}
+  .pasos li::before{
+    counter-increment:paso;
+    content:counter(paso);
+    position:absolute;left:0;top:8px;
+    width:30px;height:30px;
+    background:var(--rojo);color:#fff;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:.9rem;
+  }
+  .ejemplo-box{
+    background:var(--negro);
+    border-left:4px solid var(--verde);
+    padding:16px 20px;
+    margin-top:16px;
+    border-radius:4px;
+  }
+  .ejemplo-box .et{
+    color:var(--verde);
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:.8rem;
+    letter-spacing:2px;
+  }
+  .ejemplo-box code{
+    display:block;
+    font-family:"Courier New",monospace;
+    color:var(--oro-claro);
+    margin-top:8px;
+    white-space:pre-wrap;
+    font-size:1.02rem;
+  }
+
+  /* ====== ACTIVIDADES ====== */
+  .actividad{
+    background:var(--carbon);
+    border:1px solid var(--linea);
+    border-radius:10px;
+    padding:24px;
+    margin-bottom:22px;
+  }
+  .act-top{
+    display:flex;align-items:center;gap:14px;
+    margin-bottom:14px;
+  }
+  .round-badge{
+    background:var(--oro);
+    color:var(--negro);
+    font-weight:900;
+    padding:5px 14px;
+    border-radius:4px;
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    white-space:nowrap;
+  }
+  .act-top h4{font-size:1.12rem;}
+  .planteamiento{
+    background:var(--panel);
+    padding:14px 18px;
+    border-radius:6px;
+    margin-bottom:16px;
+    border-left:3px solid var(--rojo-claro);
+  }
+  .instruccion{font-size:.9rem;color:var(--gris);margin-bottom:10px;font-style:italic;}
+
+  .opciones{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+  .opciones button{
+    text-align:left;
+    background:var(--negro);
+    border:1px solid var(--linea);
+    color:var(--hueso);
+    padding:12px 16px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:1rem;
+    transition:.15s;
+  }
+  .opciones button:hover{border-color:var(--oro);}
+  .opciones button.correcto{background:rgba(42,157,92,.22);border-color:var(--verde);color:#bdedcf;}
+  .opciones button.incorrecto{background:rgba(193,18,31,.18);border-color:var(--rojo);color:#f3b6bb;}
+
+  .resp-abierta{
+    width:100%;
+    background:var(--negro);
+    border:1px solid var(--linea);
+    color:var(--hueso);
+    border-radius:6px;
+    padding:12px;
+    font-family:inherit;
+    font-size:1rem;
+    resize:vertical;
+    min-height:80px;
+  }
+  .resp-abierta:focus{outline:none;border-color:var(--oro);}
+  .input-num{
+    background:var(--negro);
+    border:1px solid var(--linea);
+    color:var(--oro-claro);
+    border-radius:6px;
+    padding:10px 14px;
+    font-size:1.1rem;
+    font-family:"Courier New",monospace;
+    width:120px;
+    text-align:center;
+  }
+  .input-num:focus{outline:none;border-color:var(--oro);}
+
+  .btn-accion{
+    background:var(--rojo);
+    color:#fff;
+    border:none;
+    padding:11px 22px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:.95rem;
+    margin-top:12px;
+    transition:.2s;
+  }
+  .btn-accion:hover{background:var(--rojo-claro);}
+  .btn-pista{
+    background:transparent;
+    color:var(--oro);
+    border:1px solid var(--oro);
+    padding:9px 18px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:.85rem;
+    margin-top:12px;
+    margin-left:8px;
+  }
+  .feedback{
+    margin-top:14px;
+    padding:14px 18px;
+    border-radius:6px;
+    display:none;
+    font-size:.95rem;
+  }
+  .feedback.ok{display:block;background:rgba(42,157,92,.18);border:1px solid var(--verde);}
+  .feedback.no{display:block;background:rgba(193,18,31,.16);border:1px solid var(--rojo);}
+  .feedback.info{display:block;background:rgba(212,160,23,.14);border:1px solid var(--oro);}
+
+  .reflexion{
+    border:1px dashed var(--oro);
+    background:rgba(212,160,23,.06);
+    border-radius:8px;
+    padding:18px 20px;
+    margin-bottom:22px;
+  }
+  .reflexion h4{color:var(--oro);margin-bottom:8px;font-size:1rem;text-transform:uppercase;letter-spacing:1px;}
+
+  footer{
+    text-align:center;
+    padding:30px 20px;
+    border-top:1px solid var(--linea);
+    color:var(--gris);
+    font-size:.85rem;
+  }
+  /* barra de progreso */
+  .progreso-cont{
+    max-width:880px;margin:0 auto;padding:0 20px;
+  }
+  .barra{
+    height:8px;background:var(--linea);border-radius:10px;overflow:hidden;margin-bottom:24px;
+  }
+  .barra div{height:100%;width:0;background:linear-gradient(90deg,var(--rojo),var(--oro));transition:width .4s;}
+
+  @media(max-width:560px){
+    body{font-size:16px;}
+    main{padding:24px 14px 60px;}
+    .num-tema{width:50px;height:50px;font-size:1.3rem;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="etiqueta">Velada de Matemáticas · Bachillerato</span>
+  <h1>Matemáticas en el <span>Ring</span></h1>
+  <p class="sub">Ecuaciones lineales · Sistemas 2x2 · Métodos de resolución. Cada problema es un combate: aprende a leerlo, planear tu estrategia y ganar por decisión técnica.</p>
+  <div class="aviso">
+    <strong>Cómo usar esta guía:</strong> trabaja un Round a la vez. No avances al siguiente hasta sentir que dominaste el actual. Si te distraes, respira, vuelve al último paso que entendiste y continúa. Cada round es corto a propósito: pega, descansa, sigue.
+  </div>
+</header>
+
+<nav id="nav">
+  <button data-tema="t1" class="activo">Round 1 · Ecuaciones lineales</button>
+  <button data-tema="t2">Round 2 · Sistemas 2x2</button>
+  <button data-tema="t3">Round 3 · Métodos de resolución</button>
+</nav>
+
+<div class="progreso-cont">
+  <div class="barra"><div id="barraInner"></div></div>
+</div>
+
+<main>
+
+<!-- ====================================================== -->
+<!-- TEMA 1 -->
+<!-- ====================================================== -->
+<section class="tema visible" id="t1">
+  <div class="tema-cabecera">
+    <div class="num-tema">1</div>
+    <h2>Ecuaciones Lineales</h2>
+  </div>
+
+  <div class="intro-tema">
+    <h3>El objetivo del round</h3>
+    <p>Una ecuación lineal es como buscar el peso exacto que falta para dar el límite de tu categoría. Hay un valor desconocido (la incógnita, casi siempre <strong>x</strong>) y tu trabajo es despejarlo: dejarlo solo de un lado del igual. Vas a aprender a hacerlo paso a paso, usando situaciones reales de tu entrenamiento.</p>
+  </div>
+
+  <div class="concepto">
+    <h3>Concepto base</h3>
+    <p>Una ecuación lineal tiene la forma:</p>
+    <div class="formula">a·x + b = c</div>
+    <p>La regla de oro: <strong>lo que hagas de un lado, hazlo del otro</strong>. La balanza siempre debe quedar equilibrada, igual que tu guardia: si bajas una mano, sube la otra.</p>
+    <ol class="pasos">
+      <li>Identifica la incógnita (lo que no sabes).</li>
+      <li>Pasa los números sin x hacia el lado del resultado (cambiando el signo).</li>
+      <li>El número que multiplica a x pasa dividiendo al otro lado.</li>
+      <li>Comprueba: sustituye tu resultado en la ecuación original.</li>
+    </ol>
+    <div class="ejemplo-box">
+      <span class="et">Ejemplo guiado</span>
+      <p>Entrenas <strong>x</strong> rounds más 3 de calentamiento y en total haces 8.</p>
+      <code>x + 3 = 8
+x = 8 - 3   (el 3 pasa restando)
+x = 5  →  entrenaste 5 rounds de costal</code>
+    </div>
+  </div>
+
+  <!-- ACTIVIDAD 1.1 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 1</span><h4>Cuenta tus rounds</h4></div>
+    <div class="planteamiento">Haces <strong>x</strong> rounds de sombra más 2 de cuerda y completas 6 en total: <em>x + 2 = 6</em>.</div>
+    <p class="instruccion">Escribe el valor de x y presiona Verificar.</p>
+    <input class="input-num" id="r1a" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r1a',4,'fb1a','Correcto. 6 - 2 = 4 rounds de sombra.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p1a')">Pista</button>
+    <div class="feedback info" id="p1a" style="display:none">Pasa el 2 restando: x = 6 - 2.</div>
+    <div class="feedback" id="fb1a"></div>
+  </div>
+
+  <!-- ACTIVIDAD 1.2 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 2</span><h4>El peso del costal</h4></div>
+    <div class="planteamiento">Un costal pesa el doble de unas pesas más 5 kg: <em>2x + 5 = 25</em>. ¿Cuánto pesan las pesas (x)?</div>
+    <p class="instruccion">Primero quita el 5, luego divide entre 2.</p>
+    <input class="input-num" id="r1b" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r1b',10,'fb1b','Exacto. 25-5=20, y 20÷2=10 kg.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p1b')">Pista</button>
+    <div class="feedback info" id="p1b" style="display:none">2x = 25 - 5 = 20. Ahora x = 20 ÷ 2.</div>
+    <div class="feedback" id="fb1b"></div>
+  </div>
+
+  <!-- ACTIVIDAD 1.3 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 3</span><h4>Elige el primer paso</h4></div>
+    <div class="planteamiento">Para resolver <em>3x - 4 = 11</em>, ¿cuál es el primer movimiento correcto?</div>
+    <div class="opciones" data-correcta="1">
+      <button onclick="elegir(this)">Dividir todo entre 3 de inmediato</button>
+      <button onclick="elegir(this)" data-ok>Pasar el -4 sumando: 3x = 11 + 4</button>
+      <button onclick="elegir(this)">Multiplicar el 11 por 3</button>
+    </div>
+    <div class="feedback" id="fb1c"></div>
+  </div>
+
+  <!-- ACTIVIDAD 1.4 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 4</span><h4>Calorías por sesión</h4></div>
+    <div class="planteamiento">Quemas 80 kcal por round más 120 de calentamiento, y la sesión total fue de 600 kcal: <em>80x + 120 = 600</em>. ¿Cuántos rounds (x) hiciste?</div>
+    <input class="input-num" id="r1d" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r1d',6,'fb1d','Bien. 600-120=480, 480÷80=6 rounds.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p1d')">Pista</button>
+    <div class="feedback info" id="p1d" style="display:none">80x = 600 - 120 = 480. Luego x = 480 ÷ 80.</div>
+    <div class="feedback" id="fb1d"></div>
+  </div>
+
+  <!-- ACTIVIDAD 1.5 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 5</span><h4>Detecta el error</h4></div>
+    <div class="planteamiento">Un compañero resolvió <em>x + 7 = 12</em> y escribió <em>x = 12 + 7 = 19</em>. ¿Está bien?</div>
+    <div class="opciones" data-correcta="1">
+      <button onclick="elegir(this)">Sí, está correcto</button>
+      <button onclick="elegir(this)" data-ok>No: el 7 debe pasar restando, x = 12 - 7 = 5</button>
+    </div>
+    <div class="feedback" id="fb1e"></div>
+  </div>
+
+  <!-- ACTIVIDAD 1.6 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 6</span><h4>La incógnita en ambos lados</h4></div>
+    <div class="planteamiento">Tu rutina: <em>5x = 2x + 9</em>. Junta las x de un lado. ¿Cuánto vale x?</div>
+    <input class="input-num" id="r1f" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r1f',3,'fb1f','Correcto. 5x-2x=3x, entonces 3x=9 y x=3.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p1f')">Pista</button>
+    <div class="feedback info" id="p1f" style="display:none">Pasa 2x restando: 5x - 2x = 9 → 3x = 9.</div>
+    <div class="feedback" id="fb1f"></div>
+  </div>
+
+  <!-- ACTIVIDAD 1.7 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 7</span><h4>Arma tu propia ecuación</h4></div>
+    <div class="planteamiento">Inventa una situación de tu entrenamiento que se resuelva con <em>4x = 20</em> (por ejemplo, repartir vendas, rounds, kilómetros). Explica qué representa x.</div>
+    <p class="instruccion">Escribe tu situación. No hay respuesta única: lo importante es que tenga sentido.</p>
+    <textarea class="resp-abierta" id="r1g" placeholder="Mi situación: ..."></textarea>
+    <button class="btn-accion" onclick="guardarAbierta('r1g','fb1g')">Registrar</button>
+    <div class="feedback" id="fb1g"></div>
+  </div>
+
+  <!-- ACTIVIDAD 1.8 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 8</span><h4>Fracción de jornada</h4></div>
+    <div class="planteamiento">La mitad de tus repeticiones más 4 da 14: <em>x/2 + 4 = 14</em>. ¿Cuántas repeticiones (x) hiciste?</div>
+    <input class="input-num" id="r1h" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r1h',20,'fb1h','Excelente. 14-4=10, y 10×2=20.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p1h')">Pista</button>
+    <div class="feedback info" id="p1h" style="display:none">x/2 = 14 - 4 = 10. Para despejar, multiplica por 2.</div>
+    <div class="feedback" id="fb1h"></div>
+  </div>
+
+  <!-- ACTIVIDAD 1.9 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 9</span><h4>Comprobación obligatoria</h4></div>
+    <div class="planteamiento">Resolviste <em>2x - 1 = 9</em> y obtuviste <em>x = 5</em>. Comprueba sustituyendo: ¿cuánto da 2(5) - 1?</div>
+    <input class="input-num" id="r1i" placeholder="resultado">
+    <button class="btn-accion" onclick="checkNum('r1i',9,'fb1i','Correcto. 2(5)-1 = 9. La solución pasa la prueba.')">Verificar</button>
+    <div class="feedback" id="fb1i"></div>
+  </div>
+
+  <!-- ACTIVIDAD 1.10 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 10</span><h4>Combate final del round</h4></div>
+    <div class="planteamiento">Tu mánager dice: "Tres veces tus rounds, menos 2, igual a 19": <em>3x - 2 = 19</em>. Resuelve por completo.</div>
+    <input class="input-num" id="r1j" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r1j',7,'fb1j','¡Ganaste el round! 19+2=21, 21÷3=7 rounds.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p1j')">Pista</button>
+    <div class="feedback info" id="p1j" style="display:none">Primero 3x = 19 + 2 = 21. Luego x = 21 ÷ 3.</div>
+    <div class="feedback" id="fb1j"></div>
+  </div>
+
+  <div class="reflexion">
+    <h4>Esquina del descanso · Reflexión</h4>
+    <p>¿En qué se parece despejar una x a corregir tu guardia cuando algo no funciona en el ring? Escribe una idea en tu cuaderno antes de pasar al Round 2.</p>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- TEMA 2 -->
+<!-- ====================================================== -->
+<section class="tema" id="t2">
+  <div class="tema-cabecera">
+    <div class="num-tema">2</div>
+    <h2>Sistemas de Ecuaciones 2x2</h2>
+  </div>
+
+  <div class="intro-tema">
+    <h3>El objetivo del round</h3>
+    <p>Un sistema 2x2 son dos ecuaciones con dos incógnitas (x e y) que se cumplen al mismo tiempo. Es como una pelea donde debes controlar <strong>dos cosas a la vez</strong>: la distancia y el tiempo, los golpes y la defensa. La solución es el par de valores (x, y) que satisface a ambas.</p>
+  </div>
+
+  <div class="concepto">
+    <h3>Concepto base</h3>
+    <div class="formula">x + y = total<br>a·x + b·y = otro total</div>
+    <p>Cada ecuación es un "asalto" con su propia información. Solo cuando combinas la información de ambos asaltos encuentras la verdad: cuánto vale x y cuánto vale y.</p>
+    <ol class="pasos">
+      <li>Lee las dos situaciones e identifica qué es x y qué es y.</li>
+      <li>Escribe una ecuación por cada dato total.</li>
+      <li>Combina ambas para encontrar primero una incógnita.</li>
+      <li>Sustituye ese valor para hallar la otra.</li>
+    </ol>
+    <div class="ejemplo-box">
+      <span class="et">Ejemplo guiado</span>
+      <p>Compras x pares de vendas y y protectores bucales. Llevas 5 artículos y gastas información distinta en cada uno.</p>
+      <code>x + y = 5      (cantidad de artículos)
+2x + 3y = 13   (costo total en cientos)
+Solución: x = 2, y = 3</code>
+    </div>
+  </div>
+
+  <!-- 2.1 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 1</span><h4>¿Qué es un sistema?</h4></div>
+    <div class="planteamiento">¿Cuándo decimos que un par (x, y) es solución de un sistema 2x2?</div>
+    <div class="opciones" data-correcta="1">
+      <button onclick="elegir(this)">Cuando cumple solo una de las ecuaciones</button>
+      <button onclick="elegir(this)" data-ok>Cuando cumple las dos ecuaciones al mismo tiempo</button>
+      <button onclick="elegir(this)">Cuando x e y son iguales</button>
+    </div>
+    <div class="feedback" id="fb2a"></div>
+  </div>
+
+  <!-- 2.2 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 2</span><h4>Verifica la solución</h4></div>
+    <div class="planteamiento">Sistema: <em>x + y = 7</em> y <em>x - y = 1</em>. ¿El par x=4, y=3 es solución?</div>
+    <div class="opciones" data-correcta="0">
+      <button onclick="elegir(this)" data-ok>Sí: 4+3=7 y 4-3=1, cumple ambas</button>
+      <button onclick="elegir(this)">No, falla en la primera</button>
+    </div>
+    <div class="feedback" id="fb2b"></div>
+  </div>
+
+  <!-- 2.3 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 3</span><h4>Suma de pesos</h4></div>
+    <div class="planteamiento">Dos boxeadores pesan en total 140 kg (<em>x + y = 140</em>) y se diferencian en 20 kg (<em>x - y = 20</em>). ¿Cuánto pesa el más pesado (x)?</div>
+    <input class="input-num" id="r2c" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r2c',80,'fb2c','Correcto. Sumando ambas: 2x=160, x=80 kg.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p2c')">Pista</button>
+    <div class="feedback info" id="p2c" style="display:none">Suma las dos ecuaciones: (x+y)+(x-y)=140+20 → 2x=160.</div>
+    <div class="feedback" id="fb2c"></div>
+  </div>
+
+  <!-- 2.4 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 4</span><h4>Encuentra la segunda incógnita</h4></div>
+    <div class="planteamiento">Del ejercicio anterior ya sabes x=80 y que <em>x + y = 140</em>. ¿Cuánto pesa el otro boxeador (y)?</div>
+    <input class="input-num" id="r2d" placeholder="y = ?">
+    <button class="btn-accion" onclick="checkNum('r2d',60,'fb2d','Bien. 140-80=60 kg.')">Verificar</button>
+    <div class="feedback" id="fb2d"></div>
+  </div>
+
+  <!-- 2.5 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 5</span><h4>Entradas al gimnasio</h4></div>
+    <div class="planteamiento">Se venden x entradas de adulto y y de estudiante. En total 10 entradas (<em>x + y = 10</em>) y el cobro deja <em>x = y + 4</em>. ¿Cuántas de adulto (x)?</div>
+    <input class="input-num" id="r2e" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r2e',7,'fb2e','Correcto. Si x=y+4 y x+y=10, entonces y=3 y x=7.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p2e')">Pista</button>
+    <div class="feedback info" id="p2e" style="display:none">Sustituye x=y+4 en x+y=10 → (y+4)+y=10 → 2y=6 → y=3.</div>
+    <div class="feedback" id="fb2e"></div>
+  </div>
+
+  <!-- 2.6 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 6</span><h4>Traduce el problema</h4></div>
+    <div class="planteamiento">"En la tienda, 2 guantes y 1 casco cuestan 9; 1 guante y 1 casco cuestan 6." Elige el sistema correcto (x = guante, y = casco).</div>
+    <div class="opciones" data-correcta="0">
+      <button onclick="elegir(this)" data-ok>2x + y = 9 ; x + y = 6</button>
+      <button onclick="elegir(this)">x + 2y = 9 ; x + y = 6</button>
+      <button onclick="elegir(this)">2x + 2y = 9 ; x + y = 6</button>
+    </div>
+    <div class="feedback" id="fb2f"></div>
+  </div>
+
+  <!-- 2.7 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 7</span><h4>Resuelve la tienda</h4></div>
+    <div class="planteamiento">Con el sistema anterior (<em>2x + y = 9</em>, <em>x + y = 6</em>), ¿cuánto cuesta un guante (x)?</div>
+    <input class="input-num" id="r2g" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r2g',3,'fb2g','Exacto. Restando las ecuaciones: x=3.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p2g')">Pista</button>
+    <div class="feedback info" id="p2g" style="display:none">Resta la segunda de la primera: (2x+y)-(x+y)=9-6 → x=3.</div>
+    <div class="feedback" id="fb2g"></div>
+  </div>
+
+  <!-- 2.8 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 8</span><h4>Rounds y minutos</h4></div>
+    <div class="planteamiento">Hiciste x rounds de 3 min y y rounds de 2 min. En total 5 rounds (<em>x + y = 5</em>) y 13 minutos (<em>3x + 2y = 13</em>). ¿Cuántos rounds de 3 min (x)?</div>
+    <input class="input-num" id="r2h" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r2h',3,'fb2h','Correcto. x=3 rounds de 3 min y y=2 de 2 min.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p2h')">Pista</button>
+    <div class="feedback info" id="p2h" style="display:none">De x+y=5 sale y=5-x. Sustituye en 3x+2(5-x)=13 → x+10=13 → x=3.</div>
+    <div class="feedback" id="fb2h"></div>
+  </div>
+
+  <!-- 2.9 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 9</span><h4>Construye tu sistema</h4></div>
+    <div class="planteamiento">Inventa una situación de boxeo con dos incógnitas (por ejemplo, dos tipos de bebidas o dos tipos de golpes) que se modele con un sistema 2x2. Escribe las dos ecuaciones.</div>
+    <p class="instruccion">Describe el contexto y escribe ambas ecuaciones. No hay una sola respuesta correcta.</p>
+    <textarea class="resp-abierta" id="r2i" placeholder="Contexto: ...&#10;Ecuación 1: ...&#10;Ecuación 2: ..."></textarea>
+    <button class="btn-accion" onclick="guardarAbierta('r2i','fb2i')">Registrar</button>
+    <div class="feedback" id="fb2i"></div>
+  </div>
+
+  <!-- 2.10 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 10</span><h4>Combate final del round</h4></div>
+    <div class="planteamiento">Sistema: <em>x + y = 12</em> y <em>2x - y = 6</em>. Encuentra el valor de x.</div>
+    <input class="input-num" id="r2j" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r2j',6,'fb2j','¡Round ganado! Sumando: 3x=18, x=6 (y=6).')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p2j')">Pista</button>
+    <div class="feedback info" id="p2j" style="display:none">Suma ambas ecuaciones: (x+y)+(2x-y)=12+6 → 3x=18.</div>
+    <div class="feedback" id="fb2j"></div>
+  </div>
+
+  <div class="reflexion">
+    <h4>Esquina del descanso · Reflexión</h4>
+    <p>Un sistema 2x2 controla dos cosas a la vez. ¿Qué dos variables controlas tú durante un combate y cómo dependen una de la otra? Anótalo antes del Round 3.</p>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- TEMA 3 -->
+<!-- ====================================================== -->
+<section class="tema" id="t3">
+  <div class="tema-cabecera">
+    <div class="num-tema">3</div>
+    <h2>Métodos de Resolución</h2>
+  </div>
+
+  <div class="intro-tema">
+    <h3>El objetivo del round</h3>
+    <p>Existen tres estilos para ganar un sistema 2x2, como hay estilos de boxeador. Elige el que mejor se adapte a cada combate: <strong>Sustitución</strong> (cambias una pieza por otra), <strong>Igualación</strong> (comparas de frente) y <strong>Reducción o eliminación</strong> (anulas a un rival sumando o restando).</p>
+  </div>
+
+  <div class="concepto">
+    <h3>Los tres métodos</h3>
+    <ol class="pasos">
+      <li><strong>Sustitución:</strong> despeja una incógnita en una ecuación y mete ese valor en la otra.</li>
+      <li><strong>Igualación:</strong> despeja la misma incógnita en ambas ecuaciones e iguala los resultados.</li>
+      <li><strong>Reducción:</strong> suma o resta las ecuaciones para que una incógnita desaparezca.</li>
+    </ol>
+    <div class="ejemplo-box">
+      <span class="et">Ejemplo · Reducción</span>
+      <code>x + y = 10
+x - y = 2
+Sumando: 2x = 12 → x = 6, luego y = 4</code>
+    </div>
+  </div>
+
+  <!-- 3.1 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 1</span><h4>Reconoce el método</h4></div>
+    <div class="planteamiento">"Despejo y en la primera ecuación y la meto en la segunda." ¿Qué método es?</div>
+    <div class="opciones" data-correcta="0">
+      <button onclick="elegir(this)" data-ok>Sustitución</button>
+      <button onclick="elegir(this)">Reducción</button>
+      <button onclick="elegir(this)">Igualación</button>
+    </div>
+    <div class="feedback" id="fb3a"></div>
+  </div>
+
+  <!-- 3.2 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 2</span><h4>El mejor método para el combate</h4></div>
+    <div class="planteamiento">Sistema: <em>x + y = 9</em> y <em>x - y = 3</em>. ¿Qué método conviene por ser el más rápido aquí?</div>
+    <div class="opciones" data-correcta="1">
+      <button onclick="elegir(this)">Igualación</button>
+      <button onclick="elegir(this)" data-ok>Reducción (al sumar, la y se elimina sola)</button>
+      <button onclick="elegir(this)">Ninguno funciona</button>
+    </div>
+    <div class="feedback" id="fb3b"></div>
+  </div>
+
+  <!-- 3.3 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 3</span><h4>Sustitución paso 1</h4></div>
+    <div class="planteamiento">Sistema: <em>y = x + 1</em> y <em>2x + y = 7</em>. Sustituye y en la segunda. ¿Cuánto vale x?</div>
+    <input class="input-num" id="r3c" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r3c',2,'fb3c','Correcto. 2x+(x+1)=7 → 3x=6 → x=2.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p3c')">Pista</button>
+    <div class="feedback info" id="p3c" style="display:none">Reemplaza y por (x+1): 2x + (x+1) = 7 → 3x + 1 = 7.</div>
+    <div class="feedback" id="fb3c"></div>
+  </div>
+
+  <!-- 3.4 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 4</span><h4>Reducción directa</h4></div>
+    <div class="planteamiento">Sistema: <em>3x + y = 14</em> y <em>x + y = 6</em>. Resta la segunda de la primera. ¿Cuánto vale x?</div>
+    <input class="input-num" id="r3d" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r3d',4,'fb3d','Bien. (3x+y)-(x+y)=14-6 → 2x=8 → x=4.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p3d')">Pista</button>
+    <div class="feedback info" id="p3d" style="display:none">Al restar, la y desaparece: 2x = 8.</div>
+    <div class="feedback" id="fb3d"></div>
+  </div>
+
+  <!-- 3.5 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 5</span><h4>Ordena los pasos de la sustitución</h4></div>
+    <div class="planteamiento">¿Cuál es el orden correcto del método de sustitución?</div>
+    <div class="opciones" data-correcta="0">
+      <button onclick="elegir(this)" data-ok>Despejar una incógnita → sustituir en la otra → resolver → hallar la segunda</button>
+      <button onclick="elegir(this)">Sumar las ecuaciones → dividir → comprobar</button>
+      <button onclick="elegir(this)">Igualar ambas ecuaciones → graficar</button>
+    </div>
+    <div class="feedback" id="fb3e"></div>
+  </div>
+
+  <!-- 3.6 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 6</span><h4>Igualación</h4></div>
+    <div class="planteamiento">De <em>y = 2x</em> y <em>y = x + 3</em>, iguala: <em>2x = x + 3</em>. ¿Cuánto vale x?</div>
+    <input class="input-num" id="r3f" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r3f',3,'fb3f','Correcto. 2x - x = 3 → x = 3 (y = 6).')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p3f')">Pista</button>
+    <div class="feedback info" id="p3f" style="display:none">Pasa la x restando: 2x - x = 3.</div>
+    <div class="feedback" id="fb3f"></div>
+  </div>
+
+  <!-- 3.7 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 7</span><h4>Plan de pelea (gasto del equipo)</h4></div>
+    <div class="planteamiento">2 vendas y 1 bucal cuestan 8 (<em>2x + y = 8</em>); 1 venda y 1 bucal cuestan 5 (<em>x + y = 5</em>). Por reducción, ¿cuánto cuesta una venda (x)?</div>
+    <input class="input-num" id="r3g" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r3g',3,'fb3g','Exacto. Restando: x = 3.')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p3g')">Pista</button>
+    <div class="feedback info" id="p3g" style="display:none">(2x+y)-(x+y) = 8-5 → x = 3.</div>
+    <div class="feedback" id="fb3g"></div>
+  </div>
+
+  <!-- 3.8 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 8</span><h4>Termina el problema</h4></div>
+    <div class="planteamiento">Ya sabes que la venda cuesta x=3 y que <em>x + y = 5</em>. ¿Cuánto cuesta el bucal (y)?</div>
+    <input class="input-num" id="r3h" placeholder="y = ?">
+    <button class="btn-accion" onclick="checkNum('r3h',2,'fb3h','Correcto. 5 - 3 = 2.')">Verificar</button>
+    <div class="feedback" id="fb3h"></div>
+  </div>
+
+  <!-- 3.9 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 9</span><h4>Compara estrategias</h4></div>
+    <div class="planteamiento">Explica con tus palabras: ¿en qué tipo de sistema prefieres usar Reducción y en cuál Sustitución? Da una razón ligada a "qué es más rápido".</div>
+    <p class="instruccion">Respuesta abierta. Justifica tu elección como justificarías un plan de pelea.</p>
+    <textarea class="resp-abierta" id="r3i" placeholder="Prefiero reducción cuando... y sustitución cuando..."></textarea>
+    <button class="btn-accion" onclick="guardarAbierta('r3i','fb3i')">Registrar</button>
+    <div class="feedback" id="fb3i"></div>
+  </div>
+
+  <!-- 3.10 -->
+  <div class="actividad">
+    <div class="act-top"><span class="round-badge">Ejercicio 10</span><h4>Combate de campeonato</h4></div>
+    <div class="planteamiento">Resuelve por el método que prefieras: <em>2x + y = 11</em> y <em>x - y = 1</em>. Encuentra x.</div>
+    <input class="input-num" id="r3j" placeholder="x = ?">
+    <button class="btn-accion" onclick="checkNum('r3j',4,'fb3j','¡Campeón! Sumando: 3x=12, x=4 (y=3).')">Verificar</button>
+    <button class="btn-pista" onclick="toggle('p3j')">Pista</button>
+    <div class="feedback info" id="p3j" style="display:none">Suma ambas ecuaciones: (2x+y)+(x-y)=11+1 → 3x=12.</div>
+    <div class="feedback" id="fb3j"></div>
+  </div>
+
+  <div class="reflexion">
+    <h4>Esquina del descanso · Reflexión final</h4>
+    <p>Ya conoces tres estilos para resolver. Igual que un boxeador completo cambia de estilo según el rival, tú ahora eliges el método según el problema. ¿Cuál se te dio más natural y por qué? Escríbelo: ese es tu estilo base.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Guía didáctica de Matemáticas · Ecuaciones lineales y sistemas 2x2 · Diseño activo, constructivista y basado en problemas.</p>
+  <p style="margin-top:6px;">Sitio web compartible · Compatible con GitHub Pages.</p>
+</footer>
+
+<script>
+  // Navegación entre temas
+  const botones = document.querySelectorAll('#nav button');
+  const temas = document.querySelectorAll('.tema');
+  botones.forEach(b=>{
+    b.addEventListener('click',()=>{
+      botones.forEach(x=>x.classList.remove('activo'));
+      temas.forEach(t=>t.classList.remove('visible'));
+      b.classList.add('activo');
+      document.getElementById(b.dataset.tema).classList.add('visible');
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+  });
+
+  // Progreso (cuenta verificaciones correctas)
+  const totalItems = 30;
+  const completados = new Set();
+  function avanzar(id){
+    completados.add(id);
+    const pct = Math.min(100, Math.round(completados.size/totalItems*100));
+    document.getElementById('barraInner').style.width = pct + '%';
+  }
+
+  // Verificar respuesta numérica
+  function checkNum(id, correcto, fbId, msgOk){
+    const val = parseFloat(document.getElementById(id).value.replace(',','.'));
+    const fb = document.getElementById(fbId);
+    if(isNaN(val)){
+      fb.className='feedback no'; fb.textContent='Escribe un número antes de verificar.'; return;
+    }
+    if(val === correcto){
+      fb.className='feedback ok'; fb.textContent='✔ ' + msgOk;
+      avanzar(id);
+    } else {
+      fb.className='feedback no'; fb.textContent='Aún no. Revisa la pista y vuelve a intentarlo con calma.';
+    }
+  }
+
+  // Opción múltiple
+  function elegir(btn){
+    const cont = btn.parentElement;
+    const fb = cont.nextElementSibling;
+    cont.querySelectorAll('button').forEach(x=>{x.disabled=false;});
+    const correcta = btn.hasAttribute('data-ok');
+    if(correcta){
+      btn.classList.add('correcto');
+      fb.className='feedback ok'; fb.textContent='✔ Respuesta correcta. Buen ojo.';
+      avanzar(cont);
+    } else {
+      btn.classList.add('incorrecto');
+      fb.className='feedback no'; fb.textContent='Esa no. Lee de nuevo el planteamiento y prueba otra opción.';
+    }
+  }
+
+  // Respuesta abierta
+  function guardarAbierta(id, fbId){
+    const val = document.getElementById(id).value.trim();
+    const fb = document.getElementById(fbId);
+    if(val.length < 8){
+      fb.className='feedback no'; fb.textContent='Desarrolla un poco más tu idea antes de registrar.'; return;
+    }
+    fb.className='feedback ok'; fb.textContent='✔ Idea registrada. No hay una única respuesta correcta: lo valioso es tu razonamiento.';
+    avanzar(id);
+  }
+
+  // Mostrar / ocultar pistas
+  function toggle(id){
+    const el = document.getElementById(id);
+    el.style.display = (el.style.display==='none' || !el.style.display) ? 'block' : 'none';
+  }
+</script>
+</body>
+</html>
