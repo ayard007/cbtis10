@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diseño de bases de datos ofimáticas · Unidad 1.1 · CBETIS No. 10</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --canvas:#F3F6FB;
+    --surface:#FFFFFF;
+    --surface-2:#FAFCFE;
+    --ink:#16233D;
+    --ink-soft:#3C4A6B;
+    --muted:#6B7890;
+    --line:#DCE4EF;
+    --line-strong:#C3CEDE;
+    --teal:#0E7C8A;
+    --teal-dark:#0A5B66;
+    --teal-soft:#E0F0F2;
+    --amber:#D6902A;
+    --amber-soft:#FBEFD6;
+    --ok:#1F7A4D;
+    --ok-soft:#E3F4EB;
+    --bad:#B23A48;
+    --bad-soft:#FBE7E9;
+    --radius:14px;
+    --radius-sm:9px;
+    --shadow:0 1px 2px rgba(22,35,61,.06), 0 8px 24px rgba(22,35,61,.06);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--canvas);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:"IBM Plex Mono", ui-monospace, monospace}
+  h1,h2,h3,h4{font-family:"Space Grotesk", system-ui, sans-serif; color:var(--ink); line-height:1.15; margin:0 0 .5em}
+  h2{font-size:1.72rem; font-weight:700; letter-spacing:-.01em}
+  h3{font-size:1.22rem; font-weight:600; margin-top:1.6em}
+  h4{font-size:1.02rem; font-weight:600}
+  p{margin:0 0 1em}
+  a{color:var(--teal-dark)}
+  strong{font-weight:600; color:var(--ink)}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(1200px 400px at 80% -10%, rgba(14,124,138,.18), transparent 60%),
+      linear-gradient(160deg, #16233D 0%, #1D3357 60%, #123244 100%);
+    color:#EAF1F8;
+    padding:34px 22px 46px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-inner{max-width:1120px; margin:0 auto}
+  .brandbar{display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:30px}
+  .crest{width:66px; height:66px; flex:0 0 auto; filter:drop-shadow(0 3px 8px rgba(0,0,0,.28))}
+  .brandmeta{font-size:.82rem; color:#B7C6DA; line-height:1.4}
+  .brandmeta strong{color:#EAF1F8; display:block; font-family:"Space Grotesk"; letter-spacing:.02em; font-size:.92rem}
+  .hero h1{
+    color:#FFFFFF; font-size:clamp(1.9rem, 4.4vw, 3.05rem); font-weight:700;
+    letter-spacing:-.02em; max-width:16ch; margin-bottom:.35em;
+  }
+  .hero .eyebrow{
+    display:inline-block; font-family:"IBM Plex Mono"; font-size:.78rem; font-weight:600;
+    color:#7FD6DF; border:1px solid rgba(127,214,223,.4); border-radius:999px;
+    padding:5px 13px; margin-bottom:20px; letter-spacing:.03em;
+  }
+  .hero .lede{color:#C6D4E6; font-size:1.06rem; max-width:60ch; margin-bottom:0}
+  .hero-figure{margin-top:34px}
+
+  /* animated mini-schema (hero visual) */
+  .schema-svg .tbl{opacity:0; transform:translateY(10px)}
+  .schema-svg .lnk{stroke-dasharray:200; stroke-dashoffset:200}
+  .go .schema-svg .tbl{animation:rise .7s cubic-bezier(.2,.7,.3,1) forwards}
+  .go .schema-svg .t1{animation-delay:.15s}
+  .go .schema-svg .t2{animation-delay:.4s}
+  .go .schema-svg .lnk{animation:draw .8s ease .75s forwards}
+  .go .schema-svg .keydot{animation:pulse 2.4s ease 1.6s infinite}
+  @keyframes rise{to{opacity:1; transform:translateY(0)}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  /* ---------- LAYOUT ---------- */
+  .layout{max-width:1120px; margin:0 auto; display:grid; grid-template-columns:248px 1fr; gap:34px; padding:0 22px 80px}
+  .sidebar{position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto; padding:28px 4px 28px 0}
+  .sidebar h4{font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:18px 0 8px 10px; font-family:"IBM Plex Mono"; font-weight:600}
+  .nav a{
+    display:block; padding:7px 12px; border-radius:8px; color:var(--ink-soft);
+    text-decoration:none; font-size:.92rem; border-left:2px solid transparent;
+  }
+  .nav a:hover{background:var(--teal-soft); color:var(--teal-dark)}
+  .nav a.active{background:var(--teal-soft); color:var(--teal-dark); border-left-color:var(--teal); font-weight:600}
+  .main{padding-top:34px; min-width:0}
+
+  section{margin-bottom:46px; scroll-margin-top:20px}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:26px 28px}
+  .card + .card{margin-top:18px}
+  .sectlabel{font-family:"IBM Plex Mono"; font-size:.76rem; font-weight:600; color:var(--teal); letter-spacing:.04em; margin-bottom:6px}
+
+  ul,ol{margin:0 0 1em; padding-left:1.3em}
+  li{margin-bottom:.4em}
+
+  .callout{border:1px solid var(--line); border-left:4px solid var(--teal); background:var(--surface-2); border-radius:var(--radius-sm); padding:16px 20px; margin:18px 0}
+  .callout.amber{border-left-color:var(--amber); background:var(--amber-soft)}
+  .callout.amber .co-title{color:#8A5A12}
+  .co-title{font-family:"Space Grotesk"; font-weight:600; font-size:.98rem; margin-bottom:4px; display:flex; align-items:center; gap:8px}
+  .callout p:last-child{margin-bottom:0}
+
+  .defgrid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0}
+  .def{border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px; background:var(--surface-2)}
+  .def dt{font-family:"Space Grotesk"; font-weight:600; color:var(--teal-dark); margin-bottom:3px}
+  .def dd{margin:0; font-size:.95rem; color:var(--ink-soft)}
+
+  .figwrap{margin:22px 0; text-align:center}
+  .figwrap svg{max-width:100%; height:auto; border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--surface); padding:10px}
+  figcaption{font-size:.85rem; color:var(--muted); margin-top:8px; font-style:italic}
+
+  /* data table demo */
+  table.demo{border-collapse:collapse; width:100%; margin:16px 0; font-size:.92rem}
+  table.demo th, table.demo td{border:1px solid var(--line-strong); padding:8px 12px; text-align:left}
+  table.demo th{background:var(--ink); color:#fff; font-family:"Space Grotesk"; font-weight:600}
+  table.demo caption{caption-side:top; text-align:left; font-family:"IBM Plex Mono"; font-size:.8rem; color:var(--muted); margin-bottom:6px}
+  table.demo tr:nth-child(even) td{background:var(--surface-2)}
+  .pk{color:var(--amber); font-weight:700}
+
+  /* ---------- GAMES ---------- */
+  .game{border:1px solid var(--line); border-top:4px solid var(--teal); border-radius:var(--radius); background:var(--surface); box-shadow:var(--shadow); padding:24px 26px; margin:26px 0}
+  .game.g-amber{border-top-color:var(--amber)}
+  .game-head{display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px}
+  .game-tag{font-family:"IBM Plex Mono"; font-size:.72rem; font-weight:600; color:#fff; background:var(--teal); padding:3px 9px; border-radius:6px; letter-spacing:.03em}
+  .g-amber .game-tag{background:var(--amber)}
+  .game h3{margin-top:0}
+  .instr{font-size:.92rem; color:var(--ink-soft)}
+  .scoreline{font-family:"IBM Plex Mono"; font-size:.85rem; color:var(--muted); margin-left:auto}
+  .scoreline b{color:var(--teal-dark)}
+
+  .btn{
+    font-family:"IBM Plex Sans"; font-size:.92rem; font-weight:600; cursor:pointer;
+    border:1px solid var(--teal); background:var(--teal); color:#fff;
+    padding:9px 17px; border-radius:9px; transition:filter .15s, transform .05s;
+  }
+  .btn:hover{filter:brightness(1.07)}
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent; color:var(--teal-dark)}
+  .btn.small{padding:6px 12px; font-size:.85rem}
+  .btn:focus-visible, a:focus-visible, select:focus-visible, .opt:focus-visible{outline:3px solid #7FD6DF; outline-offset:2px}
+
+  /* Game 1: clasificar */
+  .g1-list{display:flex; flex-direction:column; gap:10px; margin:16px 0}
+  .g1-item{display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:var(--radius-sm); padding:11px 14px; background:var(--surface-2); flex-wrap:wrap}
+  .g1-item .txt{flex:1 1 200px; font-size:.95rem}
+  .g1-item .opt{border:1px solid var(--line-strong); background:#fff; color:var(--ink-soft); padding:6px 12px; border-radius:7px; font-size:.85rem; font-weight:600; cursor:pointer; font-family:"IBM Plex Sans"}
+  .g1-item .opt:hover{border-color:var(--teal); color:var(--teal-dark)}
+  .g1-item.correct{border-color:var(--ok); background:var(--ok-soft)}
+  .g1-item.wrong{border-color:var(--bad); background:var(--bad-soft)}
+  .g1-item.correct .opts, .g1-item.wrong .opts{display:none}
+  .verdict{font-size:.85rem; font-weight:600; display:none}
+  .g1-item.correct .verdict{display:inline; color:var(--ok)}
+  .g1-item.wrong .verdict{display:inline; color:var(--bad)}
+
+  /* Game 2: anatomía (selects) */
+  .g2-row{display:flex; align-items:center; gap:12px; margin:10px 0; flex-wrap:wrap}
+  .marker{display:inline-flex; width:30px; height:30px; align-items:center; justify-content:center; border-radius:50%; background:var(--amber); color:#fff; font-family:"Space Grotesk"; font-weight:700; flex:0 0 auto}
+  select{font-family:"IBM Plex Sans"; font-size:.9rem; padding:7px 10px; border:1px solid var(--line-strong); border-radius:7px; background:#fff; color:var(--ink); min-width:200px}
+  .g2-row.correct select{border-color:var(--ok); background:var(--ok-soft)}
+  .g2-row.wrong select{border-color:var(--bad); background:var(--bad-soft)}
+
+  /* Game 5 / relaciones */
+  .rel-item{border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px; margin:12px 0; background:var(--surface-2)}
+  .rel-q{font-size:.95rem; margin-bottom:10px}
+  .chips{display:flex; gap:8px; flex-wrap:wrap}
+  .chip{border:1px solid var(--line-strong); background:#fff; padding:7px 14px; border-radius:999px; cursor:pointer; font-weight:600; font-size:.85rem; font-family:"IBM Plex Mono"; color:var(--ink-soft)}
+  .chip:hover{border-color:var(--teal); color:var(--teal-dark)}
+  .chip.sel{background:var(--teal); border-color:var(--teal); color:#fff}
+  .rel-item.correct{border-color:var(--ok); background:var(--ok-soft)}
+  .rel-item.wrong{border-color:var(--bad); background:var(--bad-soft)}
+  .rel-fb{font-size:.85rem; margin-top:8px; display:none}
+  .rel-item.correct .rel-fb, .rel-item.wrong .rel-fb{display:block}
+
+  /* Game 6: ordenar */
+  .order-list{list-style:none; padding:0; margin:16px 0; counter-reset:none}
+  .order-item{display:flex; align-items:center; gap:12px; border:1px solid var(--line); border-radius:var(--radius-sm); padding:11px 14px; margin-bottom:8px; background:var(--surface-2)}
+  .order-item .step-txt{flex:1; font-size:.93rem}
+  .order-item .arrows{display:flex; flex-direction:column; gap:2px}
+  .arrows button{border:1px solid var(--line-strong); background:#fff; width:26px; height:20px; border-radius:5px; cursor:pointer; line-height:1; padding:0; color:var(--ink-soft); font-size:.7rem}
+  .arrows button:hover{border-color:var(--teal); color:var(--teal-dark)}
+  .order-item.ok{border-color:var(--ok); background:var(--ok-soft)}
+
+  /* Game 7: relacionar columnas */
+  .match-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0}
+  .match-col{display:flex; flex-direction:column; gap:9px}
+  .match-btn{text-align:left; border:1px solid var(--line-strong); background:#fff; padding:10px 13px; border-radius:9px; cursor:pointer; font-family:"IBM Plex Sans"; font-size:.9rem; color:var(--ink); transition:.12s}
+  .match-btn:hover:not(:disabled){border-color:var(--teal)}
+  .match-btn.sel{border-color:var(--teal); background:var(--teal-soft); font-weight:600}
+  .match-btn.done{border-color:var(--ok); background:var(--ok-soft); color:var(--ok); cursor:default}
+  .match-btn.flash-bad{border-color:var(--bad); background:var(--bad-soft)}
+  .match-btn:disabled{opacity:.7}
+
+  /* quiz */
+  .quiz-q{margin-bottom:22px}
+  .quiz-q .qtext{font-weight:600; margin-bottom:10px; font-family:"Space Grotesk"}
+  .quiz-q .qnum{color:var(--teal); margin-right:6px}
+  .options{display:flex; flex-direction:column; gap:8px}
+  .opt-radio{display:flex; align-items:flex-start; gap:10px; border:1px solid var(--line-strong); border-radius:9px; padding:10px 13px; cursor:pointer; font-size:.94rem; background:#fff}
+  .opt-radio:hover{border-color:var(--teal)}
+  .opt-radio input{margin-top:4px; accent-color:var(--teal)}
+  .opt-radio.correct{border-color:var(--ok); background:var(--ok-soft)}
+  .opt-radio.wrong{border-color:var(--bad); background:var(--bad-soft)}
+  .quiz-result{display:none; margin-top:18px; padding:20px; border-radius:var(--radius); text-align:center}
+  .quiz-result.show{display:block}
+  .quiz-score{font-family:"Space Grotesk"; font-size:2.4rem; font-weight:700; color:var(--teal-dark)}
+  .quiz-bar{height:12px; background:var(--line); border-radius:999px; overflow:hidden; margin:14px auto; max-width:320px}
+  .quiz-bar span{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--teal),var(--amber)); transition:width .8s ease}
+
+  /* steps / activities */
+  .steps{counter-reset:st; list-style:none; padding:0; margin:16px 0}
+  .steps li{counter-increment:st; position:relative; padding:2px 0 12px 46px; margin:0}
+  .steps li::before{content:counter(st); position:absolute; left:0; top:0; width:32px; height:32px; background:var(--teal); color:#fff; border-radius:9px; display:flex; align-items:center; justify-content:center; font-family:"Space Grotesk"; font-weight:700; font-size:.95rem}
+  .steps li strong{display:block; margin-bottom:2px}
+
+  .activity{border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin:22px 0}
+  .activity-head{background:var(--ink); color:#fff; padding:16px 24px; display:flex; align-items:center; gap:14px}
+  .activity-head .num{font-family:"Space Grotesk"; font-weight:700; font-size:1.5rem; color:var(--amber)}
+  .activity-head h3{color:#fff; margin:0; font-size:1.12rem}
+  .activity-head .up{margin-left:auto; font-family:"IBM Plex Mono"; font-size:.72rem; background:rgba(255,255,255,.12); padding:5px 11px; border-radius:999px; color:#D9E4F1}
+  .activity-body{padding:22px 24px}
+
+  /* planner */
+  .planner label{display:block; font-family:"Space Grotesk"; font-weight:600; font-size:.95rem; margin:16px 0 6px}
+  .planner textarea{width:100%; min-height:74px; border:1px solid var(--line-strong); border-radius:9px; padding:11px 13px; font-family:"IBM Plex Sans"; font-size:.95rem; resize:vertical; color:var(--ink)}
+  .planner textarea:focus{outline:3px solid #7FD6DF; outline-offset:1px; border-color:var(--teal)}
+  .planner-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; align-items:center}
+  .saved-note{font-size:.85rem; color:var(--ok); font-weight:600; opacity:0; transition:opacity .3s}
+  .saved-note.show{opacity:1}
+
+  footer{border-top:1px solid var(--line); padding:26px 22px; text-align:center; color:var(--muted); font-size:.85rem}
+  footer .mono{color:var(--ink-soft)}
+
+  details.deploy{max-width:1120px; margin:0 auto 20px; padding:0 22px}
+  details.deploy summary{cursor:pointer; font-family:"Space Grotesk"; font-weight:600; color:var(--teal-dark); padding:12px 0}
+  details.deploy .card{margin-top:6px}
+  code{font-family:"IBM Plex Mono"; background:var(--teal-soft); color:var(--teal-dark); padding:1px 6px; border-radius:5px; font-size:.86em}
+
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr; gap:0}
+    .sidebar{position:sticky; top:0; height:auto; z-index:20; background:var(--canvas); border-bottom:1px solid var(--line); padding:10px 0; margin:0 -22px; padding-left:22px}
+    .sidebar h4{display:none}
+    .nav{display:flex; gap:6px; overflow-x:auto; padding-bottom:4px}
+    .nav a{white-space:nowrap; border-left:none; border-bottom:2px solid transparent; padding:8px 12px}
+    .nav a.active{border-left:none; border-bottom-color:var(--teal)}
+    .main{padding-top:24px}
+    .defgrid, .match-grid{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+    .schema-svg .tbl{opacity:1; transform:none}
+    .schema-svg .lnk{stroke-dashoffset:0}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="inicio">
+  <div class="hero-inner">
+    <div class="brandbar">
+      <!-- LOGO PLACEHOLDER: reemplaza este bloque <svg> por el logo oficial del CBETIS No. 10 -->
+      <svg class="crest" viewBox="0 0 100 100" role="img" aria-label="Escudo CBETIS No. 10 (marcador de posición)">
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1E9AA8"/><stop offset="1" stop-color="#0A5B66"/>
+          </linearGradient>
+        </defs>
+        <path d="M50 4 L88 18 V50 C88 74 70 90 50 96 C30 90 12 74 12 50 V18 Z" fill="url(#cg)" stroke="#EAF1F8" stroke-width="2.5"/>
+        <text x="50" y="44" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="19" font-weight="700" fill="#FFFFFF">CBETIS</text>
+        <text x="50" y="70" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="30" font-weight="700" fill="#FFDDA6">10</text>
+      </svg>
+      <div class="brandmeta">
+        <strong>CBETIS No. 10</strong>
+        Bachillerato Tecnológico · Ofimática<br>
+        Gestiona información mediante SMBD ofimáticos
+      </div>
+    </div>
+
+    <span class="eyebrow">UNIDAD 1 · INTRODUCCIÓN · TEMA 1.1</span>
+    <h1>Diseño de bases de datos ofimáticas</h1>
+    <p class="lede">Aprende a organizar la información como lo hacen los sistemas reales: en tablas conectadas por claves. En esta guía construirás, paso a paso y jugando, el diseño de tu propia base de datos.</p>
+
+    <div class="hero-figure">
+      <svg class="schema-svg" viewBox="0 0 560 190" width="560" role="img" aria-label="Diagrama de dos tablas relacionadas por una clave">
+        <!-- Tabla ALUMNOS -->
+        <g class="tbl t1">
+          <rect x="20" y="30" width="200" height="130" rx="8" fill="#FFFFFF" stroke="#0E7C8A" stroke-width="1.5"/>
+          <rect x="20" y="30" width="200" height="26" rx="8" fill="#16233D"/>
+          <rect x="20" y="44" width="200" height="12" fill="#16233D"/>
+          <text x="34" y="48" font-family="Space Grotesk" font-size="13" font-weight="700" fill="#fff">ALUMNOS</text>
+          <circle class="keydot" cx="36" cy="76" r="4" fill="#D6902A"/>
+          <text x="48" y="80" font-family="IBM Plex Mono" font-size="11" fill="#16233D">id_alumno (PK)</text>
+          <text x="34" y="104" font-family="IBM Plex Mono" font-size="11" fill="#3C4A6B">nombre</text>
+          <text x="34" y="128" font-family="IBM Plex Mono" font-size="11" fill="#3C4A6B">grupo</text>
+          <text x="34" y="152" font-family="IBM Plex Mono" font-size="11" fill="#3C4A6B">correo</text>
+        </g>
+        <!-- Tabla PRESTAMOS -->
+        <g class="tbl t2">
+          <rect x="340" y="30" width="200" height="130" rx="8" fill="#FFFFFF" stroke="#0E7C8A" stroke-width="1.5"/>
+          <rect x="340" y="30" width="200" height="26" rx="8" fill="#16233D"/>
+          <rect x="340" y="44" width="200" height="12" fill="#16233D"/>
+          <text x="354" y="48" font-family="Space Grotesk" font-size="13" font-weight="700" fill="#fff">PRESTAMOS</text>
+          <circle cx="356" cy="76" r="4" fill="#D6902A"/>
+          <text x="368" y="80" font-family="IBM Plex Mono" font-size="11" fill="#16233D">id_prestamo (PK)</text>
+          <circle cx="356" cy="100" r="4" fill="#0E7C8A"/>
+          <text x="368" y="104" font-family="IBM Plex Mono" font-size="11" fill="#16233D">id_alumno (FK)</text>
+          <text x="354" y="128" font-family="IBM Plex Mono" font-size="11" fill="#3C4A6B">libro</text>
+          <text x="354" y="152" font-family="IBM Plex Mono" font-size="11" fill="#3C4A6B">fecha</text>
+        </g>
+        <!-- Relación -->
+        <path class="lnk" d="M220 76 C275 76, 285 100, 340 100" fill="none" stroke="#D6902A" stroke-width="2"/>
+        <text x="256" y="70" font-family="IBM Plex Mono" font-size="10" fill="#8A5A12">1 : N</text>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<!-- ================= LAYOUT ================= -->
+<div class="layout">
+  <aside class="sidebar">
+    <nav class="nav" aria-label="Índice de la guía">
+      <h4>Contenido</h4>
+      <a href="#introduccion" class="active">Introducción</a>
+      <a href="#reto">El reto inicial</a>
+      <a href="#que-es">¿Qué es una base de datos?</a>
+      <a href="#smbd">Sistemas manejadores (SMBD)</a>
+      <a href="#componentes">Componentes de una tabla</a>
+      <a href="#tipos">Tipos de datos</a>
+      <a href="#claves">Claves primaria y foránea</a>
+      <a href="#relaciones">Relaciones entre tablas</a>
+      <a href="#proceso">Proceso de diseño</a>
+      <a href="#normalizacion">Normalización básica</a>
+      <h4>Actividades</h4>
+      <a href="#actividades">3 entregas en Classroom</a>
+      <a href="#quiz">Quiz de 5 preguntas</a>
+      <h4>Cierre</h4>
+      <a href="#reflexion">Reflexión y aplicación</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <!-- INTRODUCCIÓN -->
+    <section id="introduccion">
+      <div class="sectlabel">PRESENTACIÓN</div>
+      <h2>Introducción</h2>
+      <div class="card">
+        <p>Cada vez que la escuela consulta tu boleta, que una tienda revisa si hay existencia de un producto o que una aplicación recuerda tu usuario, hay una <strong>base de datos</strong> trabajando detrás. La información no está guardada al azar: está <strong>diseñada</strong>, organizada en estructuras que permiten guardarla, buscarla y actualizarla sin errores.</p>
+        <p>En esta guía no memorizarás definiciones sueltas. Vas a <strong>construir</strong> tu comprensión resolviendo un problema real, poniendo a prueba tus decisiones en siete juegos interactivos y, al final, diseñando la base de datos de un caso de tu propio entorno. Todo lo que aprendas aquí es directamente aplicable a tus clases de bachillerato y a tu formación técnica.</p>
+        <div class="callout">
+          <div class="co-title">Al terminar serás capaz de</div>
+          <ul style="margin-bottom:0">
+            <li>Distinguir entre <strong>dato</strong> e <strong>información</strong> y explicar para qué sirve un SMBD ofimático.</li>
+            <li>Identificar los componentes de una tabla: campos, registros, celdas y claves.</li>
+            <li>Elegir el <strong>tipo de dato</strong> y la <strong>clave primaria</strong> adecuados para cada campo.</li>
+            <li>Reconocer los tipos de <strong>relación</strong> (1:1, 1:N, N:M) y aplicar el proceso de diseño.</li>
+          </ul>
+        </div>
+        <div class="callout amber">
+          <div class="co-title">Metodología de trabajo</div>
+          <p style="margin-bottom:0">Esta guía sigue una <strong>pedagogía activa</strong>, un enfoque <strong>constructivista</strong> y el <strong>aprendizaje basado en problemas (ABP)</strong>: partirás de un problema concreto, formularás hipótesis, las verificarás con los juegos y llegarás a conclusiones que tú mismo construirás. El conocimiento no se recibe: se elabora.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RETO INICIAL (ABP) -->
+    <section id="reto">
+      <div class="sectlabel">SITUACIÓN PROBLEMA · ABP</div>
+      <h2>El reto inicial</h2>
+      <div class="card">
+        <p>El grupo de tu salón organizó una pequeña biblioteca con los libros que cada quien trajo. Al principio bastaba una libreta para anotar quién se llevaba qué. Tres meses después el desorden es total: hay libros anotados dos veces, nombres escritos de distintas formas para la misma persona, préstamos sin fecha de devolución y nadie sabe qué libros faltan.</p>
+        <div class="callout">
+          <div class="co-title">Pregunta que guiará toda la unidad</div>
+          <p style="margin-bottom:0"><strong>¿Cómo organizarías esa información para que nunca se repita, nunca se pierda y cualquiera pueda consultarla en segundos?</strong></p>
+        </div>
+        <p style="margin-bottom:0">Guarda tu primera respuesta en tu cuaderno. A lo largo de la guía volverás a ella y verás cómo tus ideas se transforman en un <strong>diseño de base de datos</strong> formal. Esa es la meta.</p>
+      </div>
+    </section>
+
+    <!-- QUÉ ES -->
+    <section id="que-es">
+      <div class="sectlabel">CONCEPTO CENTRAL</div>
+      <h2>¿Qué es una base de datos?</h2>
+      <div class="card">
+        <p>Una <strong>base de datos</strong> es un conjunto de información organizada de forma estructurada para que sea fácil de almacenar, buscar y actualizar. La palabra clave es <em>organizada</em>: no es cualquier montón de información, sino información ordenada según reglas.</p>
+        <p>Para entenderla, primero hay que separar dos ideas que suelen confundirse:</p>
+        <div class="defgrid">
+          <div class="def"><dt>Dato</dt><dd>Un hecho aislado, sin contexto. Por sí solo no dice mucho. Ejemplo: <span class="mono">18</span>, <span class="mono">"Ana"</span>, <span class="mono">2026-05-14</span>.</dd></div>
+          <div class="def"><dt>Información</dt><dd>Datos <em>procesados y relacionados</em> que adquieren significado y sirven para decidir. Ejemplo: <em>"Ana, de 18 años, devolvió el libro el 14 de mayo de 2026".</em></dd></div>
+        </div>
+        <p style="margin-bottom:0">Una base de datos guarda <strong>datos</strong>; al relacionarlos y consultarlos, obtenemos <strong>información</strong>. Comprueba si ya distingues uno de otro:</p>
+      </div>
+
+      <!-- JUEGO 1 -->
+      <div class="game" id="g1">
+        <div class="game-head">
+          <span class="game-tag">JUEGO 1 · CLASIFICA</span>
+          <span class="scoreline">Aciertos: <b id="g1-score">0</b> / 6</span>
+        </div>
+        <h3>¿Dato o información?</h3>
+        <p class="instr">Lee cada tarjeta y decide si contiene un simple <strong>dato</strong> o ya es <strong>información</strong> con significado.</p>
+        <div class="g1-list" id="g1-list"></div>
+        <button class="btn ghost small" onclick="g1Reset()">Reiniciar juego</button>
+      </div>
+    </section>
+
+    <!-- SMBD -->
+    <section id="smbd">
+      <div class="sectlabel">HERRAMIENTA</div>
+      <h2>Sistemas manejadores de bases de datos (SMBD)</h2>
+      <div class="card">
+        <p>Un <strong>sistema manejador de bases de datos ofimáticas (SMBD)</strong> es el programa que nos permite crear, guardar, consultar y modificar una base de datos sin programar desde cero. En el ámbito ofimático los más comunes son:</p>
+        <div class="defgrid">
+          <div class="def"><dt>Microsoft Access</dt><dd>Parte del paquete Office. Permite crear tablas, formularios, consultas e informes con un entorno visual.</dd></div>
+          <div class="def"><dt>LibreOffice Base</dt><dd>Alternativa gratuita y de código abierto, con funciones equivalentes a las de Access.</dd></div>
+        </div>
+        <p>Ambos trabajan con el <strong>modelo relacional</strong>: la información se guarda en <strong>tablas</strong> que pueden conectarse entre sí. Este es el modelo que usarás en tus clases y el que estudiaremos aquí.</p>
+        <div class="callout">
+          <div class="co-title">Ofimática, en contexto</div>
+          <p style="margin-bottom:0">"Ofimática" viene de <em>oficina</em> + <em>informática</em>: son las herramientas digitales para el trabajo de oficina. Un SMBD ofimático está pensado para que una persona, sin ser programadora, gestione la información de una escuela, un negocio o un proyecto.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPONENTES -->
+    <section id="componentes">
+      <div class="sectlabel">ESTRUCTURA</div>
+      <h2>Componentes de una tabla</h2>
+      <div class="card">
+        <p>La tabla es la pieza fundamental de una base de datos relacional. Se parece a una cuadrícula, pero cada parte tiene un nombre técnico:</p>
+        <div class="defgrid">
+          <div class="def"><dt>Tabla</dt><dd>Conjunto de datos sobre un mismo tema (por ejemplo, ALUMNOS).</dd></div>
+          <div class="def"><dt>Campo (columna)</dt><dd>Cada característica que se guarda: nombre, grupo, correo. Todos los registros comparten los mismos campos.</dd></div>
+          <div class="def"><dt>Registro (fila)</dt><dd>Toda la información de un solo elemento: un alumno completo.</dd></div>
+          <div class="def"><dt>Celda / dato</dt><dd>El cruce de un campo con un registro: un valor concreto.</dd></div>
+        </div>
+        <table class="demo">
+          <caption>Tabla: ALUMNOS</caption>
+          <thead><tr><th>id_alumno</th><th>nombre</th><th>grupo</th><th>correo</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Ana Torres</td><td>3-A</td><td>ana@correo.mx</td></tr>
+            <tr><td>2</td><td>Luis Mena</td><td>3-A</td><td>luis@correo.mx</td></tr>
+            <tr><td>3</td><td>Sara Ruiz</td><td>3-B</td><td>sara@correo.mx</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-bottom:0">La columna <span class="mono">nombre</span> es un <strong>campo</strong>; la fila de Ana Torres es un <strong>registro</strong>; la palabra <span class="mono">3-A</span> en la fila de Luis es una <strong>celda</strong>. Ahora identifícalos tú:</p>
+      </div>
+
+      <!-- JUEGO 2 -->
+      <div class="game" id="g2">
+        <div class="game-head">
+          <span class="game-tag">JUEGO 2 · IDENTIFICA</span>
+          <span class="scoreline">Aciertos: <b id="g2-score">–</b> / 4</span>
+        </div>
+        <h3>Anatomía de la tabla</h3>
+        <p class="instr">A cada marcador le corresponde un componente. Elige el nombre correcto en cada lista y presiona <strong>Verificar</strong>.</p>
+        <table class="demo" style="margin-top:14px">
+          <caption>Tabla: PRODUCTOS</caption>
+          <thead><tr><th><span class="marker" style="width:22px;height:22px;font-size:.8rem">A</span> id_producto</th><th>producto</th><th>precio</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Cuaderno</td><td><span class="marker" style="width:22px;height:22px;font-size:.8rem">D</span> 45</td></tr>
+            <tr style="outline:2px solid var(--amber); outline-offset:-2px"><td>2</td><td>Lápiz</td><td>8</td></tr>
+          </tbody>
+        </table>
+        <div class="g2-row" data-answer="campo"><span class="marker">A</span> La columna encabezada por <b class="mono" style="margin:0 4px">id_producto</b> es un…
+          <select><option value="">— elige —</option><option value="tabla">Tabla</option><option value="campo">Campo</option><option value="registro">Registro</option><option value="celda">Celda</option></select>
+        </div>
+        <div class="g2-row" data-answer="registro"><span class="marker" style="background:var(--amber)">B</span> La fila completa de "Lápiz" (resaltada) es un…
+          <select><option value="">— elige —</option><option value="tabla">Tabla</option><option value="campo">Campo</option><option value="registro">Registro</option><option value="celda">Celda</option></select>
+        </div>
+        <div class="g2-row" data-answer="tabla"><span class="marker">C</span> Todo el conjunto llamado PRODUCTOS es una…
+          <select><option value="">— elige —</option><option value="tabla">Tabla</option><option value="campo">Campo</option><option value="registro">Registro</option><option value="celda">Celda</option></select>
+        </div>
+        <div class="g2-row" data-answer="celda"><span class="marker">D</span> El valor <b class="mono" style="margin:0 4px">45</b> aislado es una…
+          <select><option value="">— elige —</option><option value="tabla">Tabla</option><option value="campo">Campo</option><option value="registro">Registro</option><option value="celda">Celda</option></select>
+        </div>
+        <div style="margin-top:14px; display:flex; gap:10px">
+          <button class="btn small" onclick="g2Check()">Verificar</button>
+          <button class="btn ghost small" onclick="g2Reset()">Reiniciar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIPOS DE DATOS -->
+    <section id="tipos">
+      <div class="sectlabel">DEFINICIÓN DE CAMPOS</div>
+      <h2>Tipos de datos</h2>
+      <div class="card">
+        <p>Al diseñar cada campo debemos indicar qué <strong>tipo de dato</strong> almacenará. Esto obliga al sistema a aceptar solo valores válidos: si un campo es de tipo Fecha, no permitirá escribir "casa". Los tipos más usados en un SMBD ofimático son:</p>
+        <div class="defgrid">
+          <div class="def"><dt>Texto corto</dt><dd>Palabras y frases: nombres, direcciones. También datos como teléfonos que no se operan matemáticamente.</dd></div>
+          <div class="def"><dt>Número</dt><dd>Cantidades con las que se puede calcular: edad, cantidad en existencia.</dd></div>
+          <div class="def"><dt>Fecha / Hora</dt><dd>Fechas y horas: fecha de nacimiento, fecha de préstamo.</dd></div>
+          <div class="def"><dt>Sí / No (booleano)</dt><dd>Valores de dos estados: ¿pagado?, ¿activo?, ¿entregado?</dd></div>
+          <div class="def"><dt>Moneda</dt><dd>Valores monetarios con formato de dinero: precio, total.</dd></div>
+          <div class="def"><dt>Autonumérico</dt><dd>Número que el sistema asigna solo, sin repetirse. Ideal para claves primarias.</dd></div>
+        </div>
+        <div class="callout amber">
+          <div class="co-title">Regla práctica</div>
+          <p style="margin-bottom:0">Un número de teléfono se guarda como <strong>Texto</strong>, no como Número: nunca lo sumamos ni restamos, y puede empezar con cero. Elige el tipo por el <em>uso</em> del dato, no solo por su apariencia.</p>
+        </div>
+      </div>
+
+      <!-- JUEGO 3 -->
+      <div class="game g-amber" id="g3">
+        <div class="game-head">
+          <span class="game-tag">JUEGO 3 · ASIGNA</span>
+          <span class="scoreline">Aciertos: <b id="g3-score">–</b> / 6</span>
+        </div>
+        <h3>Asigna el tipo de dato</h3>
+        <p class="instr">Estás diseñando la tabla ALUMNOS. Elige el tipo de dato más adecuado para cada campo.</p>
+        <div id="g3-list" style="margin-top:14px"></div>
+        <div style="margin-top:14px; display:flex; gap:10px">
+          <button class="btn small" onclick="g3Check()">Verificar</button>
+          <button class="btn ghost small" onclick="g3Reset()">Reiniciar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLAVES -->
+    <section id="claves">
+      <div class="sectlabel">IDENTIDAD Y CONEXIÓN</div>
+      <h2>Claves: primaria y foránea</h2>
+      <div class="card">
+        <p>Para que no existan registros duplicados ni confusiones, cada tabla necesita una forma de identificar sin ambigüedad a cada elemento. Ahí entran las claves.</p>
+        <div class="defgrid">
+          <div class="def"><dt>Clave primaria (PK)</dt><dd>Campo que identifica de forma <strong>única</strong> a cada registro. No se repite y no puede quedar vacío. Ejemplo: <span class="mono">id_alumno</span>.</dd></div>
+          <div class="def"><dt>Clave foránea (FK)</dt><dd>Campo que <strong>conecta</strong> una tabla con la clave primaria de otra. Así se relacionan las tablas. Ejemplo: <span class="mono">id_alumno</span> dentro de PRESTAMOS.</dd></div>
+        </div>
+        <p style="margin-bottom:0">Una buena clave primaria es única, estable y nunca cambia. Por eso el nombre no sirve (dos personas pueden llamarse igual) y suele usarse un campo <strong>Autonumérico</strong>. Practica eligiendo la mejor:</p>
+      </div>
+
+      <!-- JUEGO 4 -->
+      <div class="game" id="g4">
+        <div class="game-head">
+          <span class="game-tag">JUEGO 4 · DECIDE</span>
+          <span class="scoreline">Aciertos: <b id="g4-score">0</b> / 3</span>
+        </div>
+        <h3>Detective de la clave primaria</h3>
+        <p class="instr">Para cada tabla, elige el campo que mejor funciona como clave primaria y observa la explicación.</p>
+        <div id="g4-list" style="margin-top:14px"></div>
+        <button class="btn ghost small" onclick="g4Reset()" style="margin-top:8px">Reiniciar juego</button>
+      </div>
+    </section>
+
+    <!-- RELACIONES -->
+    <section id="relaciones">
+      <div class="sectlabel">MODELO RELACIONAL</div>
+      <h2>Relaciones entre tablas</h2>
+      <div class="card">
+        <p>La gran ventaja del modelo relacional es dividir la información en varias tablas y <strong>conectarlas</strong>, evitando repetir datos. Existen tres tipos de relación según cuántos registros de una tabla se asocian con cuántos de la otra:</p>
+        <div class="figwrap">
+          <svg viewBox="0 0 560 150" width="560" role="img" aria-label="Tres tipos de relación: uno a uno, uno a muchos, muchos a muchos">
+            <!-- 1:1 -->
+            <text x="80" y="22" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="700" fill="#16233D">1 : 1</text>
+            <circle cx="45" cy="70" r="12" fill="#0E7C8A"/><circle cx="115" cy="70" r="12" fill="#D6902A"/>
+            <line x1="57" y1="70" x2="103" y2="70" stroke="#3C4A6B" stroke-width="2"/>
+            <text x="80" y="110" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#6B7890">Un alumno · una</text>
+            <text x="80" y="123" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#6B7890">credencial</text>
+            <!-- 1:N -->
+            <text x="280" y="22" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="700" fill="#16233D">1 : N</text>
+            <circle cx="240" cy="70" r="12" fill="#0E7C8A"/>
+            <circle cx="315" cy="45" r="9" fill="#D6902A"/><circle cx="322" cy="70" r="9" fill="#D6902A"/><circle cx="315" cy="95" r="9" fill="#D6902A"/>
+            <line x1="252" y1="70" x2="306" y2="47" stroke="#3C4A6B" stroke-width="2"/>
+            <line x1="252" y1="70" x2="311" y2="70" stroke="#3C4A6B" stroke-width="2"/>
+            <line x1="252" y1="70" x2="306" y2="93" stroke="#3C4A6B" stroke-width="2"/>
+            <text x="280" y="123" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#6B7890">Un grupo · muchos alumnos</text>
+            <!-- N:M -->
+            <text x="470" y="22" text-anchor="middle" font-family="Space Grotesk" font-size="14" font-weight="700" fill="#16233D">N : M</text>
+            <circle cx="435" cy="50" r="9" fill="#0E7C8A"/><circle cx="435" cy="90" r="9" fill="#0E7C8A"/>
+            <circle cx="505" cy="50" r="9" fill="#D6902A"/><circle cx="505" cy="90" r="9" fill="#D6902A"/>
+            <line x1="444" y1="50" x2="496" y2="50" stroke="#3C4A6B" stroke-width="1.5"/>
+            <line x1="444" y1="50" x2="496" y2="90" stroke="#3C4A6B" stroke-width="1.5"/>
+            <line x1="444" y1="90" x2="496" y2="50" stroke="#3C4A6B" stroke-width="1.5"/>
+            <line x1="444" y1="90" x2="496" y2="90" stroke="#3C4A6B" stroke-width="1.5"/>
+            <text x="470" y="123" text-anchor="middle" font-family="IBM Plex Sans" font-size="10" fill="#6B7890">Alumnos · materias</text>
+          </svg>
+          <figcaption>Los tres tipos de relación del modelo relacional.</figcaption>
+        </div>
+        <div class="defgrid">
+          <div class="def"><dt>Uno a uno (1:1)</dt><dd>Un registro se asocia con un único registro de la otra tabla. Ej.: un alumno tiene una sola credencial.</dd></div>
+          <div class="def"><dt>Uno a muchos (1:N)</dt><dd>Un registro se asocia con varios de la otra tabla. Ej.: un grupo tiene muchos alumnos. Es la más común.</dd></div>
+          <div class="def"><dt>Muchos a muchos (N:M)</dt><dd>Varios registros de una tabla se asocian con varios de la otra. Ej.: los alumnos cursan varias materias y cada materia tiene varios alumnos.</dd></div>
+        </div>
+      </div>
+
+      <!-- JUEGO 5 -->
+      <div class="game g-amber" id="g5">
+        <div class="game-head">
+          <span class="game-tag">JUEGO 5 · CLASIFICA</span>
+          <span class="scoreline">Aciertos: <b id="g5-score">0</b> / 4</span>
+        </div>
+        <h3>¿Qué tipo de relación es?</h3>
+        <p class="instr">Para cada situación, elige el tipo de relación correcto.</p>
+        <div id="g5-list" style="margin-top:8px"></div>
+        <button class="btn ghost small" onclick="g5Reset()" style="margin-top:6px">Reiniciar juego</button>
+      </div>
+    </section>
+
+    <!-- PROCESO DE DISEÑO -->
+    <section id="proceso">
+      <div class="sectlabel">METODOLOGÍA</div>
+      <h2>Proceso de diseño de una base de datos</h2>
+      <div class="card">
+        <p>Diseñar una base de datos no es empezar a escribir tablas al azar: es seguir un orden que va del problema a la estructura. Estos son los seis pasos que aplicarás en tu actividad práctica:</p>
+        <ol class="steps">
+          <li><strong>Identificar el propósito y los requisitos.</strong> ¿Qué información se necesita guardar y para qué? Aquí regresas al problema.</li>
+          <li><strong>Identificar las entidades (tablas).</strong> Cada "cosa" o "tema" sobre el que guardas datos se convierte en una tabla: ALUMNOS, LIBROS, PRESTAMOS.</li>
+          <li><strong>Definir los campos y sus tipos de datos.</strong> Qué características guardas de cada entidad y de qué tipo son.</li>
+          <li><strong>Establecer la clave primaria de cada tabla.</strong> El campo que identifica sin ambigüedad a cada registro.</li>
+          <li><strong>Definir las relaciones entre tablas.</strong> Conectas las tablas con claves foráneas y determinas si son 1:1, 1:N o N:M.</li>
+          <li><strong>Aplicar normalización y revisar.</strong> Eliminas datos repetidos y verificas que el diseño responda al problema original.</li>
+        </ol>
+        <p style="margin-bottom:0">Comprueba si ya dominas la secuencia:</p>
+      </div>
+
+      <!-- JUEGO 6 -->
+      <div class="game" id="g6">
+        <div class="game-head">
+          <span class="game-tag">JUEGO 6 · ORDENA</span>
+          <span class="scoreline" id="g6-score">Por verificar</span>
+        </div>
+        <h3>Ordena el proceso de diseño</h3>
+        <p class="instr">Los pasos están desordenados. Usa las flechas para colocarlos en la secuencia correcta y presiona <strong>Verificar orden</strong>.</p>
+        <ul class="order-list" id="g6-list"></ul>
+        <div style="display:flex; gap:10px">
+          <button class="btn small" onclick="g6Check()">Verificar orden</button>
+          <button class="btn ghost small" onclick="g6Reset()">Reiniciar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- NORMALIZACIÓN -->
+    <section id="normalizacion">
+      <div class="sectlabel">CALIDAD DEL DISEÑO</div>
+      <h2>Normalización básica</h2>
+      <div class="card">
+        <p>La <strong>normalización</strong> es el proceso de organizar los datos para <strong>evitar repeticiones e inconsistencias</strong>. Su idea básica en este nivel es sencilla: <em>cada dato debe guardarse una sola vez, en el lugar que le corresponde</em>.</p>
+        <p>Observa el problema. Esta tabla mezcla información de préstamos y de alumnos, repitiendo el nombre y el grupo cada vez:</p>
+        <table class="demo">
+          <caption>Diseño NO normalizado (con repeticiones)</caption>
+          <thead><tr><th>libro</th><th>fecha</th><th>alumno</th><th>grupo</th></tr></thead>
+          <tbody>
+            <tr><td>Física I</td><td>2026-05-02</td><td>Ana Torres</td><td>3-A</td></tr>
+            <tr><td>Química</td><td>2026-05-04</td><td>Ana Torres</td><td>3-A</td></tr>
+            <tr><td>Historia</td><td>2026-05-05</td><td>Ana Torres</td><td>3-A</td></tr>
+          </tbody>
+        </table>
+        <p>Si Ana cambia de grupo, habría que corregir varias filas y es fácil olvidar alguna. La solución: <strong>separar en dos tablas</strong> conectadas por una clave. El nombre y el grupo de Ana se guardan una sola vez en ALUMNOS; PRESTAMOS solo referencia su <span class="mono">id_alumno</span>.</p>
+        <div class="callout">
+          <div class="co-title">Señales de que falta normalizar</div>
+          <ul style="margin-bottom:0">
+            <li>El mismo dato aparece escrito muchas veces.</li>
+            <li>Al cambiar un dato hay que corregirlo en varios lugares.</li>
+            <li>Una misma columna mezcla temas distintos (datos del libro y del alumno juntos).</li>
+          </ul>
+        </div>
+        <p style="margin-bottom:0">Refuerza los términos clave de toda la unidad con el siguiente juego de relación.</p>
+      </div>
+
+      <!-- JUEGO 7 -->
+      <div class="game g-amber" id="g7">
+        <div class="game-head">
+          <span class="game-tag">JUEGO 7 · RELACIONA</span>
+          <span class="scoreline">Parejas: <b id="g7-score">0</b> / 6</span>
+        </div>
+        <h3>Memorama de conceptos</h3>
+        <p class="instr">Haz clic en un término de la izquierda y luego en su definición de la derecha. Si aciertas, la pareja queda fijada.</p>
+        <div class="match-grid">
+          <div class="match-col" id="g7-terms"></div>
+          <div class="match-col" id="g7-defs"></div>
+        </div>
+        <button class="btn ghost small" onclick="g7Reset()">Reiniciar juego</button>
+      </div>
+    </section>
+
+    <!-- ACTIVIDADES CLASSROOM -->
+    <section id="actividades">
+      <div class="sectlabel">EVALUACIÓN · ENTREGAS</div>
+      <h2>Actividades para Google Classroom</h2>
+      <p style="color:var(--ink-soft); margin-bottom:22px">Debes subir <strong>tres entregas</strong> a Classroom. Cada una fomenta un aprendizaje distinto: el diálogo, la aplicación práctica y la autoevaluación. Sigue las instrucciones paso a paso.</p>
+
+      <!-- Actividad 1: Foro -->
+      <div class="activity">
+        <div class="activity-head"><span class="num">1</span><h3>Foro de mediación: pregunta detonadora</h3><span class="up">Entregar en Classroom</span></div>
+        <div class="activity-body">
+          <p><strong>Propósito:</strong> construir conocimiento de forma colaborativa a través del diálogo y la reflexión crítica.</p>
+          <div class="callout amber">
+            <div class="co-title">Pregunta detonadora</div>
+            <p style="margin-bottom:0">En tu vida diaria interactúas con decenas de bases de datos sin darte cuenta: cuando la escuela consulta tu boleta, cuando una tienda revisa su inventario o cuando una clínica busca un expediente. <strong>¿Qué pasaría en tu escuela, tu comunidad o tu familia si toda esa información dejara de estar organizada en bases de datos y volviera a guardarse en hojas de papel sueltas?</strong> Argumenta al menos <strong>dos consecuencias concretas</strong> y describe <strong>una situación real de tu propio entorno</strong> donde una base de datos resolvería un problema de desorganización.</p>
+          </div>
+          <h4>Instrucciones paso a paso</h4>
+          <ol class="steps">
+            <li><strong>Reflexiona antes de escribir.</strong> Piensa en un caso real y cercano; no un ejemplo genérico de internet.</li>
+            <li><strong>Redacta tu aporte inicial</strong> (mínimo 5 renglones) respondiendo la pregunta: dos consecuencias + tu situación real.</li>
+            <li><strong>Publica en el foro de Classroom.</strong> Entra al tema, presiona "Responder" y pega tu texto.</li>
+            <li><strong>Dialoga:</strong> responde de forma respetuosa a <strong>por lo menos dos compañeros</strong>, aportando una idea nueva, un acuerdo argumentado o una pregunta.</li>
+            <li><strong>Cierra tu participación</strong> retomando algo que aprendiste de las respuestas de tus compañeros.</li>
+          </ol>
+          <div class="callout">
+            <div class="co-title">Ejemplo de aporte bien construido</div>
+            <p style="margin-bottom:0"><em>"En la tienda de mi tío no hay base de datos y anota las ventas en un cuaderno. Dos consecuencias: (1) no sabe qué producto se vende más y compra de más; (2) cuando busca cuánto le debe un cliente tarda mucho y a veces se equivoca. Una base de datos con tablas de PRODUCTOS y VENTAS resolvería esto porque…"</em></p>
+          </div>
+          <p style="margin-bottom:0; font-size:.9rem; color:var(--muted)"><strong>Se evalúa:</strong> claridad del argumento, uso de los conceptos de la unidad, calidad de las respuestas a tus compañeros.</p>
+        </div>
+      </div>
+
+      <!-- Actividad 2: Aplicada -->
+      <div class="activity">
+        <div class="activity-head"><span class="num">2</span><h3>Diseña la base de datos de tu propio entorno</h3><span class="up">Entregar en Classroom</span></div>
+        <div class="activity-body">
+          <p><strong>Propósito:</strong> aplicar el proceso de diseño a un problema real y verificable de tu vida académica, logrando un aprendizaje significativo.</p>
+          <div class="callout amber">
+            <div class="co-title">Requisito de autenticidad</div>
+            <p style="margin-bottom:0">Elige un caso <strong>real de tu propio entorno</strong> (tu salón, tu carrera técnica, un club, un negocio familiar, tu colección personal). Debes entregar una <strong>fotografía de tu diagrama dibujado a mano</strong> y una justificación con datos concretos de tu contexto. Este requisito garantiza que el diseño es tuyo y no copiado de otra fuente.</p>
+          </div>
+          <h4>Instrucciones paso a paso</h4>
+          <ol class="steps">
+            <li><strong>Elige y describe tu problema real</strong> en 2 o 3 renglones. Ejemplos: control de préstamo de material de tu taller, registro de asistencia de un club, inventario de tu colección.</li>
+            <li><strong>Identifica al menos DOS tablas (entidades)</strong> necesarias para resolverlo.</li>
+            <li><strong>Define los campos de cada tabla</strong> con su <strong>tipo de dato</strong>, en una pequeña tabla.</li>
+            <li><strong>Señala la clave primaria</strong> de cada tabla.</li>
+            <li><strong>Define al menos una relación</strong> entre tus tablas usando una clave foránea, e indica si es 1:1, 1:N o N:M.</li>
+            <li><strong>Dibuja tu diagrama a mano</strong> (tablas + línea de relación) y <strong>tómale una foto</strong>.</li>
+            <li><strong>Sube a Classroom</strong> la foto del diagrama, la tabla de campos/tipos y un párrafo que justifique tus decisiones con datos de tu contexto.</li>
+          </ol>
+          <div class="callout">
+            <div class="co-title">Ejemplo resuelto (síguelo como modelo, no lo copies)</div>
+            <p><em>Problema:</em> en mi grupo prestamos libros y se pierde el control.</p>
+            <table class="demo" style="margin:8px 0">
+              <caption>Tabla ALUMNOS</caption>
+              <thead><tr><th>Campo</th><th>Tipo</th></tr></thead>
+              <tbody>
+                <tr><td class="pk">id_alumno (PK)</td><td>Autonumérico</td></tr>
+                <tr><td>nombre</td><td>Texto corto</td></tr>
+                <tr><td>grupo</td><td>Texto corto</td></tr>
+              </tbody>
+            </table>
+            <table class="demo" style="margin:8px 0">
+              <caption>Tabla PRESTAMOS</caption>
+              <thead><tr><th>Campo</th><th>Tipo</th></tr></thead>
+              <tbody>
+                <tr><td class="pk">id_prestamo (PK)</td><td>Autonumérico</td></tr>
+                <tr><td>id_alumno (FK)</td><td>Número</td></tr>
+                <tr><td>libro</td><td>Texto corto</td></tr>
+                <tr><td>fecha</td><td>Fecha / Hora</td></tr>
+                <tr><td>devuelto</td><td>Sí / No</td></tr>
+              </tbody>
+            </table>
+            <p style="margin-bottom:0"><em>Relación:</em> ALUMNOS 1 : N PRESTAMOS (un alumno puede tener muchos préstamos). <em>Justificación:</em> separo los datos del alumno para no repetir su nombre en cada préstamo.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actividad 3: Quiz -->
+      <div class="activity" id="quiz">
+        <div class="activity-head"><span class="num">3</span><h3>Quiz de autoevaluación</h3><span class="up">Captura tu puntaje y súbelo</span></div>
+        <div class="activity-body">
+          <p><strong>Propósito:</strong> comprobar por ti mismo cuánto has construido de los conceptos de la unidad.</p>
+          <h4>Instrucciones</h4>
+          <ol class="steps">
+            <li><strong>Responde las 5 preguntas</strong> y presiona <strong>Calificar quiz</strong>.</li>
+            <li><strong>Observa tu puntaje</strong> y revisa las respuestas correctas resaltadas.</li>
+            <li><strong>Toma una captura de pantalla del resultado</strong> y súbela a Classroom.</li>
+          </ol>
+
+          <div id="quiz-form"></div>
+          <div style="display:flex; gap:10px; margin-top:8px">
+            <button class="btn" onclick="quizGrade()">Calificar quiz</button>
+            <button class="btn ghost" onclick="quizReset()">Reiniciar</button>
+          </div>
+
+          <div class="quiz-result" id="quiz-result">
+            <div class="quiz-score" id="quiz-score">0 / 5</div>
+            <div class="quiz-bar"><span id="quiz-bar-fill"></span></div>
+            <p id="quiz-feedback" style="margin-bottom:0; font-weight:600"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REFLEXIÓN -->
+    <section id="reflexion">
+      <div class="sectlabel">CIERRE</div>
+      <h2>Reflexión y aplicación</h2>
+      <div class="card planner">
+        <p>Has recorrido del problema al diseño. Antes de terminar, planifica cómo incorporarás lo aprendido. Tus respuestas se guardan en este mismo navegador con el botón <strong>Guardar mi plan</strong>.</p>
+
+        <label for="p1">1. Vuelve al reto inicial de la biblioteca del salón: ¿en qué cambió tu respuesta ahora que sabes diseñar tablas, claves y relaciones?</label>
+        <textarea id="p1"></textarea>
+
+        <label for="p2">2. Menciona una tarea o proyecto de <strong>otra materia</strong> de tu bachillerato donde una base de datos te ayudaría a organizar información. Explica cómo.</label>
+        <textarea id="p2"></textarea>
+
+        <label for="p3">3. En tu <strong>carrera técnica o futuro profesional</strong>, ¿qué información valdría la pena guardar en una base de datos bien diseñada?</label>
+        <textarea id="p3"></textarea>
+
+        <label for="p4">4. Escribe un compromiso concreto: ¿qué base de datos vas a diseñar o mejorar esta semana con lo aprendido?</label>
+        <textarea id="p4"></textarea>
+
+        <div class="planner-actions">
+          <button class="btn" onclick="savePlan()">Guardar mi plan</button>
+          <button class="btn ghost" onclick="downloadPlan()">Descargar como texto</button>
+          <span class="saved-note" id="saved-note">Plan guardado en este navegador.</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<details class="deploy">
+  <summary>Cómo publicar esta guía en GitHub Pages</summary>
+  <div class="card">
+    <p style="margin-bottom:.6em">Esta guía es un único archivo <code>index.html</code> sin dependencias externas (salvo las tipografías de Google Fonts). Para publicarla:</p>
+    <ol style="margin-bottom:0">
+      <li>Crea un repositorio en GitHub y sube este archivo como <code>index.html</code>.</li>
+      <li>Entra en <code>Settings → Pages</code>, selecciona la rama <code>main</code> y la carpeta raíz <code>/root</code>, y guarda.</li>
+      <li>En 1–2 minutos tu guía estará disponible en la URL que GitHub te indique.</li>
+      <li>Para el logo oficial: reemplaza el bloque <code>&lt;svg class="crest"&gt;…&lt;/svg&gt;</code> del encabezado por <code>&lt;img class="crest" src="logo-cbetis10.png"&gt;</code> y sube también esa imagen al repositorio.</li>
+    </ol>
+  </div>
+</details>
+
+<footer>
+  <p class="mono">CBETIS No. 10 · Bachillerato Tecnológico · Ofimática</p>
+  <p>Guía interactiva · Gestiona información mediante SMBD ofimáticos · Unidad 1, Tema 1.1: Diseño de bases de datos<br>Material didáctico con enfoque constructivista y aprendizaje basado en problemas.</p>
+</footer>
+
+<script>
+/* ============ NAV ACTIVE STATE ============ */
+(function(){
+  var links = document.querySelectorAll('.nav a');
+  var sections = [];
+  links.forEach(function(a){
+    var el = document.querySelector(a.getAttribute('href'));
+    if(el) sections.push({a:a, el:el});
+  });
+  function onScroll(){
+    var y = window.scrollY + 120;
+    var current = sections[0];
+    for(var i=0;i<sections.length;i++){
+      if(sections[i].el.offsetTop <= y) current = sections[i];
+    }
+    links.forEach(function(a){a.classList.remove('active');});
+    if(current) current.a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+
+/* Hero animation trigger */
+window.addEventListener('load', function(){
+  document.body.classList.add('go');
+});
+
+/* ============ JUEGO 1: Dato o Información ============ */
+var g1data = [
+  {t:'"3-A"', a:'dato'},
+  {t:'"El grupo 3-A tiene 24 alumnos inscritos en 2026."', a:'info'},
+  {t:'2026-05-14', a:'dato'},
+  {t:'"Ana devolvió el libro de Física el 14 de mayo de 2026."', a:'info'},
+  {t:'"45"', a:'dato'},
+  {t:'"El cuaderno cuesta 45 pesos y hay 12 en existencia."', a:'info'}
+];
+var g1score = 0;
+function g1Render(){
+  g1score = 0; document.getElementById('g1-score').textContent = '0';
+  var box = document.getElementById('g1-list'); box.innerHTML = '';
+  g1data.forEach(function(item, i){
+    var row = document.createElement('div');
+    row.className = 'g1-item';
+    row.innerHTML = '<span class="txt mono">'+item.t+'</span>'+
+      '<span class="opts" style="display:flex;gap:8px">'+
+        '<button class="opt" data-v="dato">Dato</button>'+
+        '<button class="opt" data-v="info">Información</button>'+
+      '</span>'+
+      '<span class="verdict"></span>';
+    row.querySelectorAll('.opt').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var chosen = btn.getAttribute('data-v');
+        if(chosen === item.a){
+          row.classList.add('correct');
+          row.querySelector('.verdict').textContent = 'Correcto';
+          g1score++;
+          document.getElementById('g1-score').textContent = g1score;
+        } else {
+          row.classList.add('wrong');
+          row.querySelector('.verdict').textContent = item.a==='dato' ? 'Era un dato' : 'Era información';
+        }
+      });
+    });
+    box.appendChild(row);
+  });
+}
+function g1Reset(){ g1Render(); }
+g1Render();
+
+/* ============ JUEGO 2: Anatomía de la tabla ============ */
+function g2Check(){
+  var rows = document.querySelectorAll('#g2 .g2-row');
+  var ok = 0;
+  rows.forEach(function(r){
+    r.classList.remove('correct','wrong');
+    var val = r.querySelector('select').value;
+    if(val === r.getAttribute('data-answer')){ r.classList.add('correct'); ok++; }
+    else { r.classList.add('wrong'); }
+  });
+  document.getElementById('g2-score').textContent = ok;
+}
+function g2Reset(){
+  document.querySelectorAll('#g2 .g2-row').forEach(function(r){
+    r.classList.remove('correct','wrong');
+    r.querySelector('select').value = '';
+  });
+  document.getElementById('g2-score').textContent = '–';
+}
+
+/* ============ JUEGO 3: Tipos de dato ============ */
+var g3fields = [
+  {f:'nombre', a:'texto'},
+  {f:'fecha_nacimiento', a:'fecha'},
+  {f:'promedio', a:'numero'},
+  {f:'beca (¿tiene?)', a:'sino'},
+  {f:'telefono', a:'texto'},
+  {f:'id_alumno', a:'auto'}
+];
+var g3types = [
+  {v:'texto', l:'Texto corto'},
+  {v:'numero', l:'Número'},
+  {v:'fecha', l:'Fecha / Hora'},
+  {v:'sino', l:'Sí / No'},
+  {v:'moneda', l:'Moneda'},
+  {v:'auto', l:'Autonumérico'}
+];
+function g3Render(){
+  var box = document.getElementById('g3-list'); box.innerHTML = '';
+  g3fields.forEach(function(item, i){
+    var row = document.createElement('div');
+    row.className = 'g2-row';
+    var opts = '<option value="">— tipo de dato —</option>';
+    g3types.forEach(function(t){ opts += '<option value="'+t.v+'">'+t.l+'</option>'; });
+    row.innerHTML = '<span class="mono" style="min-width:170px;font-weight:600">'+item.f+'</span>'+
+      '<select>'+opts+'</select>';
+    row.setAttribute('data-answer', item.a);
+    box.appendChild(row);
+  });
+  document.getElementById('g3-score').textContent = '–';
+}
+function g3Check(){
+  var rows = document.querySelectorAll('#g3-list .g2-row');
+  var ok = 0;
+  rows.forEach(function(r){
+    r.classList.remove('correct','wrong');
+    if(r.querySelector('select').value === r.getAttribute('data-answer')){ r.classList.add('correct'); ok++; }
+    else { r.classList.add('wrong'); }
+  });
+  document.getElementById('g3-score').textContent = ok;
+}
+function g3Reset(){ g3Render(); }
+g3Render();
+
+/* ============ JUEGO 4: Detective de la clave primaria ============ */
+var g4data = [
+  {
+    q:'Tabla ALUMNOS con campos: nombre, grupo, id_alumno, correo. ¿Cuál es la mejor clave primaria?',
+    opts:['nombre','grupo','id_alumno','correo'],
+    correct:2,
+    fb:'id_alumno es único, no se repite y no cambia. El nombre puede repetirse y el correo puede cambiar.'
+  },
+  {
+    q:'Tabla LIBROS con campos: titulo, autor, isbn, editorial. ¿Cuál conviene como clave primaria?',
+    opts:['titulo','autor','isbn','editorial'],
+    correct:2,
+    fb:'El ISBN es un identificador único e internacional de cada libro; el título o el autor pueden repetirse.'
+  },
+  {
+    q:'Tabla VENTAS. Ningún campo actual es único por sí solo. ¿Qué conviene hacer?',
+    opts:['Usar la fecha como clave','Agregar un campo id_venta autonumérico','Usar el nombre del cliente','No poner clave primaria'],
+    correct:1,
+    fb:'Cuando ningún campo es único, se crea un campo autonumérico (id_venta) como clave primaria.'
+  }
+];
+var g4score = 0;
+function g4Render(){
+  g4score = 0; document.getElementById('g4-score').textContent = '0';
+  var box = document.getElementById('g4-list'); box.innerHTML = '';
+  g4data.forEach(function(item){
+    var wrap = document.createElement('div');
+    wrap.className = 'rel-item';
+    var chips = '<div class="chips">';
+    item.opts.forEach(function(o, idx){ chips += '<button class="chip" data-i="'+idx+'">'+o+'</button>'; });
+    chips += '</div>';
+    wrap.innerHTML = '<div class="rel-q">'+item.q+'</div>'+chips+'<div class="rel-fb"></div>';
+    wrap.querySelectorAll('.chip').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        if(wrap.classList.contains('correct')) return;
+        var i = parseInt(chip.getAttribute('data-i'),10);
+        if(i === item.correct){
+          wrap.classList.remove('wrong'); wrap.classList.add('correct');
+          wrap.querySelector('.rel-fb').textContent = 'Correcto. '+item.fb;
+          if(!chip.getAttribute('data-counted')){ chip.setAttribute('data-counted','1'); g4score++; document.getElementById('g4-score').textContent = g4score; }
+        } else {
+          wrap.classList.add('wrong');
+          wrap.querySelector('.rel-fb').textContent = 'Aún no. Piensa en cuál campo nunca se repite. Intenta de nuevo.';
+        }
+      });
+    });
+    box.appendChild(wrap);
+  });
+}
+function g4Reset(){ g4Render(); }
+g4Render();
+
+/* ============ JUEGO 5: Tipo de relación ============ */
+var g5data = [
+  {q:'Un grupo escolar tiene muchos alumnos, y cada alumno pertenece a un solo grupo.', a:'1:N', fb:'Uno a muchos: un grupo → muchos alumnos.'},
+  {q:'Cada alumno tiene una única credencial y cada credencial pertenece a un solo alumno.', a:'1:1', fb:'Uno a uno: un alumno ↔ una credencial.'},
+  {q:'Los alumnos cursan varias materias y cada materia tiene varios alumnos.', a:'N:M', fb:'Muchos a muchos: alumnos ↔ materias.'},
+  {q:'Un maestro imparte muchas materias, pero cada materia la imparte un solo maestro.', a:'1:N', fb:'Uno a muchos: un maestro → muchas materias.'}
+];
+var g5score = 0;
+function g5Render(){
+  g5score = 0; document.getElementById('g5-score').textContent = '0';
+  var box = document.getElementById('g5-list'); box.innerHTML = '';
+  var options = ['1:1','1:N','N:M'];
+  g5data.forEach(function(item){
+    var wrap = document.createElement('div');
+    wrap.className = 'rel-item';
+    var chips = '<div class="chips">';
+    options.forEach(function(o){ chips += '<button class="chip mono" data-v="'+o+'">'+o+'</button>'; });
+    chips += '</div>';
+    wrap.innerHTML = '<div class="rel-q">'+item.q+'</div>'+chips+'<div class="rel-fb"></div>';
+    wrap.querySelectorAll('.chip').forEach(function(chip){
+      chip.addEventListener('click', function(){
+        if(wrap.classList.contains('correct')) return;
+        if(chip.getAttribute('data-v') === item.a){
+          wrap.classList.remove('wrong'); wrap.classList.add('correct');
+          wrap.querySelector('.rel-fb').textContent = 'Correcto. '+item.fb;
+          g5score++; document.getElementById('g5-score').textContent = g5score;
+        } else {
+          wrap.classList.add('wrong');
+          wrap.querySelector('.rel-fb').textContent = 'Revisa cuántos registros de cada lado se relacionan. Intenta otra vez.';
+        }
+      });
+    });
+    box.appendChild(wrap);
+  });
+}
+function g5Reset(){ g5Render(); }
+g5Render();
+
+/* ============ JUEGO 6: Ordenar pasos ============ */
+var g6steps = [
+  {order:1, t:'Identificar el propósito y los requisitos'},
+  {order:2, t:'Identificar las entidades (tablas)'},
+  {order:3, t:'Definir los campos y sus tipos de datos'},
+  {order:4, t:'Establecer la clave primaria de cada tabla'},
+  {order:5, t:'Definir las relaciones entre tablas'},
+  {order:6, t:'Aplicar normalización y revisar'}
+];
+function shuffle(arr){
+  var a = arr.slice();
+  for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var tmp=a[i]; a[i]=a[j]; a[j]=tmp; }
+  return a;
+}
+function g6Render(){
+  var list = document.getElementById('g6-list'); list.innerHTML = '';
+  var scrambled = shuffle(g6steps);
+  // avoid an already-correct random order
+  var isSorted = scrambled.every(function(s,i){return s.order===i+1;});
+  if(isSorted) scrambled = shuffle(g6steps);
+  scrambled.forEach(function(s){
+    var li = document.createElement('li');
+    li.className = 'order-item';
+    li.setAttribute('data-order', s.order);
+    li.innerHTML = '<span class="step-txt">'+s.t+'</span>'+
+      '<span class="arrows"><button onclick="g6Move(this,-1)" aria-label="Subir">▲</button>'+
+      '<button onclick="g6Move(this,1)" aria-label="Bajar">▼</button></span>';
+    list.appendChild(li);
+  });
+  document.getElementById('g6-score').textContent = 'Por verificar';
+}
+function g6Move(btn, dir){
+  var li = btn.closest('.order-item');
+  var list = document.getElementById('g6-list');
+  if(dir === -1 && li.previousElementSibling){ list.insertBefore(li, li.previousElementSibling); }
+  if(dir === 1 && li.nextElementSibling){ list.insertBefore(li.nextElementSibling, li); }
+}
+function g6Check(){
+  var items = document.querySelectorAll('#g6-list .order-item');
+  var ok = 0;
+  items.forEach(function(li, i){
+    li.classList.remove('ok');
+    if(parseInt(li.getAttribute('data-order'),10) === i+1){ li.classList.add('ok'); ok++; }
+  });
+  var s = document.getElementById('g6-score');
+  if(ok === 6){ s.textContent = 'Secuencia correcta'; s.style.color = 'var(--ok)'; }
+  else { s.textContent = ok+' / 6 en su lugar'; s.style.color = 'var(--muted)'; }
+}
+function g6Reset(){ g6Render(); }
+g6Render();
+
+/* ============ JUEGO 7: Relacionar columnas ============ */
+var g7pairs = [
+  {k:'base', term:'Base de datos', def:'Conjunto de información organizada de forma estructurada.'},
+  {k:'smbd', term:'SMBD', def:'Programa que crea y gestiona la base de datos (Access, Base).'},
+  {k:'campo', term:'Campo', def:'Columna que guarda una característica de cada registro.'},
+  {k:'registro', term:'Registro', def:'Fila con toda la información de un elemento.'},
+  {k:'pk', term:'Clave primaria', def:'Campo que identifica de forma única cada registro.'},
+  {k:'fk', term:'Clave foránea', def:'Campo que conecta una tabla con la clave de otra.'}
+];
+var g7sel = null, g7done = 0;
+function g7Render(){
+  g7sel = null; g7done = 0; document.getElementById('g7-score').textContent = '0';
+  var terms = document.getElementById('g7-terms');
+  var defs = document.getElementById('g7-defs');
+  terms.innerHTML = ''; defs.innerHTML = '';
+  g7pairs.forEach(function(p){
+    var tb = document.createElement('button');
+    tb.className = 'match-btn'; tb.textContent = p.term; tb.setAttribute('data-k', p.k); tb.setAttribute('data-side','t');
+    tb.addEventListener('click', function(){ g7pick(tb); });
+    terms.appendChild(tb);
+  });
+  shuffle(g7pairs).forEach(function(p){
+    var db = document.createElement('button');
+    db.className = 'match-btn'; db.textContent = p.def; db.setAttribute('data-k', p.k); db.setAttribute('data-side','d');
+    db.addEventListener('click', function(){ g7pick(db); });
+    defs.appendChild(db);
+  });
+}
+function g7pick(btn){
+  if(btn.classList.contains('done')) return;
+  if(!g7sel){
+    // must start with a term
+    if(btn.getAttribute('data-side') !== 't'){ return; }
+    g7sel = btn; btn.classList.add('sel'); return;
+  }
+  if(btn.getAttribute('data-side') === 't'){
+    // switch selected term
+    g7sel.classList.remove('sel'); g7sel = btn; btn.classList.add('sel'); return;
+  }
+  // btn is a definition; compare
+  if(btn.getAttribute('data-k') === g7sel.getAttribute('data-k')){
+    btn.classList.add('done'); g7sel.classList.remove('sel'); g7sel.classList.add('done');
+    g7sel = null; g7done++; document.getElementById('g7-score').textContent = g7done;
+  } else {
+    var wrong = g7sel; var picked = btn;
+    picked.classList.add('flash-bad'); wrong.classList.add('flash-bad');
+    setTimeout(function(){ picked.classList.remove('flash-bad'); wrong.classList.remove('flash-bad','sel'); }, 600);
+    g7sel = null;
+  }
+}
+function g7Reset(){ g7Render(); }
+g7Render();
+
+/* ============ QUIZ ============ */
+var quizData = [
+  {
+    q:'¿Cuál es la diferencia entre dato e información?',
+    opts:['Son sinónimos','Un dato es un hecho aislado; la información son datos procesados con significado','La información no se puede guardar','El dato siempre es un número'],
+    correct:1
+  },
+  {
+    q:'En una tabla, ¿qué es un registro?',
+    opts:['Una columna con una característica','El nombre de la tabla','Una fila con toda la información de un elemento','El tipo de dato de un campo'],
+    correct:2
+  },
+  {
+    q:'¿Qué tipo de dato es más adecuado para un número telefónico?',
+    opts:['Número','Texto corto','Moneda','Sí / No'],
+    correct:1
+  },
+  {
+    q:'¿Cuál es la función de la clave primaria?',
+    opts:['Conectar con otra tabla','Identificar de forma única cada registro','Guardar fechas','Ordenar alfabéticamente'],
+    correct:1
+  },
+  {
+    q:'Un grupo tiene muchos alumnos y cada alumno pertenece a un grupo. ¿Qué relación es?',
+    opts:['Uno a uno (1:1)','Uno a muchos (1:N)','Muchos a muchos (N:M)','No hay relación'],
+    correct:1
+  }
+];
+function quizRender(){
+  var form = document.getElementById('quiz-form'); form.innerHTML = '';
+  quizData.forEach(function(item, qi){
+    var q = document.createElement('div');
+    q.className = 'quiz-q'; q.setAttribute('data-correct', item.correct);
+    var html = '<div class="qtext"><span class="qnum mono">'+(qi+1)+'.</span>'+item.q+'</div><div class="options">';
+    item.opts.forEach(function(o, oi){
+      html += '<label class="opt-radio"><input type="radio" name="q'+qi+'" value="'+oi+'"><span>'+o+'</span></label>';
+    });
+    html += '</div>';
+    q.innerHTML = html;
+    form.appendChild(q);
+  });
+}
+function quizGrade(){
+  var qs = document.querySelectorAll('#quiz-form .quiz-q');
+  var score = 0;
+  qs.forEach(function(q){
+    var correct = parseInt(q.getAttribute('data-correct'),10);
+    var labels = q.querySelectorAll('.opt-radio');
+    var chosen = -1;
+    labels.forEach(function(l, li){
+      l.classList.remove('correct','wrong');
+      var input = l.querySelector('input');
+      if(input.checked) chosen = li;
+    });
+    labels[correct].classList.add('correct');
+    if(chosen === correct) score++;
+    else if(chosen >= 0) labels[chosen].classList.add('wrong');
+  });
+  var pct = Math.round(score/5*100);
+  document.getElementById('quiz-score').textContent = score + ' / 5';
+  document.getElementById('quiz-result').classList.add('show');
+  setTimeout(function(){ document.getElementById('quiz-bar-fill').style.width = pct+'%'; }, 50);
+  var fb = document.getElementById('quiz-feedback');
+  if(score === 5){ fb.textContent = 'Excelente. Dominas los conceptos de diseño de bases de datos.'; }
+  else if(score >= 3){ fb.textContent = 'Buen trabajo. Repasa las preguntas marcadas en rojo y vuelve a intentarlo.'; }
+  else { fb.textContent = 'Es un buen punto de partida. Regresa a las secciones de la guía y vuelve a resolver el quiz.'; }
+  document.getElementById('quiz-result').scrollIntoView({behavior:'smooth', block:'center'});
+}
+function quizReset(){
+  quizRender();
+  document.getElementById('quiz-result').classList.remove('show');
+  document.getElementById('quiz-bar-fill').style.width = '0';
+}
+quizRender();
+
+/* ============ PLANNER (localStorage) ============ */
+var PLAN_KEY = 'cbetis10_bd_plan_u1_1';
+function loadPlan(){
+  try{
+    var raw = localStorage.getItem(PLAN_KEY);
+    if(!raw) return;
+    var data = JSON.parse(raw);
+    ['p1','p2','p3','p4'].forEach(function(id){ if(data[id]) document.getElementById(id).value = data[id]; });
+  }catch(e){}
+}
+function savePlan(){
+  try{
+    var data = {};
+    ['p1','p2','p3','p4'].forEach(function(id){ data[id] = document.getElementById(id).value; });
+    localStorage.setItem(PLAN_KEY, JSON.stringify(data));
+    var note = document.getElementById('saved-note');
+    note.classList.add('show');
+    setTimeout(function(){ note.classList.remove('show'); }, 2500);
+  }catch(e){
+    alert('No fue posible guardar en este navegador. Puedes usar "Descargar como texto".');
+  }
+}
+function downloadPlan(){
+  var labels = [
+    '1. Cambio en mi respuesta al reto inicial:',
+    '2. Aplicación en otra materia del bachillerato:',
+    '3. Utilidad en mi carrera técnica o profesional:',
+    '4. Mi compromiso de esta semana:'
+  ];
+  var ids = ['p1','p2','p3','p4'];
+  var text = 'PLAN DE REFLEXION Y APLICACION\nDiseño de bases de datos ofimáticas · Unidad 1.1 · CBETIS No. 10\n\n';
+  ids.forEach(function(id, i){
+    text += labels[i] + '\n' + (document.getElementById(id).value || '(pendiente)') + '\n\n';
+  });
+  var blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'plan-reflexion-bases-de-datos.txt';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+loadPlan();
+</script>
+</body>
+</html>
